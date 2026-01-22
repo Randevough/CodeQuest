@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  avatar    String?
+  handle    String?
+  role      String?  @default("Member")
+  points    Int      @default(0)
+  completedQuests Int @default(0)
+  
+  snatches  Snatch[]
+  penalties Penalty[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Quest {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  maxSnatchers Int      @default(1)
+  
+  difficulty  String   @default("Beginner") // Beginner, Intermediate, Advanced
+  points      Int      @default(100)
+  category    String   @default("Web") // Web, AI, Mobile
+  
+  snatches    Snatch[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Snatch {
+  id        String   @id @default(cuid())
+  userId    String
+  questId   String
+  status    String   @default("ACTIVE") // ACTIVE, COMPLETED, DROPPED
+  
+  user      User     @relation(fields: [userId], references: [id])
+  quest     Quest    @relation(fields: [questId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, questId]) // User can only snatch a quest once (until dropped/completed logic handled?)
+  // Actually, if they drop it, can they snatch it again? 
+  // For now, let's keep it unique to prevent double snatching.
+}
+
+model Penalty {
+  id        String   @id @default(cuid())
+  userId    String
+  reason    String
+  expiresAt DateTime
+  
+  user      User     @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+}
