@@ -3,6 +3,7 @@ import { QuestCard } from '@/components/QuestCard'
 import { QuestSearch } from '@/components/QuestSearch'
 import { getUserActiveSnatches } from '@/actions/quest'
 import Link from 'next/link'
+import { LoginToast } from '@/components/LoginToast'
 import { Header } from '@/components/Header'
 
 export const dynamic = 'force-dynamic'
@@ -106,6 +107,13 @@ async function seedQuests() {
 
 export default async function Home({ searchParams }: { searchParams: { q?: string, difficulty?: string, sort?: string } }) {
   const params = await searchParams; // Next 15+ await searchParams
+
+  // Note: To show toast on the server component, we usually need a client wrapper or pass a prop.
+  // Actually, for "Welcome Toast" after redirect, we can check a searchParam on the CLIENT side.
+  // But this is a Server Component.
+  // We can add a small Client Component just for the toaster effect, or check it in the main layout if global.
+  // Let's create a Client Component `LoginToast` and embed it here.
+
   const [allFilteredQuests, myActiveQuests] = await Promise.all([
     getQuests(params),
     getMyActiveQuests()
@@ -124,6 +132,8 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
       <Header activePage="explore" />
 
       <main className="flex-1 w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <LoginToast />
 
         {/* MY ACTIVE QUESTS SECTION */}
         {myActiveQuests.length > 0 && (

@@ -26,7 +26,7 @@ async function getCurrentUser() {
 export async function joinQuest(questId: string) {
     const user = await getCurrentUser();
 
-    if (!user) throw new Error("Unauthorized");
+    if (!user) redirect('/login');
 
     try {
         const result = await prisma.$transaction(async (tx) => {
@@ -102,7 +102,7 @@ export async function getUserActiveSnatches() {
 
 export async function dropQuest(questId: string) {
     const user = await getCurrentUser();
-    if (!user) throw new Error("Unauthorized");
+    if (!user) redirect('/login');
 
     try {
         const result = await prisma.$transaction(async (tx) => {

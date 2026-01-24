@@ -10,7 +10,7 @@ export default function AuthLayout({
     return (
         <div className="flex h-screen w-full flex-row overflow-hidden bg-white text-gray-900 font-display">
             {/* Left Side (Forms) */}
-            <div className="flex w-full flex-col bg-white p-8 md:w-1/2 md:p-12 lg:p-16 relative overflow-y-auto">
+            <div className="flex w-full flex-col bg-white p-8 lg:w-1/2 lg:p-16 relative overflow-y-auto">
                 <div className="flex items-center mb-8">
                     <Link href="/" className="text-xl font-bold tracking-tight text-gray-900">
                         CodeQuest
@@ -23,7 +23,7 @@ export default function AuthLayout({
             </div>
 
             {/* Right Side (Visual) */}
-            <div className="hidden md:flex md:w-1/2 flex-col items-center justify-center bg-[#4F46E5] relative overflow-hidden">
+            <div className="hidden lg:flex lg:w-1/2 flex-col items-center justify-center bg-[#4F46E5] relative overflow-hidden">
                 <div className="absolute inset-0 opacity-10 pointer-events-none"
                     style={{
                         backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)',
