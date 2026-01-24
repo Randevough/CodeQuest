@@ -29,7 +29,10 @@ export default async function LeaderboardPage(props: { searchParams: Promise<{ p
 
                 {/* Action Bar for Seeding/Population */}
                 <div className="flex justify-end mb-4">
-                    <form action={seedUsers}>
+                    <form action={async () => {
+                        'use server'
+                        await seedUsers()
+                    }}>
                         <button className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors shadow-sm">
                             <span className="material-symbols-outlined text-[18px]">group_add</span>
                             Populate Leaderboard (Generate 20 Users)
@@ -40,7 +43,10 @@ export default async function LeaderboardPage(props: { searchParams: Promise<{ p
                 {users.length === 0 ? (
                     <div className="text-center py-20 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-2xl">
                         <p className="text-slate-500 mb-6">No heroes have risen yet.</p>
-                        <form action={seedUsers}>
+                        <form action={async () => {
+                            'use server'
+                            await seedUsers()
+                        }}>
                             <button className="px-6 py-3 bg-primary hover:bg-primary/90 text-white font-bold rounded-lg transition-colors shadow-lg shadow-primary/20">
                                 Seed Leaderboard Users
                             </button>
@@ -56,7 +62,7 @@ export default async function LeaderboardPage(props: { searchParams: Promise<{ p
                                 className="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm"
                                 suppressHydrationWarning
                             >
-                                <LeaderboardTable users={users} page={page} pageSize={pageSize} />
+                                <LeaderboardTable users={users.map(u => ({ ...u, role: u.role || 'Member', handle: u.handle || '@unknown' }))} page={page} pageSize={pageSize} />
                                 <PaginationControls page={page} pageSize={pageSize} total={total} />
                             </div>
                         </div>

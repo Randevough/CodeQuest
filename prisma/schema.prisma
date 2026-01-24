@@ -17,11 +17,13 @@ model User {
   avatar    String?
   handle    String?
   role      String?  @default("Member")
+  password  String?
   points    Int      @default(0)
   completedQuests Int @default(0)
   
   snatches  Snatch[]
   penalties Penalty[]
+  accounts  Account[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -69,4 +71,23 @@ model Penalty {
   user      User     @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
 }

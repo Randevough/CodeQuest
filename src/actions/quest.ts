@@ -3,21 +3,24 @@
 import { prisma } from '@/lib/db'
 import { revalidatePath } from 'next/cache'
 
-// Stub for auth - in real app would verify session
-async function getCurrentUser() {
-    // TODO: Implement actual auth
-    // For now, return a fixed ID or similar, or create a new user if not exists?
-    // Let's assume we pass userId or it's handled. 
-    // For scaffolding, I'll just create a dummy user or fetch the first one.
-    const user = await prisma.user.findFirst();
-    if (user) return user;
+import { auth } from '@/auth'
+import { redirect } from 'next/navigation'
 
-    return await prisma.user.create({
-        data: {
-            email: 'demo@example.com',
-            name: 'Demo User'
-        }
+// Authentication helper
+async function getCurrentUser() {
+    const session = await auth();
+    if (!session || !session.user || !session.user.email) return null;
+
+    // In a real scenario, we might want to fetch the full user from DB if session is stale,
+    // but NextAuth session usually has what we need if configured.
+    // However, our logic relies on user.id which might not be in default session (it is usually there with adapter, but we use credentials).
+    // Let's fetch the user from DB to be safe and get the ID.
+
+    const user = await prisma.user.findUnique({
+        where: { email: session.user.email }
     });
+
+    return user;
 }
 
 export async function joinQuest(questId: string) {
