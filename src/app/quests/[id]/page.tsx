@@ -14,6 +14,20 @@ async function getQuest(id: string) {
         include: {
             _count: {
                 select: { snatches: true }
+            },
+            snatches: {
+                include: {
+                    user: {
+                        select: {
+                            id: true,
+                            name: true,
+                            avatar: true,
+                            role: true,
+                            handle: true
+                        }
+                    }
+                },
+                take: 5 // Limit to 5 for now in the sidebar
             }
         }
     })
@@ -172,25 +186,47 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                                     <span className="material-symbols-outlined text-primary text-[20px]">groups</span>
                                     <h4 className="text-sm font-bold text-slate-900 dark:text-white">Squad Members</h4>
                                 </div>
-                                <span className="text-xs font-mono font-bold text-primary bg-primary/10 px-2 py-1 rounded">2/{quest.maxSnatchers}</span>
+                                <span className={`text-xs font-mono font-bold px-2 py-1 rounded ${quest.snatches.length >= quest.maxSnatchers ? 'bg-red-100 text-red-700' : 'bg-primary/10 text-primary'}`}>
+                                    {quest.snatches.length}/{quest.maxSnatchers}
+                                </span>
                             </div>
                             <div className="space-y-4">
-                                {/* Mock Squad */}
-                                <div className="flex items-center gap-3">
-                                    <div className="size-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-slate-500">M</div>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">Marcus JS</p>
-                                        <p className="text-xs text-slate-500 truncate">Frontend Wizard</p>
+                                {quest.snatches.map((snatch) => (
+                                    <div key={snatch.user.id} className="flex items-center gap-3">
+                                        {snatch.user.avatar ? (
+                                            <img src={snatch.user.avatar} alt={snatch.user.name || 'User'} className="size-10 rounded-full object-cover" />
+                                        ) : (
+                                            <div className="size-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-slate-500">
+                                                {(snatch.user.name || snatch.user.handle || '?')[0].toUpperCase()}
+                                            </div>
+                                        )}
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">
+                                                {snatch.user.name || snatch.user.handle || 'Anonymous'}
+                                            </p>
+                                            <p className="text-xs text-slate-500 truncate">{snatch.user.role || 'Member'}</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="flex items-center gap-3 opacity-60">
-                                    <div className="size-10 rounded-full bg-slate-50 dark:bg-slate-800 border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center text-slate-400">
-                                        <span className="material-symbols-outlined text-[18px]">add</span>
+                                ))}
+
+                                {/* Empty Slots or "No Members" */}
+                                {quest.snatches.length === 0 && (
+                                    <div className="text-center py-4 text-sm text-slate-500 italic">
+                                        No brave souls yet. Be the first!
                                     </div>
-                                    <div className="flex-1">
-                                        <p className="text-sm text-slate-500 italic">Spot Open</p>
+                                )}
+
+                                {/* Show Open Slot indicator if there is space */}
+                                {quest.snatches.length < quest.maxSnatchers && (
+                                    <div className="flex items-center gap-3 opacity-60">
+                                        <div className="size-10 rounded-full bg-slate-50 dark:bg-slate-800 border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center text-slate-400">
+                                            <span className="material-symbols-outlined text-[18px]">add</span>
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className="text-sm text-slate-500 italic">Spot Open</p>
+                                        </div>
                                     </div>
-                                </div>
+                                )}
                             </div>
                         </div>
 

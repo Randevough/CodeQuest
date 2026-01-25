@@ -3,11 +3,11 @@
 import { useState } from 'react'
 import { joinQuest, dropQuest } from '@/actions/quest'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 export function QuestAction({ questId, isSnatched }: { questId: string, isSnatched: boolean }) {
     const [loading, setLoading] = useState(false)
     const [showJoinModal, setShowJoinModal] = useState(false)
-    const [msg, setMsg] = useState('')
     const router = useRouter()
 
     const handleJoin = async () => {
@@ -15,15 +15,15 @@ export function QuestAction({ questId, isSnatched }: { questId: string, isSnatch
         try {
             const result = await joinQuest(questId)
             if (result.success) {
-                setMsg('Snatched!')
+                toast.success('Quest Snatched! Good luck.')
                 // Refresh to update UI state
                 router.refresh()
                 setShowJoinModal(false)
             } else {
-                setMsg(result.error as string)
+                toast.error(result.error as string)
             }
         } catch (e) {
-            setMsg('Action failed')
+            toast.error('Action failed')
         } finally {
             setLoading(false)
         }
@@ -90,7 +90,6 @@ export function QuestAction({ questId, isSnatched }: { questId: string, isSnatch
                                 {loading ? 'Joining...' : 'Confirm Join'}
                             </button>
                         </div>
-                        {msg && <p className="mt-3 text-xs text-center text-red-500">{msg}</p>}
                     </div>
                 </div>
             )}
