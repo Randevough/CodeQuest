@@ -57,13 +57,32 @@ export async function joinQuest(questId: string) {
             }
 
             // 3. Check quest limits
+            // 3. Check quest limits
+            // We need to count only ACTIVE snatches.
+            const currentActiveSnatchers = await tx.snatch.count({
+                where: {
+                    questId: questId,
+                    status: 'ACTIVE'
+                }
+            });
             const quest = await tx.quest.findUniqueOrThrow({
-                where: { id: questId },
-                include: { _count: { select: { snatches: true } } }
+                where: { id: questId }
             });
 
-            if (quest._count.snatches >= quest.maxSnatchers) {
+            if (currentActiveSnatchers >= quest.maxSnatchers) {
                 throw new Error("Quest is full");
+            }
+
+            // 4. Check user active quests limit
+            const activeQuestsCount = await tx.snatch.count({
+                where: {
+                    userId: user.id,
+                    status: 'ACTIVE'
+                }
+            });
+
+            if (activeQuestsCount >= 3) {
+                throw new Error("Maximum quest is 3, finish your quest first!");
             }
 
             // 4. Create snatch

@@ -13,9 +13,10 @@ async function getQuest(id: string) {
         where: { id },
         include: {
             _count: {
-                select: { snatches: true }
+                select: { snatches: { where: { status: 'ACTIVE' } } }
             },
             snatches: {
+                where: { status: 'ACTIVE' },
                 include: {
                     user: {
                         select: {

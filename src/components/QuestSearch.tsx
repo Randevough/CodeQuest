@@ -55,7 +55,7 @@ export function QuestSearch() {
                 <input
                     name="q"
                     defaultValue={searchParams.get('q') || ''}
-                    className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 dark:border-border-dark rounded-md bg-white dark:bg-surface-dark focus:ring-1 focus:ring-primary focus:border-primary placeholder-gray-400 text-black dark:text-white"
+                    className="w-full pl-12 pr-4 py-2 text-sm border border-gray-200 dark:border-border-dark rounded-md bg-white dark:bg-surface-dark focus:ring-1 focus:ring-primary focus:border-primary placeholder-gray-400 text-black dark:text-white"
                     placeholder="Search quests..."
                     type="text"
                 />

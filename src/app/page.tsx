@@ -38,7 +38,7 @@ async function getQuests(searchParams: { q?: string, difficulty?: string, sort?:
     where,
     include: {
       _count: {
-        select: { snatches: true }
+        select: { snatches: { where: { status: 'ACTIVE' } } }
       }
     },
     orderBy
@@ -55,7 +55,7 @@ async function getMyActiveQuests() {
       id: { in: activeIds }
     },
     include: {
-      _count: { select: { snatches: true } }
+      _count: { select: { snatches: { where: { status: 'ACTIVE' } } } }
     }
   });
 }
@@ -168,11 +168,6 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
         {availableQuests.length === 0 ? (
           <div className="text-center py-20 border border-dashed border-gray-200 dark:border-border-dark rounded-3xl">
             <p className="text-zinc-500 mb-4">No quests found.</p>
-            <form action={seedQuests}>
-              <button className="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-full text-sm transition-colors text-black dark:text-white">
-                Seed Test Quests
-              </button>
-            </form>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -186,6 +181,15 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
             ))}
           </div>
         )}
+
+        {/* Developer / Seed Section */}
+        <div className="mt-12 pt-8 border-t border-gray-100 dark:border-gray-800 flex justify-center">
+          <form action={seedQuests}>
+            <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full text-xs font-mono transition-colors text-gray-500 dark:bg-white/5 dark:hover:bg-white/10 dark:text-gray-400">
+              🌱 Seed Test Quests
+            </button>
+          </form>
+        </div>
       </main>
     </div>
   )

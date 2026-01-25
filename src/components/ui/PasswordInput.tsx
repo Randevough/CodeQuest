@@ -16,7 +16,7 @@ export function PasswordInput({ id, name, placeholder = "•••••••�
     return (
         <div className="relative">
             <input
-                className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-[#4F46E5] focus:ring-[#4F46E5] sm:text-sm py-2.5 text-black pr-10"
+                className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-[#4F46E5] focus:ring-[#4F46E5] sm:text-sm py-2.5 text-black pr-12"
                 id={id}
                 name={name}
                 placeholder={placeholder}
