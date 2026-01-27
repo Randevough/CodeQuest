@@ -16,16 +16,16 @@ export function Header({ activePage }: HeaderProps) {
             : "px-3 py-1.5 text-sm font-medium rounded-md transition-colors"
 
         if (activePage === page) {
-            return `${baseClass} text-gray-900 bg-gray-100 dark:bg-white/10 dark:text-white`
+            return `${baseClass} text-[#4F46E5] bg-indigo-50 dark:bg-[#4F46E5]/10 dark:text-[#6366f1]`
         }
         return `${baseClass} text-gray-500 hover:text-gray-900 hover:bg-gray-50 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/5`
     }
 
     return (
-        <header className="sticky top-0 z-50 w-full bg-white dark:bg-surface-dark border-b border-border-light dark:border-border-dark h-[64px]">
+        <header className="sticky top-0 z-50 w-full bg-white dark:bg-surface-dark border-b border-gray-100 dark:border-border-dark h-[64px] shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
             <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 h-full">
                 <div className="flex h-full items-center justify-between">
-                    <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-12">
                         <Link href="/" className="flex items-center gap-2">
                             <div className="flex items-center justify-center size-8 rounded bg-black text-white dark:bg-white dark:text-black shadow-sm">
                                 <span className="material-symbols-outlined text-[20px]">terminal</span>
@@ -33,7 +33,7 @@ export function Header({ activePage }: HeaderProps) {
                             <span className="text-lg font-bold tracking-tight text-gray-900 dark:text-white">CodeQuest</span>
                         </Link>
                         {/* Desktop Nav */}
-                        <nav className="hidden md:flex items-center gap-1">
+                        <nav className="hidden md:flex items-center gap-8">
                             <Link className={getLinkClass('explore')} href="/">Explore Quests</Link>
                             <Link className={getLinkClass('leaderboard')} href="/leaderboard">Leaderboard</Link>
                             <Link className={getLinkClass('workspace')} href="/workspace">My Workspace</Link>

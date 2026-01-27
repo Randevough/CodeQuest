@@ -6,10 +6,16 @@ import Link from 'next/link'
 import { LoginToast } from '@/components/LoginToast'
 import { Header } from '@/components/Header'
 
+import { Pagination } from '@/components/Pagination'
+
+
 export const dynamic = 'force-dynamic'
 
-async function getQuests(searchParams: { q?: string, difficulty?: string, sort?: string }) {
+async function getQuests(searchParams: { q?: string, difficulty?: string, sort?: string, page?: string }) {
   const where: any = {}
+  const page = parseInt(searchParams.page || '1')
+  const limit = 9
+  const skip = (page - 1) * limit
 
   // Search
   if (searchParams.q) {
@@ -34,15 +40,22 @@ async function getQuests(searchParams: { q?: string, difficulty?: string, sort?:
     orderBy = { points: 'asc' }
   }
 
-  return await prisma.quest.findMany({
-    where,
-    include: {
-      _count: {
-        select: { snatches: { where: { status: 'ACTIVE' } } }
-      }
-    },
-    orderBy
-  })
+  const [total, quests] = await prisma.$transaction([
+    prisma.quest.count({ where }),
+    prisma.quest.findMany({
+      where,
+      include: {
+        _count: {
+          select: { snatches: { where: { status: 'ACTIVE' } } }
+        }
+      },
+      orderBy,
+      skip,
+      take: limit
+    })
+  ])
+
+  return { quests, total, page, limit }
 }
 
 // Helper to get full details of active quests
@@ -114,39 +127,56 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
   // We can add a small Client Component just for the toaster effect, or check it in the main layout if global.
   // Let's create a Client Component `LoginToast` and embed it here.
 
-  const [allFilteredQuests, myActiveQuests] = await Promise.all([
+  const [{ quests: allFilteredQuests, total, limit }, myActiveQuests] = await Promise.all([
     getQuests(params),
     getMyActiveQuests()
   ])
 
+  const totalPages = Math.ceil(total / limit)
+
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const myActiveIds = myActiveQuests.map((q: any) => q.id);
   // Filter out active quests from the main list so they don't appear twice
-  const availableQuests = allFilteredQuests.filter((q: any) => !myActiveIds.includes(q.id));
+  // Filter out active quests from the main list so they don't appear twice
+  // Also filter out FULL quests (where active snatches >= maxSnatchers)
+  const availableQuests = allFilteredQuests.filter((q: any) => {
+    const isMyActive = myActiveIds.includes(q.id);
+    if (isMyActive) return false;
+
+    const isFull = q._count.snatches >= q.maxSnatchers;
+    if (isFull) return false;
+
+    return true;
+  });
 
   return (
-    <div className="min-h-screen flex flex-col relative bg-[#fafafa] dark:bg-black text-[#171717] dark:text-white font-display">
+    <div className="min-h-screen flex flex-col relative bg-[#F9FAFB] dark:bg-black text-[#171717] dark:text-white font-display">
 
       {/* Header */}
       {/* Header */}
       <Header activePage="explore" />
 
-      <main className="flex-1 w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         <LoginToast />
 
         {/* MY ACTIVE QUESTS SECTION */}
         {myActiveQuests.length > 0 && (
-          <div className="mb-12">
-            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4 px-1">My Active Quests</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-gray-800 rounded-xl p-6 mb-6">
+            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+              <span className="material-symbols-outlined text-[18px]">bolt</span>
+              Active Quests ({myActiveQuests.length})
+            </h2>
+
+            <div className="flex overflow-x-auto gap-4 no-scrollbar items-stretch pb-2">
               {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               {myActiveQuests.map((quest: any) => (
-                <QuestCard
-                  key={quest.id}
-                  quest={quest}
-                  isSnatched={true}
-                />
+                <div key={quest.id} className="min-w-[280px] max-w-[320px] flex-none">
+                  <QuestCard
+                    quest={quest}
+                    isSnatched={true}
+                  />
+                </div>
               ))}
             </div>
           </div>
@@ -154,7 +184,7 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
 
 
         {/* Filters & Header */}
-        <div className="flex flex-col gap-6 mb-8">
+        <div className="flex flex-col gap-6 mb-6">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Quest Board</h1>
             <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Find new challenges to tackle and earn points for your team.</p>
@@ -170,20 +200,24 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
             <p className="text-zinc-500 mb-4">No quests found.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-            {availableQuests.map((quest: any) => (
-              <QuestCard
-                key={quest.id}
-                quest={quest}
-                isSnatched={false}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+              {availableQuests.map((quest: any) => (
+                <QuestCard
+                  key={quest.id}
+                  quest={quest}
+                  isSnatched={false}
+                />
+              ))}
+            </div>
+
+            <Pagination totalPages={totalPages} />
+          </>
         )}
 
         {/* Developer / Seed Section */}
-        <div className="mt-12 pt-8 border-t border-gray-100 dark:border-gray-800 flex justify-center">
+        <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-800 flex justify-center">
           <form action={seedQuests}>
             <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full text-xs font-mono transition-colors text-gray-500 dark:bg-white/5 dark:hover:bg-white/10 dark:text-gray-400">
               🌱 Seed Test Quests

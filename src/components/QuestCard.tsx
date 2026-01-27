@@ -50,117 +50,111 @@ export function QuestCard({ quest, isSnatched }: { quest: Quest, isSnatched: boo
         if (d === 'expert' || d === 'hard') return 'bg-red-50 text-red-700 border-red-100 dark:bg-red-900/20 dark:text-red-400 dark:border-red-900/30'
         if (d === 'advanced') return 'bg-purple-50 text-purple-700 border-purple-100 dark:bg-purple-900/20 dark:text-purple-400 dark:border-purple-900/30'
         if (d === 'intermediate') return 'bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-900/30'
-        return 'bg-green-50 text-green-700 border-green-100 dark:bg-green-900/20 dark:text-green-400 dark:border-green-900/30'
+        return 'bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-900/30'
     }
 
-    const getPointsColor = (points: number) => {
-        if (points >= 401) return 'bg-indigo-100 text-indigo-800 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800/30'
-        if (points >= 151) return 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800/30'
-        if (points >= 61) return 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800/30'
-        return 'bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700'
+    const getRewardColor = (points: number) => {
+        if (points <= 100) return 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-900/30'
+        if (points <= 250) return 'bg-blue-50 text-blue-600 border-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-900/30'
+        return 'bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-900/20 dark:text-violet-400 dark:border-violet-900/30'
     }
 
     return (
         <article className={`group flex flex-col bg-white dark:bg-surface-dark rounded-xl border transition-all duration-300 overflow-hidden shadow-sm hover:shadow-hover
         ${isSnatched
-                ? 'border-primary/50 dark:border-primary/50 ring-1 ring-primary/20'
-                : 'border-border-light dark:border-border-dark hover:border-gray-300 dark:hover:border-gray-700'
+                ? 'border-slate-300 dark:border-gray-600 shadow-md' // Slightly clearer border for active, but neutral
+                : 'border-slate-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700'
             }
     `}>
-            <div className="p-5 flex flex-col h-full">
-                <div className="flex justify-between items-start mb-3">
+            <div className="p-4 flex flex-col h-full">
+                <div className="flex justify-between items-start mb-2.5">
                     <div className="flex gap-2">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${getDifficultyColor(quest.difficulty)}`}>
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border ${getDifficultyColor(quest.difficulty)}`}>
                             {quest.difficulty || 'Beginner'}
                         </span>
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-gray-700 border border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700">
                             {quest.category || 'Web'}
                         </span>
                     </div>
-                    <div className={`text-xs font-semibold px-2 py-0.5 rounded border ${getPointsColor(quest.points || 0)}`}>
+                    <div className={`text-[11px] font-bold px-2.5 py-0.5 rounded border flex items-center gap-1 ${getRewardColor(quest.points || 0)}`}>
+                        <span>✨</span>
                         +{quest.points || 100} pts
                     </div>
                 </div>
 
                 <Link href={`/quests/${quest.id}`} className="block group-hover:opacity-80 transition-opacity">
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 leading-snug">
+                    <h3 className="text-base font-bold text-gray-900 dark:text-white mb-1.5 leading-snug">
                         {quest.title}
                     </h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 line-clamp-2">
+                    <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-4 line-clamp-2 leading-relaxed h-[40px]">
                         {quest.description}
                     </p>
                 </Link>
 
-                <div className="mt-auto pt-4 border-t border-gray-100 dark:border-gray-800">
-                    <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-2">
-                            <div className="flex items-center text-xs text-gray-500 gap-1">
-                                <span className="material-symbols-outlined text-[16px]">group</span>
-                                <span className={isFull ? 'text-red-500 font-bold' : ''}>
-                                    {quest._count.snatches}/{quest.maxSnatchers}
-                                </span>
-                            </div>
+                <div className="mt-auto pt-3 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="flex items-center text-[11px] text-gray-500 gap-1 font-medium">
+                            <span className="material-symbols-outlined text-[16px]">group</span>
+                            <span className={isFull ? 'text-red-600' : ''}>
+                                {quest._count.snatches}/{quest.maxSnatchers}
+                            </span>
                         </div>
-                        <span className="text-xs font-mono text-gray-400">{daysLeft} days left</span>
+                        <div className="flex items-center text-[11px] text-gray-400 gap-1">
+                            <span className="opacity-50">•</span>
+                            <span>{daysLeft}d left</span>
+                        </div>
                     </div>
 
                     {/* Action Buttons */}
                     {isSnatched ? (
-                        <>
-                            <button
-                                onClick={() => setShowDropConfirm(true)}
-                                disabled={loading}
-                                className="w-full flex items-center justify-center gap-2 text-sm font-semibold py-2 px-4 rounded-lg transition-colors shadow-sm bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 dark:bg-red-900/10 dark:hover:bg-red-900/20 dark:text-red-400 dark:border-red-900/30"
-                            >
-                                {loading ? 'Processing...' : 'Drop Quest'}
-                            </button>
-                            {msg && (
-                                <p className="mt-2 text-xs text-center text-red-500">{msg}</p>
-                            )}
-                        </>
+                        <button
+                            onClick={() => setShowDropConfirm(true)}
+                            disabled={loading}
+                            className="ml-auto text-xs font-semibold py-1.5 px-3 rounded-md transition-all shadow-sm bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 hover:shadow-md dark:bg-red-900/10 dark:hover:bg-red-900/20 dark:text-red-400 dark:border-red-900/30"
+                        >
+                            Drop
+                        </button>
                     ) : (
                         <Link
                             href={`/quests/${quest.id}`}
-                            className={`w-full flex items-center justify-center gap-2 text-sm font-semibold py-2 px-4 rounded-lg transition-all shadow-sm
+                            className={`ml-auto inline-flex items-center justify-center gap-1.5 text-xs font-semibold py-1.5 px-3 rounded-lg transition-all shadow-sm
                                 ${isFull
                                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-gray-800 dark:text-gray-600'
-                                    : 'bg-primary/5 text-primary border border-primary/20 hover:bg-primary/10 hover:border-primary/30 dark:bg-primary/20 dark:text-primary-100 dark:border-primary/40 dark:hover:bg-primary/30'
+                                    : 'text-[#4F46E5] border border-[#4F46E5]/30 bg-white hover:bg-[#4F46E5]/5 hover:shadow-md hover:border-[#4F46E5] dark:bg-transparent dark:text-[#6366f1] dark:border-[#6366f1]/40 dark:hover:bg-[#6366f1]/10'
                                 }
                             `}
                         >
-                            {isFull ? 'Quest Full' : 'View Details'}
+                            {isFull ? 'Full' : 'View Details'}
                         </Link>
-                    )}
-
-
-                    {/* Drop Confirmation Modal */}
-                    {showDropConfirm && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={(e) => e.stopPropagation()}>
-                            <div className="bg-white dark:bg-surface-dark rounded-xl shadow-xl max-w-sm w-full p-6 border border-slate-100 dark:border-slate-800 transform transition-all">
-                                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Drop this Quest?</h3>
-                                <p className="text-sm text-slate-500 dark:text-gray-400 mb-6">
-                                    Are you sure? You can join it again later if it's still available.
-                                </p>
-                                <div className="flex gap-3">
-                                    <button
-                                        onClick={() => setShowDropConfirm(false)}
-                                        className="flex-1 px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 transition-colors"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        onClick={handleDrop}
-                                        disabled={loading}
-                                        className="flex-1 px-4 py-2 text-sm font-bold text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors shadow-lg shadow-red-500/20"
-                                    >
-                                        {loading ? 'Dropping...' : 'Confirm Drop'}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
                     )}
                 </div>
             </div>
+            {/* Drop Confirmation Modal */}
+            {showDropConfirm && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={(e) => e.stopPropagation()}>
+                    <div className="bg-white dark:bg-surface-dark rounded-xl shadow-xl max-w-sm w-full p-6 border border-slate-100 dark:border-slate-800 transform transition-all">
+                        <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Drop this Quest?</h3>
+                        <p className="text-sm text-slate-500 dark:text-gray-400 mb-6">
+                            Are you sure?
+                        </p>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setShowDropConfirm(false)}
+                                className="flex-1 px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleDrop}
+                                disabled={loading}
+                                className="flex-1 px-4 py-2 text-sm font-bold text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors shadow-lg shadow-red-500/20"
+                            >
+                                Confirm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </article>
     )
 }
