@@ -8,11 +8,12 @@ import { LeaderboardFilters } from '@/components/leaderboard/LeaderboardFilters'
 // Force dynamic to ensure we get latest data
 export const dynamic = 'force-dynamic'
 
-export default async function LeaderboardPage(props: { searchParams: Promise<{ page?: string }> }) {
+export default async function LeaderboardPage(props: { searchParams: Promise<{ page?: string; timeframe?: string }> }) {
     const searchParams = await props.searchParams
     const page = Number(searchParams.page) || 1
+    const timeframe = searchParams.timeframe || 'all'
     const pageSize = 10
-    const { users, total } = await getLeaderboardUsers(page, pageSize)
+    const { users, total } = await getLeaderboardUsers(page, pageSize, timeframe)
 
     // Cast users to strict type if needed, or rely on implicit compatibility
     // In a real app we'd map/validate. For now we assume Prisma returns compatible types.
@@ -67,7 +68,7 @@ export default async function LeaderboardPage(props: { searchParams: Promise<{ p
                             </div>
                         </div>
 
-                        <UserStanding />
+                        <UserStanding timeframe={timeframe} />
                     </div>
                 )}
             </main>

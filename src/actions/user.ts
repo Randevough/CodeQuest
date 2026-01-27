@@ -4,6 +4,7 @@ import { prisma } from '@/lib/db'
 import { revalidatePath } from 'next/cache'
 
 const ROLES = ['Master Coder', 'Bug Hunter', 'Algo Expert', 'Frontend Wizard', 'Backend Guru', 'Fullstack Hero']
+import { auth } from '@/auth'
 const NAMES = [
     'Alex Chen', 'Sarah Jenkins', 'Michael Ross', 'Jenny Wilson', 'Robert Fox',
     'Kristin Watson', 'Esther Howard', 'Cody Fisher', 'Brooklyn Sim', 'Cameron McClane',
@@ -19,12 +20,12 @@ export async function seedUsers(formData?: FormData) {
     const usersToCreate = NAMES.map((name) => {
         const randomSuffix = Math.floor(Math.random() * 1000)
         const handle = `@${name.toLowerCase().replace(' ', '_')}${randomSuffix}`
-        const role = ROLES[Math.floor(Math.random() * ROLES.length)]
+        const role = 'Member'
         const points = Math.floor(Math.random() * 10000) + 500 // 500 - 10500
         const completedQuests = Math.floor(points / 100) + Math.floor(Math.random() * 5)
         // Use Dicebear for predictable avatars
         const avatar = `https://api.dicebear.com/9.x/avataaars/svg?seed=${handle}`
-        const email = `${handle.substring(1)}@example.com`
+        const email = `${handle.substring(1)}@cyber-univ.ac.id`
 
         return {
             name,
@@ -65,4 +66,40 @@ export async function getLeaderboardUsers(page: number = 1, pageSize: number = 2
     ])
 
     return { users, total }
+}
+
+export async function getLeaderboardStanding() {
+    const session = await auth();
+    if (!session || !session.user || !session.user.email) {
+        return null; // Or handle not logged in
+    }
+
+    const currentUser = await prisma.user.findUnique({
+        where: { email: session.user.email },
+        select: { id: true, points: true, avatar: true, name: true }
+    });
+
+    if (!currentUser) return null;
+
+    // Rank: Count users with more points
+    const rank = await prisma.user.count({
+        where: { points: { gt: currentUser.points } }
+    }) + 1;
+
+    // Next Rank User (The one just above)
+    // Find users with more points, order by points ASC (closest to current user), take 1
+    const nextRankUser = await prisma.user.findFirst({
+        where: { points: { gt: currentUser.points } },
+        orderBy: { points: 'asc' },
+        select: { points: true }
+    });
+
+    const pointsToNext = nextRankUser ? (nextRankUser.points - currentUser.points + 1) : 0;
+
+    return {
+        ...currentUser,
+        rank,
+        pointsToNext,
+        isTop: rank === 1
+    };
 }

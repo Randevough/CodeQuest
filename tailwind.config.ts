@@ -13,8 +13,8 @@ const config: Config = {
                 background: "var(--background)",
                 foreground: "var(--foreground)",
                 primary: {
-                    DEFAULT: "#4f46e5",
-                    hover: "#4338ca",
+                    DEFAULT: "#000000",
+                    hover: "#333333",
                 },
                 "background-light": "#ffffff",
                 "background-dark": "#000000",
