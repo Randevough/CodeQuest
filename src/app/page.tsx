@@ -163,15 +163,15 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
         {/* MY ACTIVE QUESTS SECTION */}
         {myActiveQuests.length > 0 && (
           <div className="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-gray-800 rounded-xl p-6 mb-6">
-            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-2">
               <span className="material-symbols-outlined text-[18px]">bolt</span>
               Active Quests ({myActiveQuests.length})
             </h2>
 
-            <div className="flex overflow-x-auto gap-4 no-scrollbar items-stretch pb-2">
+            <div className="flex overflow-x-auto gap-4 no-scrollbar items-stretch -mx-6 px-6 py-4">
               {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               {myActiveQuests.map((quest: any) => (
-                <div key={quest.id} className="min-w-[280px] max-w-[320px] flex-none">
+                <div key={quest.id} className="min-w-[320px] md:min-w-[350px] max-w-[400px] flex-none">
                   <QuestCard
                     quest={quest}
                     isSnatched={true}

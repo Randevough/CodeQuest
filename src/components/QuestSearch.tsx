@@ -93,6 +93,9 @@ export function QuestSearch() {
 
     const handleSearch = (formData: FormData) => {
         const params = new URLSearchParams(searchParams)
+        // Reset page when searching
+        params.delete('page')
+
         const q = formData.get('q') as string
         if (q !== null) {
             if (q) params.set('q', q)
@@ -103,6 +106,9 @@ export function QuestSearch() {
 
     const updateFilter = (key: string, value: string) => {
         const params = new URLSearchParams(searchParams)
+        // Reset page when filtering
+        params.delete('page')
+
         if (value && value !== 'All') {
             params.set(key, value)
         } else {

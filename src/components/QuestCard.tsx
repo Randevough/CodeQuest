@@ -49,18 +49,18 @@ export function QuestCard({ quest, isSnatched }: { quest: Quest, isSnatched: boo
         const d = diff?.toLowerCase() || ''
         if (d === 'expert' || d === 'hard') return 'bg-red-50 text-red-700 border-red-100 dark:bg-red-900/20 dark:text-red-400 dark:border-red-900/30'
         if (d === 'advanced') return 'bg-purple-50 text-purple-700 border-purple-100 dark:bg-purple-900/20 dark:text-purple-400 dark:border-purple-900/30'
-        if (d === 'intermediate') return 'bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-900/30'
-        return 'bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-900/30'
+        if (d === 'intermediate') return 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-900/30'
+        return 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-900/30'
     }
 
     const getRewardColor = (points: number) => {
-        if (points <= 100) return 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-900/30'
+        if (points <= 100) return 'bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-900/30'
         if (points <= 250) return 'bg-blue-50 text-blue-600 border-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-900/30'
         return 'bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-900/20 dark:text-violet-400 dark:border-violet-900/30'
     }
 
     return (
-        <article className={`group flex flex-col bg-white dark:bg-surface-dark rounded-xl border transition-all duration-300 overflow-hidden shadow-sm hover:shadow-hover
+        <article className={`group flex flex-col bg-white dark:bg-surface-dark rounded-xl border transition-all duration-300 shadow-sm hover:shadow-[0_6px_20px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_6px_20px_rgba(255,255,255,0.05)]
         ${isSnatched
                 ? 'border-slate-300 dark:border-gray-600 shadow-md' // Slightly clearer border for active, but neutral
                 : 'border-slate-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700'
@@ -110,8 +110,10 @@ export function QuestCard({ quest, isSnatched }: { quest: Quest, isSnatched: boo
                         <button
                             onClick={() => setShowDropConfirm(true)}
                             disabled={loading}
-                            className="ml-auto text-xs font-semibold py-1.5 px-3 rounded-md transition-all shadow-sm bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 hover:shadow-md dark:bg-red-900/10 dark:hover:bg-red-900/20 dark:text-red-400 dark:border-red-900/30"
+                            className="ml-auto flex items-center gap-1.5 text-[11px] font-medium py-1 px-2.5 rounded-lg transition-colors text-slate-400 hover:text-red-600 hover:bg-red-50 dark:text-gray-500 dark:hover:text-red-400 dark:hover:bg-red-900/20"
+                            title="Drop Quest"
                         >
+                            <span className="material-symbols-outlined text-[16px]">delete</span>
                             Drop
                         </button>
                     ) : (
