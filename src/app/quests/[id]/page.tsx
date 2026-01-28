@@ -65,47 +65,51 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                         <article className="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
                             <div className="p-8 pb-6 border-b border-slate-100 dark:border-slate-800">
                                 <div className="flex flex-col gap-6">
-                                    <div className="flex items-center gap-2 text-xs font-mono text-slate-400 uppercase tracking-widest">
+                                    {/* Back Navigation */}
+                                    <Link href="/" className="inline-flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-orange-600 transition-colors font-['Plus_Jakarta_Sans'] mb-[-10px]">
+                                        <span className="material-symbols-outlined text-[20px]">chevron_left</span>
+                                        Back to Quests
+                                    </Link>
+
+                                    <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
                                         <span>Quest ID: #{quest.id.slice(0, 6)}</span>
                                         <span className="text-slate-300 dark:text-slate-700">•</span>
                                         <span>{quest.category || 'Core Infrastructure'}</span>
                                     </div>
-                                    <h1 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white leading-tight tracking-tight">
-                                        {quest.title}
-                                    </h1>
-                                    <div className="flex flex-wrap gap-3">
-                                        <div className="inline-flex items-center px-3 py-1 rounded-full bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800/30">
-                                            <span className="material-symbols-outlined text-purple-600 dark:text-purple-400 text-[16px] mr-1.5 icon-filled">bolt</span>
-                                            <span className="text-xs font-bold text-purple-700 dark:text-purple-300 uppercase tracking-wide">{quest.difficulty || 'Advanced'}</span>
-                                        </div>
-
-                                        {/* Dynamic Points Badge */}
+                                    <div className="flex items-center gap-3">
+                                        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
+                                            {quest.title}
+                                        </h1>
+                                        <span className={`px-2.5 py-1 text-[11px] font-bold uppercase rounded-full border align-middle ${isSnatched ? 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800' : 'bg-gray-100 text-gray-700 border-gray-200'}`}>
+                                            {isSnatched ? 'Active' : 'Available'}
+                                        </span>
+                                    </div>
+                                    <div className="flex flex-wrap gap-3 items-center">
+                                        {/* Multicolor Difficulty Badge */}
                                         {(() => {
-                                            const pts = quest.points || 0;
-                                            let colors = 'bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-300';
-                                            let iconColor = 'text-gray-500';
+                                            const diff = (quest.difficulty || 'Advanced').toLowerCase();
+                                            let diffInfo = { color: 'bg-violet-50 border-violet-100 shadow-sm dark:bg-violet-900/20 dark:border-violet-800/30', text: 'text-violet-700 dark:text-violet-300' };
 
-                                            if (pts >= 401) {
-                                                colors = 'bg-indigo-100 text-indigo-800 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800/30';
-                                                iconColor = 'text-indigo-600 dark:text-indigo-400';
-                                            } else if (pts >= 151) {
-                                                colors = 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800/30';
-                                                iconColor = 'text-green-600 dark:text-green-400';
-                                            } else if (pts >= 61) {
-                                                colors = 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800/30';
-                                                iconColor = 'text-blue-600 dark:text-blue-400';
+                                            if (diff === 'intermediate') {
+                                                diffInfo = { color: 'bg-blue-50 border-blue-100 dark:bg-blue-900/20 dark:border-blue-800/30', text: 'text-blue-700 dark:text-blue-300' };
+                                            } else if (diff === 'beginner') {
+                                                diffInfo = { color: 'bg-emerald-50 border-emerald-100 dark:bg-emerald-900/20 dark:border-emerald-800/30', text: 'text-emerald-700 dark:text-emerald-300' };
                                             }
 
                                             return (
-                                                <div className={`inline-flex items-center px-3 py-1 rounded-full border ${colors}`}>
-                                                    <span className={`material-symbols-outlined ${iconColor} text-[16px] mr-1.5 icon-filled`}>auto_awesome</span>
-                                                    <span className="text-xs font-bold uppercase tracking-wide">{quest.points || 500} XP</span>
+                                                <div className={`inline-flex items-center px-3 py-1 rounded-full border ${diffInfo.color}`}>
+                                                    <span className={`text-xs font-bold ${diffInfo.text} tracking-wide`}>{quest.difficulty || 'Advanced'}</span>
                                                 </div>
                                             );
                                         })()}
 
+                                        {/* Soft Pill Points Badge (Gold Nugget Style) */}
+                                        <div className="inline-flex items-center px-3 py-1 rounded-full border bg-orange-50 border-orange-100 shadow-sm text-orange-700 dark:text-orange-400">
+                                            <span className="text-[14px] mr-1.5">✨</span>
+                                            <span className="text-xs font-bold uppercase tracking-wide">{quest.points || 500} pts</span>
+                                        </div>
                                         <div className="inline-flex items-center px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800">
-                                            <span className="text-xs font-medium text-slate-600 dark:text-slate-300 font-mono">Backend / Node.js</span>
+                                            <span className="text-xs font-bold text-slate-600 dark:text-slate-300">{quest.category}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -120,31 +124,10 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                                     </div>
                                 </section>
 
-                                {/* Static Deliverables as per design - in real app this would be part of quest data */}
-                                <section className="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-6 border border-slate-100 dark:border-slate-800">
-                                    <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
-                                        <span className="material-symbols-outlined text-[18px]">check_circle</span> Deliverables
-                                    </h3>
-                                    <ul className="space-y-4">
-                                        <li className="flex items-start gap-3 group">
-                                            <div className="mt-0.5 size-5 rounded border-2 border-slate-300 dark:border-slate-600 group-hover:border-primary transition-colors flex items-center justify-center shrink-0"></div>
-                                            <span className="text-slate-700 dark:text-slate-300 leading-snug">Audit current JWT implementation for security vulnerabilities.</span>
-                                        </li>
-                                        {/* Mock items */}
-                                        <li className="flex items-start gap-3 group">
-                                            <div className="mt-0.5 size-5 rounded border-2 border-slate-300 dark:border-slate-600 group-hover:border-primary transition-colors flex items-center justify-center shrink-0"></div>
-                                            <span className="text-slate-700 dark:text-slate-300 leading-snug">Achieve &gt;90% unit test coverage.</span>
-                                        </li>
-                                    </ul>
-                                </section>
-
                                 {/* Submission Section or Join/Drop Actions */}
                                 <section className="border-t border-slate-100 dark:border-slate-800 pt-8 mt-10">
                                     <div className="flex items-center gap-2 mb-6">
                                         <h3 className="text-xl font-bold text-slate-900 dark:text-white">Ready to level up?</h3>
-                                        <span className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-full border ${isSnatched ? 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800' : 'bg-gray-100 text-gray-700 border-gray-200'}`}>
-                                            {isSnatched ? 'Active' : 'Available'}
-                                        </span>
                                     </div>
 
                                     <QuestAction questId={quest.id} isSnatched={isSnatched} />

@@ -1,11 +1,11 @@
 'use client'
 
-import { usePathname, useSearchParams, useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { usePathname, useSearchParams } from 'next/navigation'
 
 export function Pagination({ totalPages }: { totalPages: number }) {
     const pathname = usePathname()
     const searchParams = useSearchParams()
-    const router = useRouter()
     const currentPage = Number(searchParams.get('page')) || 1
 
     const createPageURL = (pageNumber: number | string) => {
@@ -20,21 +20,17 @@ export function Pagination({ totalPages }: { totalPages: number }) {
             return Array.from({ length: totalPages }, (_, i) => i + 1);
         }
 
-        // 1. Beginning: [1, 2, 3, '...', total-1, total]
-        // (Actually standard is usually: if current < 4, show 1,2,3,4,5, ..., total)
-        // Let's stick to the requested "7-8 slots" and robust logic.
-
-        // If current is near start (<= 4)
+        // 1. Beginning
         if (currentPage <= 4) {
             return [1, 2, 3, 4, 5, '...', totalPages];
         }
 
-        // If current is near end (>= total - 3)
+        // 2. End
         if (currentPage >= totalPages - 3) {
             return [1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
         }
 
-        // Middle
+        // 3. Middle
         return [
             1,
             '...',
@@ -51,15 +47,20 @@ export function Pagination({ totalPages }: { totalPages: number }) {
     if (totalPages <= 1) return null
 
     return (
-        <div className="flex items-center justify-center gap-2 mt-8">
+        <div className="flex items-center justify-center gap-2 mt-0">
             {/* Previous Button */}
-            <button
-                onClick={() => router.push(createPageURL(currentPage - 1))}
-                disabled={currentPage <= 1}
-                className="px-3 py-1.5 text-sm font-medium text-gray-500 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white/5 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-white/10 transition-colors"
-            >
-                Previous
-            </button>
+            {currentPage > 1 ? (
+                <Link
+                    href={createPageURL(currentPage - 1)}
+                    className="px-3 py-1.5 text-sm font-medium text-gray-500 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 dark:bg-white/5 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-white/10 transition-colors"
+                >
+                    Previous
+                </Link>
+            ) : (
+                <span className="px-3 py-1.5 text-sm font-medium text-gray-300 bg-gray-50 border border-gray-100 rounded-lg cursor-not-allowed dark:bg-white/5 dark:border-gray-800 dark:text-gray-600">
+                    Previous
+                </span>
+            )}
 
             {/* Pages */}
             <div className="flex items-center gap-1">
@@ -76,30 +77,35 @@ export function Pagination({ totalPages }: { totalPages: number }) {
                     const isActive = pageNumber === currentPage
 
                     return (
-                        <button
+                        <Link
                             key={pageNumber}
-                            onClick={() => router.push(createPageURL(pageNumber))}
+                            href={createPageURL(pageNumber)}
                             className={`min-w-[32px] h-8 flex items-center justify-center text-sm font-medium rounded-lg transition-all
                         ${isActive
-                                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30'
+                                    ? 'bg-orange-600 text-white shadow-md shadow-orange-500/30'
                                     : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 dark:bg-white/5 dark:text-gray-400 dark:border-gray-800 dark:hover:bg-white/10'
                                 }
                     `}
                         >
                             {pageNumber}
-                        </button>
+                        </Link>
                     )
                 })}
             </div>
 
             {/* Next Button */}
-            <button
-                onClick={() => router.push(createPageURL(currentPage + 1))}
-                disabled={currentPage >= totalPages}
-                className="px-3 py-1.5 text-sm font-medium text-gray-500 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white/5 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-white/10 transition-colors"
-            >
-                Next
-            </button>
+            {currentPage < totalPages ? (
+                <Link
+                    href={createPageURL(currentPage + 1)}
+                    className="px-3 py-1.5 text-sm font-medium text-gray-500 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 dark:bg-white/5 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-white/10 transition-colors"
+                >
+                    Next
+                </Link>
+            ) : (
+                <span className="px-3 py-1.5 text-sm font-medium text-gray-300 bg-gray-50 border border-gray-100 rounded-lg cursor-not-allowed dark:bg-white/5 dark:border-gray-800 dark:text-gray-600">
+                    Next
+                </span>
+            )}
         </div>
     )
 }

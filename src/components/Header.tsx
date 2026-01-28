@@ -16,9 +16,9 @@ export function Header({ activePage }: HeaderProps) {
             : "px-3 py-1.5 text-sm font-medium rounded-md transition-colors"
 
         if (activePage === page) {
-            return `${baseClass} text-[#4F46E5] bg-indigo-50 dark:bg-[#4F46E5]/10 dark:text-[#6366f1]`
+            return `${baseClass} text-orange-600 bg-orange-50 dark:bg-orange-600/10 dark:text-orange-500`
         }
-        return `${baseClass} text-gray-500 hover:text-gray-900 hover:bg-gray-50 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/5`
+        return `${baseClass} text-slate-500 hover:text-orange-600 hover:bg-orange-50 dark:text-slate-400 dark:hover:bg-orange-900/10 dark:hover:text-orange-400`
     }
 
     return (

@@ -71,8 +71,9 @@ export function LeaderboardTable({ users, page, pageSize }: LeaderboardTableProp
                                     {user.completedQuests} completed
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-right">
-                                    <div className="text-sm font-bold font-mono text-primary group-hover:scale-105 transition-transform origin-right">
-                                        {user.points.toLocaleString()}
+                                    <div className="flex items-center justify-end gap-1.5 text-sm font-bold font-mono group-hover:scale-105 transition-transform origin-right">
+                                        <span className="text-[16px] text-orange-500">✨</span>
+                                        <span className="text-slate-900 dark:text-white">{user.points.toLocaleString()}</span>
                                     </div>
                                 </td>
                             </tr>

@@ -47,38 +47,38 @@ export function QuestCard({ quest, isSnatched }: { quest: Quest, isSnatched: boo
 
     const getDifficultyColor = (diff?: string | null) => {
         const d = diff?.toLowerCase() || ''
-        if (d === 'expert' || d === 'hard') return 'bg-red-50 text-red-700 border-red-100 dark:bg-red-900/20 dark:text-red-400 dark:border-red-900/30'
-        if (d === 'advanced') return 'bg-purple-50 text-purple-700 border-purple-100 dark:bg-purple-900/20 dark:text-purple-400 dark:border-purple-900/30'
-        if (d === 'intermediate') return 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-900/30'
-        return 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-900/30'
+        if (d === 'expert' || d === 'hard' || d === 'advanced') return 'bg-violet-50 text-violet-700 border-violet-100 dark:bg-violet-900/20 dark:text-violet-300 dark:border-violet-800/30'
+        if (d === 'intermediate') return 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800/30'
+        return 'bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800/30'
     }
 
-    const getRewardColor = (points: number) => {
-        if (points <= 100) return 'bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-900/30'
-        if (points <= 250) return 'bg-blue-50 text-blue-600 border-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-900/30'
-        return 'bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-900/20 dark:text-violet-400 dark:border-violet-900/30'
+    const getPointStyle = (points: number) => {
+        if (points >= 300) return 'bg-amber-100 text-amber-900 border-amber-200 font-bold dark:bg-amber-900/30 dark:text-amber-200 dark:border-amber-800'
+        if (points >= 150) return 'bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-900/10 dark:text-amber-400 dark:border-amber-800/30'
+        return 'bg-transparent text-amber-600 border-transparent shadow-none px-0 dark:text-amber-500'
     }
 
     return (
         <article className={`group flex flex-col bg-white dark:bg-surface-dark rounded-xl border transition-all duration-300 shadow-sm hover:shadow-[0_6px_20px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_6px_20px_rgba(255,255,255,0.05)]
         ${isSnatched
-                ? 'border-slate-300 dark:border-gray-600 shadow-md' // Slightly clearer border for active, but neutral
+                ? 'border-slate-300 dark:border-gray-600 shadow-md'
                 : 'border-slate-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700'
             }
     `}>
-            <div className="p-4 flex flex-col h-full">
+            <div className="p-4 flex flex-col h-full relative">
                 <div className="flex justify-between items-start mb-2.5">
                     <div className="flex gap-2">
                         <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border ${getDifficultyColor(quest.difficulty)}`}>
                             {quest.difficulty || 'Beginner'}
                         </span>
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-gray-700 border border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700">
                             {quest.category || 'Web'}
                         </span>
                     </div>
-                    <div className={`text-[11px] font-bold px-2.5 py-0.5 rounded border flex items-center gap-1 ${getRewardColor(quest.points || 0)}`}>
-                        <span>✨</span>
-                        +{quest.points || 100} pts
+                    {/* Dynamic Golden Reward Badge */}
+                    <div className={`absolute top-4 right-4 inline-flex items-center px-1.5 py-0.5 rounded-full border text-[11px] ${getPointStyle(quest.points || 0)}`}>
+                        <span className="mr-1">✨</span>
+                        <span className={quest.points && quest.points >= 300 ? 'font-bold' : 'font-medium'}>{quest.points || 100} pts</span>
                     </div>
                 </div>
 
@@ -110,7 +110,7 @@ export function QuestCard({ quest, isSnatched }: { quest: Quest, isSnatched: boo
                         <button
                             onClick={() => setShowDropConfirm(true)}
                             disabled={loading}
-                            className="ml-auto flex items-center gap-1.5 text-[11px] font-medium py-1 px-2.5 rounded-lg transition-colors text-slate-400 hover:text-red-600 hover:bg-red-50 dark:text-gray-500 dark:hover:text-red-400 dark:hover:bg-red-900/20"
+                            className="ml-auto flex items-center gap-1.5 text-[11px] font-medium py-1 px-2.5 rounded-lg transition-colors text-slate-400 border border-slate-200 hover:text-red-600 hover:bg-red-50 hover:border-red-500 dark:text-gray-500 dark:border-slate-700 dark:hover:text-red-400 dark:hover:bg-red-900/20 dark:hover:border-red-500/50"
                             title="Drop Quest"
                         >
                             <span className="material-symbols-outlined text-[16px]">delete</span>
@@ -122,7 +122,7 @@ export function QuestCard({ quest, isSnatched }: { quest: Quest, isSnatched: boo
                             className={`ml-auto inline-flex items-center justify-center gap-1.5 text-xs font-semibold py-1.5 px-3 rounded-lg transition-all shadow-sm
                                 ${isFull
                                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-gray-800 dark:text-gray-600'
-                                    : 'text-[#4F46E5] border border-[#4F46E5]/30 bg-white hover:bg-[#4F46E5]/5 hover:shadow-md hover:border-[#4F46E5] dark:bg-transparent dark:text-[#6366f1] dark:border-[#6366f1]/40 dark:hover:bg-[#6366f1]/10'
+                                    : 'text-orange-600 border border-orange-600/30 bg-white hover:bg-orange-50 hover:shadow-md hover:border-orange-600 dark:bg-transparent dark:text-orange-400 dark:border-orange-500/40 dark:hover:bg-orange-500/10'
                                 }
                             `}
                         >
@@ -137,7 +137,7 @@ export function QuestCard({ quest, isSnatched }: { quest: Quest, isSnatched: boo
                     <div className="bg-white dark:bg-surface-dark rounded-xl shadow-xl max-w-sm w-full p-6 border border-slate-100 dark:border-slate-800 transform transition-all">
                         <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Drop this Quest?</h3>
                         <p className="text-sm text-slate-500 dark:text-gray-400 mb-6">
-                            Are you sure?
+                            Are you sure? You won't be able to join another quest for 2 days.
                         </p>
                         <div className="flex gap-3">
                             <button

@@ -39,7 +39,7 @@ function CustomSelect({
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
                 className={`flex items-center justify-between w-full px-4 py-2.5 bg-white dark:bg-surface-dark border border-slate-200 dark:border-gray-700 rounded-xl transition-all duration-200 ease-in-out text-sm font-medium text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-white/5
-                ${isOpen ? 'ring-2 ring-indigo-500/20 border-indigo-500' : ''}`}
+                ${isOpen ? 'ring-2 ring-orange-500/20 border-orange-500' : ''}`}
             >
                 <div className="flex items-center gap-2">
                     {icon && <span className="material-symbols-outlined text-[18px] text-slate-400">{icon}</span>}
@@ -66,7 +66,7 @@ function CustomSelect({
                                     }}
                                     className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between transition-colors
                                         ${isSelected
-                                            ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/20 dark:text-indigo-400'
+                                            ? 'bg-orange-50 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400'
                                             : 'text-slate-600 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-white/5'
                                         }
                                     `}
@@ -138,7 +138,7 @@ export function QuestSearch() {
             className="flex flex-col md:flex-row gap-4 p-1"
         >
             {/* Search Input */}
-            <div className="relative flex items-center w-full max-w-md bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-gray-700 transition-all duration-200 ease-in-out focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20 shadow-sm">
+            <div className="relative flex items-center w-full max-w-md bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-gray-700 transition-all duration-200 ease-in-out focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-500/20 shadow-sm">
                 <span className="absolute left-4 material-symbols-outlined text-slate-400 text-[20px] pointer-events-none">search</span>
                 <input
                     name="q"

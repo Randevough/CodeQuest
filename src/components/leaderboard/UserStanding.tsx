@@ -41,11 +41,11 @@ export async function UserStanding({ timeframe = 'all' }: { timeframe?: string }
                     <div className="text-sm text-slate-500">Global Rank</div>
                 </div>
                 <div className="space-y-4">
-                    <div className="flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-surface-dark/50 rounded-lg border border-slate-100 dark:border-slate-800">
-                        <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Current Points</span>
-                        <div className="flex items-center gap-2">
+                    <div className="flex flex-col items-center justify-center p-4 bg-orange-50/50 dark:bg-orange-900/10 rounded-xl border border-orange-200 dark:border-orange-800/30">
+                        <span className="text-xs font-semibold text-orange-800 dark:text-orange-200 uppercase tracking-wider mb-1">Current Points</span>
+                        <div className="flex items-center gap-2 text-orange-900 dark:text-orange-100">
                             <span className="text-xl">✨</span>
-                            <span className="text-2xl font-mono font-bold text-slate-900 dark:text-white">{standing.points.toLocaleString()}</span>
+                            <span className="text-2xl font-mono font-bold">{standing.points.toLocaleString()}</span>
                         </div>
                     </div>
 
@@ -70,7 +70,7 @@ export async function UserStanding({ timeframe = 'all' }: { timeframe?: string }
                             )}
                         </div>
                     </div>
-                    <Link href={`/profile/${standing.id}`} className="block w-full py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-medium rounded-lg hover:opacity-90 transition-opacity text-center">
+                    <Link href={`/profile/${standing.id}`} className="block w-full py-2.5 bg-orange-600 hover:bg-orange-700 text-white shadow-lg shadow-orange-500/20 text-sm font-semibold rounded-lg transition-all active:scale-95 text-center">
                         View Full Profile
                     </Link>
                 </div>

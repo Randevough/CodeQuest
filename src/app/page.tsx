@@ -210,9 +210,11 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
                   isSnatched={false}
                 />
               ))}
-            </div>
+            </div >
 
-            <Pagination totalPages={totalPages} />
+            <div className="mt-6">
+              <Pagination totalPages={totalPages} />
+            </div>
           </>
         )}
 

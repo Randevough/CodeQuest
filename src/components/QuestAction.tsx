@@ -37,19 +37,24 @@ export function QuestAction({ questId, isSnatched }: { questId: string, isSnatch
                     <div className="space-y-4">
                         <div>
                             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5" htmlFor="repo-url">GitHub Repository URL</label>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                                    <span className="material-symbols-outlined text-[20px]">code</span>
+                            <div className="flex flex-col gap-3 mb-4">
+                                <div className="relative w-full">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                                        <span className="material-symbols-outlined icon-filled text-[20px]">link</span>
+                                    </span>
+                                    <input
+                                        className="block w-full pl-10 pr-3 py-2.5 bg-white dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-orange-600 focus:border-transparent transition-shadow"
+                                        id="repo-url"
+                                        placeholder="https://github.com/username/repo"
+                                        type="url"
+                                    />
                                 </div>
-                                <input className="block w-full pl-10 pr-3 py-2.5 bg-white dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow" id="repo-url" placeholder="https://github.com/username/repo" type="url" />
+                                <button className="w-full bg-orange-600 hover:bg-orange-700 text-white font-medium py-2.5 px-6 rounded-lg transition-all shadow-lg shadow-orange-500/20 active:scale-95 flex items-center justify-center gap-2">
+                                    <span className="material-symbols-outlined text-[20px]">send</span>
+                                    Send for Review
+                                </button>
                             </div>
                         </div>
-                    </div>
-                    <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                        <button className="flex-1 bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-4 rounded-lg shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-200 flex items-center justify-center gap-2">
-                            <span>Send for Review</span>
-                            <span className="material-symbols-outlined text-[20px]">send</span>
-                        </button>
                     </div>
                     <p className="text-xs text-slate-500 text-center sm:text-left">
                         Submissions are reviewed automatically. Ensure your test coverage meets the requirements before sending.
@@ -60,7 +65,7 @@ export function QuestAction({ questId, isSnatched }: { questId: string, isSnatch
                     <p className="text-slate-600 dark:text-slate-400 mb-4">Join this quest to start working on it.</p>
                     <button
                         onClick={() => setShowJoinModal(true)}
-                        className="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-4 rounded-lg shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-200"
+                        className="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 px-4 rounded-lg shadow-lg shadow-orange-500/20 hover:shadow-orange-500/30 transition-all duration-200"
                     >
                         Join Quest
                     </button>
@@ -85,7 +90,7 @@ export function QuestAction({ questId, isSnatched }: { questId: string, isSnatch
                             <button
                                 onClick={handleJoin}
                                 disabled={loading}
-                                className="flex-1 px-4 py-2 text-sm font-bold text-white bg-primary rounded-lg hover:bg-primary-dark transition-colors shadow-lg shadow-primary/20"
+                                className="flex-1 px-4 py-2 text-sm font-bold text-white bg-orange-600 rounded-lg hover:bg-orange-700 transition-colors shadow-lg shadow-orange-500/20"
                             >
                                 {loading ? 'Joining...' : 'Confirm Join'}
                             </button>
