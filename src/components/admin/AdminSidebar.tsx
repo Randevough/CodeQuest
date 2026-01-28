@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useAdminSidebar } from './AdminSidebarContext';
 
 interface AdminSidebarProps {
     memberCount?: number;
@@ -10,7 +10,7 @@ interface AdminSidebarProps {
 
 export function AdminSidebar({ memberCount = 0 }: AdminSidebarProps) {
     const pathname = usePathname();
-    const [isMobileOpen, setIsMobileOpen] = useState(false);
+    const { isMobileOpen, closeMobileSidebar } = useAdminSidebar();
 
     const getLinkClass = (path: string) => {
         const isActive = pathname === path || (path !== '/admin' && pathname?.startsWith(path));
@@ -23,21 +23,11 @@ export function AdminSidebar({ memberCount = 0 }: AdminSidebarProps) {
 
     return (
         <>
-            {/* Mobile Toggle Button */}
-            <div className="md:hidden fixed top-4 left-4 z-50">
-                <button
-                    onClick={() => setIsMobileOpen(!isMobileOpen)}
-                    className="p-2 bg-white dark:bg-slate-800 rounded-md shadow-md text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-                >
-                    <span className="material-symbols-outlined">{isMobileOpen ? 'close' : 'menu'}</span>
-                </button>
-            </div>
-
             {/* Backdrop */}
             {isMobileOpen && (
                 <div
                     className="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-sm"
-                    onClick={() => setIsMobileOpen(false)}
+                    onClick={closeMobileSidebar}
                 />
             )}
 
@@ -61,15 +51,15 @@ export function AdminSidebar({ memberCount = 0 }: AdminSidebarProps) {
                             Global Menu
                         </div>
                         {/* Reordered Menu: Explore, Leaderboard, Workspace */}
-                        <Link className={getLinkClass('/')} href="/" onClick={() => setIsMobileOpen(false)}>
+                        <Link className={getLinkClass('/')} href="/" onClick={closeMobileSidebar}>
                             <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname === '/' ? 'text-orange-600' : 'text-slate-400 group-hover:text-primary'}`}>explore</span>
                             <span className="text-sm font-medium">Explore Quests</span>
                         </Link>
-                        <Link className={getLinkClass('/leaderboard')} href="/leaderboard" onClick={() => setIsMobileOpen(false)}>
+                        <Link className={getLinkClass('/leaderboard')} href="/leaderboard" onClick={closeMobileSidebar}>
                             <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname?.startsWith('/leaderboard') ? 'text-orange-600' : 'text-slate-400 group-hover:text-primary'}`}>emoji_events</span>
                             <span className="text-sm font-medium">Leaderboard</span>
                         </Link>
-                        <Link className={getLinkClass('/workspace')} href="/workspace" onClick={() => setIsMobileOpen(false)}>
+                        <Link className={getLinkClass('/workspace')} href="/workspace" onClick={closeMobileSidebar}>
                             <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname?.startsWith('/workspace') ? 'text-orange-600' : 'text-slate-400 group-hover:text-primary'}`}>code</span>
                             <span className="text-sm font-medium">Workspace</span>
                         </Link>
@@ -78,20 +68,20 @@ export function AdminSidebar({ memberCount = 0 }: AdminSidebarProps) {
                         <div className="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
                             Admin Command Center
                         </div>
-                        <Link className={getLinkClass('/admin')} href="/admin" onClick={() => setIsMobileOpen(false)}>
+                        <Link className={getLinkClass('/admin')} href="/admin" onClick={closeMobileSidebar}>
                             <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname === '/admin' ? 'text-orange-600' : 'text-slate-400 group-hover:text-primary'}`}>dashboard</span>
                             <span className="text-sm font-medium">Overview</span>
                         </Link>
-                        <Link className={getLinkClass('/admin/quests')} href="/admin/quests" onClick={() => setIsMobileOpen(false)}>
+                        <Link className={getLinkClass('/admin/quests')} href="/admin/quests" onClick={closeMobileSidebar}>
                             <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname?.startsWith('/admin/quests') ? 'text-orange-600' : 'text-slate-400 group-hover:text-primary'}`}>assignment</span>
                             <span className="text-sm font-medium">Manage Quests</span>
                         </Link>
-                        <Link className={getLinkClass('/admin/submissions')} href="/admin/submissions" onClick={() => setIsMobileOpen(false)}>
+                        <Link className={getLinkClass('/admin/submissions')} href="/admin/submissions" onClick={closeMobileSidebar}>
                             <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname?.startsWith('/admin/submissions') ? 'text-orange-600' : 'text-slate-400 group-hover:text-primary'}`}>inbox</span>
                             <span className="text-sm font-medium">Submission Queue</span>
                             <span className="ml-auto bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold px-2 py-0.5 rounded-full">12</span>
                         </Link>
-                        <Link className={getLinkClass('/admin/members')} href="/admin/members" onClick={() => setIsMobileOpen(false)}>
+                        <Link className={getLinkClass('/admin/members')} href="/admin/members" onClick={closeMobileSidebar}>
                             <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname?.startsWith('/admin/members') ? 'text-orange-600' : 'text-slate-400 group-hover:text-primary'}`}>group</span>
                             <span className="text-sm font-medium whitespace-nowrap">Member Directory</span>
                             {memberCount > 0 && (

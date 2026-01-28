@@ -18,9 +18,36 @@ export async function manualReset(userId: string) {
     }
 }
 
-export async function inviteMember() {
-    // Placeholder for invite functionality
-    // Real implementation would send an email
-    console.log("Invite member action triggered")
-    return { success: true }
+// Update User Role
+export async function updateUserRole(userId: string, role: string) {
+    try {
+        await prisma.user.update({
+            where: { id: userId },
+            data: { role }
+        })
+        revalidatePath('/admin/members')
+        return { success: true }
+    } catch (error) {
+        console.error("Failed to update role:", error)
+        return { success: false, error: "Failed to update role" }
+    }
 }
+
+// Deactivate User (apply long-term penalty)
+export async function deactivateUser(userId: string) {
+    try {
+        await prisma.penalty.create({
+            data: {
+                userId,
+                reason: "Administrative Deactivation",
+                expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365 * 10) // 10 years
+            }
+        })
+        revalidatePath('/admin/members')
+        return { success: true }
+    } catch (error) {
+        console.error("Failed to deactivate user:", error)
+        return { success: false, error: "Failed to deactivate user" }
+    }
+}
+

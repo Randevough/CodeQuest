@@ -2,6 +2,7 @@ import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db';
+import { AdminSidebarProvider } from '@/components/admin/AdminSidebarContext';
 
 export default async function AdminLayout({
     children,
@@ -19,13 +20,15 @@ export default async function AdminLayout({
     const memberCount = await prisma.user.count();
 
     return (
-        <div className="flex h-screen w-full bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-sans">
-            {/* Material Symbols support - ensure it's loaded in root layout or here */}
-            <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-            <AdminSidebar memberCount={memberCount} />
-            <main className="flex-1 flex flex-col h-full overflow-hidden relative">
-                {children}
-            </main>
-        </div>
+        <AdminSidebarProvider>
+            <div className="flex h-screen w-full bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-sans">
+                {/* Material Symbols support - ensure it's loaded in root layout or here */}
+                <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+                <AdminSidebar memberCount={memberCount} />
+                <main className="flex-1 flex flex-col h-full overflow-hidden relative">
+                    {children}
+                </main>
+            </div>
+        </AdminSidebarProvider>
     );
 }

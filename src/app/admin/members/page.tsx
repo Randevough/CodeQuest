@@ -2,6 +2,8 @@ import { prisma } from "@/lib/db"
 import { manualReset } from "@/actions/admin"
 import Link from "next/link"
 import { Pagination } from "@/components/Pagination"
+import { MemberActionMenu } from "@/components/admin/MemberActionMenu"
+import { MobileSidebarTrigger } from "@/components/admin/MobileSidebarTrigger"
 
 export default async function MemberDirectoryPage({
     searchParams,
@@ -40,15 +42,16 @@ export default async function MemberDirectoryPage({
 
     return (
         <div className="flex-1 flex flex-col h-full overflow-hidden relative">
-            <header className="h-16 flex-shrink-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-8 z-10">
-                <div className="flex flex-col justify-center">
+            <header className="h-16 flex-shrink-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 sm:px-8 z-10 transition-all">
+                <div className="flex items-center gap-4 transition-all">
+                    <MobileSidebarTrigger className="md:hidden" />
                     <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 font-['Plus_Jakarta_Sans']">Member Directory</h1>
                 </div>
                 <div className="flex items-center gap-4">
                     {/* Invite Member button removed as per request */}
                 </div>
             </header>
-            <div className="flex-1 overflow-y-auto p-8 bg-slate-50 dark:bg-slate-900 font-['Plus_Jakarta_Sans']">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-8 bg-slate-50 dark:bg-slate-900 font-['Plus_Jakarta_Sans']">
                 <div className="mx-auto max-w-6xl flex flex-col gap-6">
                     {/* Search and Filters */}
                     <div className="flex flex-col sm:flex-row justify-between items-end sm:items-center gap-4">
@@ -71,20 +74,22 @@ export default async function MemberDirectoryPage({
                     {/* Table */}
                     <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm overflow-hidden">
                         <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse">
+                            <table className="w-full min-w-[900px] text-left border-collapse">
                                 <thead>
                                     <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/30">
-                                        <th className="py-3 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-[30%]">Name</th>
+                                        <th className="py-3 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-[35%] gap-2">Name</th>
                                         <th className="py-3 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-[10%]">Points</th>
-                                        <th className="py-3 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-[15%]">Quests</th>
+                                        <th className="py-3 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-[10%]">Quests</th>
+                                        <th className="py-3 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-[15%]">Joined Date</th>
                                         <th className="py-3 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-[10%]">Role</th>
                                         <th className="py-3 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-[15%]">Cooldown</th>
-                                        <th className="py-3 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider text-right w-[20%]">Actions</th>
+                                        <th className="py-3 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider text-right w-[5%]">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
                                     {users.map((user) => {
                                         const hasPenalty = user.penalties.length > 0;
+                                        const status = hasPenalty ? 'On Cooldown' : 'Active';
 
                                         return (
                                             <tr key={user.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
@@ -109,6 +114,11 @@ export default async function MemberDirectoryPage({
                                                     <span className="text-sm text-slate-600 dark:text-slate-300 font-medium">{user.completedQuests} Completed</span>
                                                 </td>
                                                 <td className="py-4 px-6">
+                                                    <span className="text-sm text-slate-500 dark:text-slate-400 font-medium font-['Plus_Jakarta_Sans']">
+                                                        {new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                                    </span>
+                                                </td>
+                                                <td className="py-4 px-6">
                                                     <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold ${user.role === 'Admin'
                                                         ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
                                                         : 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
@@ -130,9 +140,12 @@ export default async function MemberDirectoryPage({
                                                 </td>
                                                 <td className="py-4 px-6 text-right">
                                                     <div className="flex items-center justify-end gap-2">
-                                                        <button className="text-slate-400 hover:text-orange-600 transition-colors p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700">
-                                                            <span className="material-symbols-outlined text-[20px]">more_vert</span>
-                                                        </button>
+                                                        <MemberActionMenu user={{
+                                                            id: user.id,
+                                                            name: user.name,
+                                                            role: user.role,
+                                                            status: status
+                                                        }} />
                                                     </div>
                                                 </td>
                                             </tr>
