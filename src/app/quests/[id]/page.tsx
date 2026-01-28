@@ -50,7 +50,7 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
     const isSnatched = activeSnatches.includes(quest.id);
 
     return (
-        <div className="min-h-screen bg-[#fafafa] dark:bg-black text-slate-800 dark:text-slate-200 font-display">
+        <div className="min-h-screen bg-[#fafafa] dark:bg-black text-slate-800 dark:text-slate-200">
             {/* Header - Reused from layout/page or just simplified for now as per design which doesn't explicitly show the full nav in the body snippet, 
                 but assuming we keep the app shell. The snippet above only had <main>, so we'll wrap it.
             */}

@@ -8,7 +8,7 @@ export default function AuthLayout({
     children: React.ReactNode
 }) {
     return (
-        <div className="flex h-screen w-full flex-row overflow-hidden bg-white text-gray-900 font-display">
+        <div className="flex h-screen w-full flex-row overflow-hidden bg-white text-gray-900">
             {/* Left Side (Forms) */}
             <div className="flex w-full flex-col bg-white p-8 lg:w-1/2 lg:p-16 relative overflow-y-auto">
                 <div className="flex items-center mb-8">

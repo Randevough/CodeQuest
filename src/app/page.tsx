@@ -150,7 +150,7 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
   });
 
   return (
-    <div className="min-h-screen flex flex-col relative bg-[#F9FAFB] dark:bg-black text-[#171717] dark:text-white font-display">
+    <div className="min-h-screen flex flex-col relative bg-[#F9FAFB] dark:bg-black text-[#171717] dark:text-white">
 
       {/* Header */}
       {/* Header */}

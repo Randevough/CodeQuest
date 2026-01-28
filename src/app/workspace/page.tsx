@@ -4,7 +4,7 @@ import { WorkspaceSidebar } from '@/components/workspace/WorkspaceSidebar'
 
 export default function WorkspacePage() {
     return (
-        <div className="min-h-screen bg-[#fafafa] dark:bg-black text-[#171717] dark:text-white font-display flex flex-col antialiased">
+        <div className="min-h-screen bg-[#fafafa] dark:bg-black text-[#171717] dark:text-white flex flex-col antialiased">
             <Header activePage="workspace" />
 
             <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">

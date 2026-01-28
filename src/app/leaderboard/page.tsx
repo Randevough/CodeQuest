@@ -19,7 +19,7 @@ export default async function LeaderboardPage(props: { searchParams: Promise<{ p
     // In a real app we'd map/validate. For now we assume Prisma returns compatible types.
 
     return (
-        <div className="min-h-screen bg-[#fafafa] dark:bg-black text-[#171717] dark:text-white font-display flex flex-col antialiased">
+        <div className="min-h-screen bg-[#fafafa] dark:bg-black text-[#171717] dark:text-white flex flex-col antialiased">
             <Header activePage="leaderboard" />
 
             <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
