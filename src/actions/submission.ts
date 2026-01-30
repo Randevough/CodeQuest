@@ -31,12 +31,11 @@ export async function getSubmissions({
         where.status = 'SUBMITTED'
     } else if (status === 'Accepted') {
         where.status = 'ACCEPTED'
-    } else if (status === 'Reviewed') {
-        // Reviewed could mean Accepted or Rejected
-        where.status = { in: ['ACCEPTED', 'REJECTED'] }
+    } else if (status === 'Revision') {
+        where.status = 'REVISION_NEEDED'
     } else {
-        // All "Submitted" items
-        where.status = { in: ['SUBMITTED', 'ACCEPTED', 'REJECTED'] }
+        // All "Submitted" items (including active revisions)
+        where.status = { in: ['SUBMITTED', 'ACCEPTED', 'REJECTED', 'REVISION_NEEDED'] }
     }
 
     if (query) {
@@ -93,7 +92,7 @@ export async function getSubmissions({
 }
 
 // Review Submission
-export async function reviewSubmission(snatchId: string, status: 'ACCEPTED' | 'REJECTED', feedback?: string) {
+export async function reviewSubmission(snatchId: string, status: 'ACCEPTED' | 'REJECTED' | 'REVISION_NEEDED', feedback?: string) {
     try {
         const snatch = await prisma.snatch.findUnique({
             where: { id: snatchId },
@@ -128,7 +127,7 @@ export async function reviewSubmission(snatchId: string, status: 'ACCEPTED' | 'R
             // For simplicity, let's assume one-way flow or handle reversion strictly if needed.
         })
 
-        revalidatePath('/admin/submissions')
+        revalidatePath('/admin', 'layout')
         return { success: true }
     } catch (error) {
         console.error("Failed to review submission:", error)

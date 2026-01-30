@@ -8,9 +8,10 @@ import PointsIcon from '@/app/icon.png';
 
 interface AdminSidebarProps {
     memberCount?: number;
+    submissionCount?: number;
 }
 
-export function AdminSidebar({ memberCount = 0 }: AdminSidebarProps) {
+export function AdminSidebar({ memberCount = 0, submissionCount = 0 }: AdminSidebarProps) {
     const pathname = usePathname();
     const { isMobileOpen, closeMobileSidebar } = useAdminSidebar();
 
@@ -80,8 +81,10 @@ export function AdminSidebar({ memberCount = 0 }: AdminSidebarProps) {
                         </Link>
                         <Link className={getLinkClass('/admin/submissions')} href="/admin/submissions" onClick={closeMobileSidebar}>
                             <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname?.startsWith('/admin/submissions') ? 'text-orange-600' : 'text-slate-400 group-hover:text-primary'}`}>inbox</span>
-                            <span className="text-sm font-medium">Submission Queue</span>
-                            <span className="ml-auto bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold px-2 py-0.5 rounded-full">12</span>
+                            <span className="text-sm font-medium whitespace-nowrap">Submission Queue</span>
+                            {submissionCount > 0 && (
+                                <span className="ml-auto bg-orange-100 dark:bg-orange-800 text-orange-600 dark:text-orange-300 text-xs font-bold px-2 py-0.5 rounded-full">{submissionCount}</span>
+                            )}
                         </Link>
                         <Link className={getLinkClass('/admin/members')} href="/admin/members" onClick={closeMobileSidebar}>
                             <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname?.startsWith('/admin/members') ? 'text-orange-600' : 'text-slate-400 group-hover:text-primary'}`}>group</span>

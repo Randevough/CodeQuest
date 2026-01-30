@@ -43,27 +43,6 @@ The workflow is designed to ensure quality:
 
 ---
 
-## 📂 Project Structure
-
-The codebase is organized for clarity and scalability:
-
-```text
-src/
-├── app/                  # Application routes (Next.js App Router)
-│   ├── (auth)/           # Authentication pages (Login/Signup)
-│   ├── admin/            # Protected administration dashboard
-│   ├── quests/           # Public quest browsing and details
-│   └── workspace/        # User-specific dashboard
-├── actions/              # Server Actions (Business Logic)
-│   ├── quest.ts          # Logic for snatching and fetching quests
-│   └── admin.ts          # Logic for user management and penalties
-├── components/           # Reusable UI components (Cards, Modals)
-├── lib/                  # Shared utilities (Database connection, Helpers)
-└── types/                # TypeScript definitions
-```
-
----
-
 ## 🚀 Getting Started
 
 To get the application running locally:

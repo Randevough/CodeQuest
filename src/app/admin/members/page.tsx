@@ -65,7 +65,7 @@ export default async function MemberDirectoryPage({
                                 <input
                                     name="q"
                                     defaultValue={query}
-                                    className="w-full h-10 pl-10 pr-4 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-orange-600 focus:border-orange-600 placeholder:text-slate-400 transition-all shadow-sm"
+                                    className="w-full h-10 pl-10 pr-4 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 hover:border-orange-500 placeholder:text-slate-400 transition-all shadow-sm"
                                     placeholder="Search members..."
                                     type="text"
                                 />
@@ -113,7 +113,7 @@ export default async function MemberDirectoryPage({
                                                     </div>
                                                 </td>
                                                 <td className="py-4 px-6">
-                                                    <span className="text-sm text-slate-600 dark:text-slate-300 font-medium">{user.completedQuests} Completed</span>
+                                                    <span className="text-sm text-slate-600 dark:text-slate-300 font-medium whitespace-nowrap">{user.completedQuests} Completed</span>
                                                 </td>
                                                 <td className="py-4 px-6">
                                                     <span className="text-sm text-slate-500 dark:text-slate-400 font-medium font-['Plus_Jakarta_Sans']">
@@ -132,7 +132,7 @@ export default async function MemberDirectoryPage({
                                                     {hasPenalty ? (
                                                         <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-amber-100 dark:bg-amber-900/20 text-amber-800 dark:text-amber-400 border border-amber-200 dark:border-amber-900/30">
                                                             <span className="material-symbols-outlined text-[14px]">lock</span>
-                                                            <span className="text-xs font-bold">On Cooldown</span>
+                                                            <span className="text-xs font-bold whitespace-nowrap">On Cooldown</span>
                                                         </div>
                                                     ) : (
                                                         <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-emerald-100 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/30">

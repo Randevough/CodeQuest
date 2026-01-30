@@ -19,12 +19,19 @@ export default async function AdminLayout({
 
     const memberCount = await prisma.user.count();
 
+    // Count pending and revision needed submissions
+    const submissionCount = await prisma.snatch.count({
+        where: {
+            status: { in: ['SUBMITTED', 'REVISION_NEEDED'] }
+        }
+    });
+
     return (
         <AdminSidebarProvider>
             <div className="flex h-screen w-full bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-sans">
                 {/* Material Symbols support - ensure it's loaded in root layout or here */}
                 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-                <AdminSidebar memberCount={memberCount} />
+                <AdminSidebar memberCount={memberCount} submissionCount={submissionCount} />
                 <main className="flex-1 flex flex-col h-full overflow-hidden relative">
                     {children}
                 </main>
