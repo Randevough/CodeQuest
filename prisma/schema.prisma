@@ -57,6 +57,8 @@ model Snatch {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   approvedAt DateTime?
+  submissionUrl String?
+  feedback String? // Admin feedback on rejection/approval
 
   @@unique([userId, questId]) // User can only snatch a quest once (until dropped/completed logic handled?)
   // Actually, if they drop it, can they snatch it again? 

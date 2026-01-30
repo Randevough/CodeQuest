@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CodeQuest: Project Documentation
 
-## Getting Started
+## 📖 Introduction
+Welcome to **CodeQuest**, a gamified collaboration platform designed to transform standard development tasks into engaging challenges. By reimagining a task board as a "Quest Board," CodeQuest turns issue tracking into a competitive and rewarding experience for developer communities and student clubs.
 
-First, run the development server:
+The platform is built with a focus on modern web standards, performance, and a premium user experience, ensuring that "work" feels a lot more like "play."
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 🛠️ Technology Stack
+CodeQuest leverages a cutting-edge stack optimized for speed, type safety, and developer productivity:
+
+- **Framework:** [Next.js 16 (App Router)](https://nextjs.org/) - For server-side rendering, robust routing, and API handling.
+- **Language:** TypeScript - Ensuring code reliability and maintainability across the full stack.
+- **Database:** SQLite with [Prisma ORM](https://www.prisma.io/) - For a responsive, design-system-driven user interface.
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/) - For a responsive, design-system-driven user interface.
+- **Authentication:** NextAuth.js (Beta) - Secure and flexible user authentication.
+- **State Management:** Server Actions & React Hooks - Minimizing client-side complexity.
+
+---
+
+## 🏗️ Architecture & Core Concepts
+
+### 1. The Quest Model
+At the heart of the system is the **Quest**. Unlike a standard Jira ticket, a Quest is designed to be "snatched" by a brave developer.
+- **Difficulty Levels:** Beginner, Intermediate, Advanced (each with corresponding point values).
+- **Categories:** Web, AI, Mobile, Design.
+- **Snatching:** A unique mechanism where a user claims a quest. The system enforces limits (e.g., `maxSnatchers`) to prevent over-assignment.
+
+### 2. User Progression
+Users aren't just assignees; they are players.
+- **Profiles:** Track completed quests, total points, and current active snatches.
+- **Roles:** The system distinguishes between standard **Members** and **Admins**. Admins hold the keys to manage quests and review submissions.
+- **Penalties:** To ensure accountability, an admin can issue penalties offering a mechanism for moderation.
+
+### 3. Submission Workflow
+The workflow is designed to ensure quality:
+1.  **Search**: Users filter the board to find a quest they like.
+2.  **Snatch**: The user commits to the quest.
+3.  **Submit**: Once done, work is submitted (via URL/Repo).
+4.  **Review**: Admins or peers review the work and provide feedback.
+5.  **Reward**: Points are awarded upon approval.
+
+---
+
+## 📂 Project Structure
+
+The codebase is organized for clarity and scalability:
+
+```text
+src/
+├── app/                  # Application routes (Next.js App Router)
+│   ├── (auth)/           # Authentication pages (Login/Signup)
+│   ├── admin/            # Protected administration dashboard
+│   ├── quests/           # Public quest browsing and details
+│   └── workspace/        # User-specific dashboard
+├── actions/              # Server Actions (Business Logic)
+│   ├── quest.ts          # Logic for snatching and fetching quests
+│   └── admin.ts          # Logic for user management and penalties
+├── components/           # Reusable UI components (Cards, Modals)
+├── lib/                  # Shared utilities (Database connection, Helpers)
+└── types/                # TypeScript definitions
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 Getting Started
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+To get the application running locally:
 
-## Learn More
+1.  **Install Dependencies:**
+    ```bash
+    npm install
+    ```
 
-To learn more about Next.js, take a look at the following resources:
+2.  **Database Setup:**
+    Ensure your `.env` file is configured, then run:
+    ```bash
+    npx prisma db push
+    ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3.  **Run Development Server:**
+    ```bash
+    npm run dev
+    ```
+    The application will be available at `http://localhost:3000`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🔮 Future Vision
+While the core system is robust, CodeQuest is evolving. Future roadmap items include a deeper **Achievement System** to reward specific behaviors (like "Bug Hunter" badges) and **Squads** to allow team-based competitions.

@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { dropQuest } from '@/actions/quest'
 
+import Image from 'next/image'
+import PointsIcon from '@/app/icon.png'
+
 type Quest = {
     id: string
     title: string
@@ -77,7 +80,7 @@ export function QuestCard({ quest, isSnatched }: { quest: Quest, isSnatched: boo
                     </div>
                     {/* Dynamic Golden Reward Badge */}
                     <div className={`absolute top-4 right-4 inline-flex items-center px-1.5 py-0.5 rounded-full border text-[11px] ${getPointStyle(quest.points || 0)}`}>
-                        <span className="mr-1">✨</span>
+                        <Image src={PointsIcon} alt="Points" width={14} height={14} className="mr-1 object-contain" />
                         <span className={quest.points && quest.points >= 300 ? 'font-bold' : 'font-medium'}>{quest.points || 100} pts</span>
                     </div>
                 </div>

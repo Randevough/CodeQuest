@@ -4,6 +4,8 @@ import { getUserActiveSnatches } from '@/actions/quest'
 import Link from 'next/link'
 import { QuestAction } from '@/components/QuestAction'
 import { Header } from '@/components/Header'
+import Image from 'next/image'
+import PointsIcon from '@/app/icon.png'
 
 // Force dynamic since we use user specific data and params
 export const dynamic = 'force-dynamic'
@@ -105,7 +107,7 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
 
                                         {/* Soft Pill Points Badge (Gold Nugget Style) */}
                                         <div className="inline-flex items-center px-3 py-1 rounded-full border bg-orange-50 border-orange-100 shadow-sm text-orange-700 dark:text-orange-400">
-                                            <span className="text-[14px] mr-1.5">✨</span>
+                                            <Image src={PointsIcon} alt="Points" width={14} height={14} className="mr-1.5 object-contain" />
                                             <span className="text-xs font-bold uppercase tracking-wide">{quest.points || 500} pts</span>
                                         </div>
                                         <div className="inline-flex items-center px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800">

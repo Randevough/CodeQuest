@@ -11,51 +11,103 @@ import { Pagination } from '@/components/Pagination'
 
 export const dynamic = 'force-dynamic'
 
-async function getQuests(searchParams: { q?: string, difficulty?: string, sort?: string, page?: string }) {
-  const where: any = {}
+// Helper to get active user quest IDs (exclude these from board)
+async function getMyActiveQuestIds() {
+  const activeIds = await getUserActiveSnatches();
+  return activeIds;
+}
+
+// Updated getQuests using proper Database filtering for "Availability"
+async function getQuests(searchParams: { q?: string, difficulty?: string, sort?: string, page?: string }, excludedIds: string[]) {
   const page = parseInt(searchParams.page || '1')
   const limit = 9
-  const skip = (page - 1) * limit
+  const offset = (page - 1) * limit
 
-  // Search
+  // Build SQL conditions
+  // We need to SELECT quests where:
+  // 1. Matches Search
+  // 2. Matches Difficulty
+  // 3. ID is NOT in activeIds
+  // 4. (active_snatches < maxSnatchers)
+
+  // Prisma raw query helper
+  const { Prisma } = await import('@prisma/client')
+
+  // Base Query logic
+  // Note: We use specific SQL for SQLite.
+  let whereClause = Prisma.sql`WHERE 1=1`
+
+  // 1. Search
   if (searchParams.q) {
-    where.OR = [
-      { title: { contains: searchParams.q } },
-      { description: { contains: searchParams.q } }
-    ]
+    whereClause = Prisma.sql`${whereClause} AND ("title" LIKE ${`%${searchParams.q}%`} OR "description" LIKE ${`%${searchParams.q}%`})`
   }
 
-  // Filter
+  // 2. Difficulty
   if (searchParams.difficulty && searchParams.difficulty !== 'All') {
-    where.difficulty = searchParams.difficulty
+    whereClause = Prisma.sql`${whereClause} AND "difficulty" = ${searchParams.difficulty}`
   }
 
-  // Sort
-  let orderBy: any = { createdAt: 'desc' }
+  // 3. Exclude IDs (My Active)
+  if (excludedIds.length > 0) {
+    whereClause = Prisma.sql`${whereClause} AND "id" NOT IN (${Prisma.join(excludedIds)})`
+  }
+
+  // 4. Availability Check (The Core Fix)
+  // Check if count of ACTIVE snatches is less than maxSnatchers
+  whereClause = Prisma.sql`${whereClause} AND (
+    SELECT COUNT(*) FROM "Snatch" 
+    WHERE "Snatch"."questId" = "Quest"."id" 
+    AND "Snatch"."status" = 'ACTIVE'
+  ) < "maxSnatchers"`
+
+  // Sorting
+  let orderBy = Prisma.sql`ORDER BY "createdAt" DESC`
   if (searchParams.sort === 'Oldest') {
-    orderBy = { createdAt: 'asc' }
+    orderBy = Prisma.sql`ORDER BY "createdAt" ASC`
   } else if (searchParams.sort === 'Points (High-Low)') {
-    orderBy = { points: 'desc' }
+    orderBy = Prisma.sql`ORDER BY "points" DESC`
   } else if (searchParams.sort === 'Points (Low-High)') {
-    orderBy = { points: 'asc' }
+    orderBy = Prisma.sql`ORDER BY "points" ASC`
   }
 
-  const [total, quests] = await prisma.$transaction([
-    prisma.quest.count({ where }),
-    prisma.quest.findMany({
-      where,
-      include: {
-        _count: {
-          select: { snatches: { where: { status: 'ACTIVE' } } }
-        }
-      },
-      orderBy,
-      skip,
-      take: limit
-    })
-  ])
+  // Execute Count (for pagination)
+  // We need to count valid items first
+  const countQuery = Prisma.sql`SELECT COUNT(*) as count FROM "Quest" ${whereClause}`
+  const totalResult = await prisma.$queryRaw<[{ count: bigint }]>(countQuery)
+  const total = Number(totalResult[0].count)
 
-  return { quests, total, page, limit }
+  // Execute Fetch ID Query (with Limit/Offset)
+  // We fetch IDs first using Raw SQL to handle the complex filtering
+  const idsQuery = Prisma.sql`SELECT "id" FROM "Quest" ${whereClause} ${orderBy} LIMIT ${limit} OFFSET ${offset}`
+  const validIdsResult = await prisma.$queryRaw<{ id: string }[]>(idsQuery)
+  const validIds = validIdsResult.map(r => r.id)
+
+  if (validIds.length === 0) {
+    return { quests: [], total, page, limit }
+  }
+
+  // Now sort manually or by fetching in order (using 'in' does not guarantee order)
+  // To preserve order, we can map the result.
+  const quests = await prisma.quest.findMany({
+    where: {
+      id: { in: validIds }
+    },
+    include: {
+      _count: {
+        select: { snatches: { where: { status: 'ACTIVE' } } }
+      }
+    }
+  })
+
+  // Re-sort results in JS to match ID order (since 'IN' query might scramble order)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const questsMap = new Map(quests.map(q => [q.id, q]))
+  const sortedQuests = validIds
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .map(id => questsMap.get(id))
+    .filter(q => q !== undefined)
+
+  return { quests: sortedQuests, total, page, limit }
 }
 
 // Helper to get full details of active quests
@@ -127,27 +179,16 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
   // We can add a small Client Component just for the toaster effect, or check it in the main layout if global.
   // Let's create a Client Component `LoginToast` and embed it here.
 
-  const [{ quests: allFilteredQuests, total, limit }, myActiveQuests] = await Promise.all([
-    getQuests(params),
-    getMyActiveQuests()
-  ])
+  // 1. Get my active quests first (needed for exclusion)
+  const myActiveQuests = await getMyActiveQuests();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const myActiveIds = myActiveQuests.map((q: any) => q.id);
+
+  // 2. Get filtered available quests
+  // Now passing excluded IDs to handle filtering in DB
+  const { quests: availableQuests, total, limit } = await getQuests(params, myActiveIds);
 
   const totalPages = Math.ceil(total / limit)
-
-  /* eslint-disable @typescript-eslint/no-explicit-any */
-  const myActiveIds = myActiveQuests.map((q: any) => q.id);
-  // Filter out active quests from the main list so they don't appear twice
-  // Filter out active quests from the main list so they don't appear twice
-  // Also filter out FULL quests (where active snatches >= maxSnatchers)
-  const availableQuests = allFilteredQuests.filter((q: any) => {
-    const isMyActive = myActiveIds.includes(q.id);
-    if (isMyActive) return false;
-
-    const isFull = q._count.snatches >= q.maxSnatchers;
-    if (isFull) return false;
-
-    return true;
-  });
 
   return (
     <div className="min-h-screen flex flex-col relative bg-[#F9FAFB] dark:bg-black text-[#171717] dark:text-white">

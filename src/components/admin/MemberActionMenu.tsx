@@ -136,7 +136,7 @@ export function MemberActionMenu({ user }: { user: UserProp }) {
                         </div>
                         <div className="flex gap-3 justify-end">
                             <button onClick={() => setModal('none')} className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 dark:text-slate-400">Cancel</button>
-                            <button onClick={handleUpdateRole} className="px-4 py-2 text-sm font-bold text-white bg-orange-600 rounded-lg hover:bg-orange-700 shadow-sm shadow-orange-500/20">Save Changes</button>
+                            <button onClick={handleUpdateRole} className="px-4 py-2 text-sm font-bold text-white bg-orange-500 rounded-lg hover:bg-orange-600 shadow-sm shadow-orange-500/20">Save Changes</button>
                         </div>
                     </div>
                 </div>

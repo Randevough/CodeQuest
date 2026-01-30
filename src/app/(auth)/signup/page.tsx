@@ -19,33 +19,33 @@ export default function SignupPage() {
 
     return (
         <>
-            <div className="mb-6 text-center lg:text-left">
-                <h1 className="text-3xl font-bold tracking-tight text-[#111827] mb-2">
+            <div className="mb-8 text-center lg:text-left">
+                <h1 className="text-3xl font-bold tracking-tight text-[#0F172A] mb-2 font-[Fira_Sans]">
                     Create an account
                 </h1>
-                <p className="text-[#6B7280] text-sm">
-                    All accounts must use a valid <span className="font-mono text-[#4F46E5]">@student.ac.id</span> domain.
+                <p className="text-slate-500 text-sm">
+                    All accounts must use a valid <span className="font-mono text-orange-600 bg-orange-50 px-1 py-0.5 rounded">@student.ac.id</span> email.
                 </p>
             </div>
 
-            <form action={dispatch} className="flex flex-col gap-4">
+            <form action={dispatch} className="flex flex-col gap-5">
                 <div>
-                    <label className="mb-1 block text-sm font-medium text-[#111827]" htmlFor="name">Full Name</label>
-                    <input className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-[#4F46E5] focus:ring-[#4F46E5] sm:text-sm py-2.5 text-black" id="name" name="name" placeholder="John Doe" type="text" />
+                    <label className="mb-1.5 block text-sm font-semibold text-[#1E293B]" htmlFor="name">Nickname</label>
+                    <input className="block w-full rounded-lg border border-slate-200 bg-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-3 px-4 text-slate-900 transition-all duration-200 ease-in-out hover:border-orange-500 outline-none focus:ring-1" id="name" name="name" placeholder="SuperCoder99" type="text" />
                 </div>
 
                 <div>
-                    <label className="mb-1 block text-sm font-medium text-[#111827]" htmlFor="email">Email address</label>
-                    <input className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-[#4F46E5] focus:ring-[#4F46E5] sm:text-sm py-2.5 text-black" id="email" name="email" placeholder="student@student.ac.id" type="email" required />
+                    <label className="mb-1.5 block text-sm font-semibold text-[#1E293B]" htmlFor="email">Email address</label>
+                    <input className="block w-full rounded-lg border border-slate-200 bg-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-3 px-4 text-slate-900 transition-all duration-200 ease-in-out hover:border-orange-500 outline-none focus:ring-1" id="email" name="email" placeholder="student@student.ac.id" type="email" required />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-sm font-medium text-[#111827] mb-1" htmlFor="password">Password</label>
+                        <label className="block text-sm font-semibold text-[#1E293B] mb-1.5" htmlFor="password">Password</label>
                         <PasswordInput id="password" name="password" required minLength={6} />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-[#111827] mb-1" htmlFor="confirmPassword">Confirm Password</label>
+                        <label className="block text-sm font-semibold text-[#1E293B] mb-1.5" htmlFor="confirmPassword">Confirm Password</label>
                         <PasswordInput id="confirmPassword" name="confirmPassword" required minLength={6} />
                     </div>
                 </div>
@@ -55,9 +55,9 @@ export default function SignupPage() {
                 </div>
             </form>
 
-            <div className="mt-6 text-center text-sm text-[#6B7280]">
+            <div className="mt-8 text-center text-sm text-slate-500">
                 Already have an account?
-                <Link href="/login" className="font-semibold text-[#4F46E5] hover:text-indigo-500 hover:underline ml-1">
+                <Link href="/login" className="font-semibold text-orange-500 hover:text-orange-600 hover:underline ml-1 transition-colors">
                     Sign In
                 </Link>
             </div>

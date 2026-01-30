@@ -4,6 +4,8 @@ import Link from "next/link"
 import { Pagination } from "@/components/Pagination"
 import { MemberActionMenu } from "@/components/admin/MemberActionMenu"
 import { MobileSidebarTrigger } from "@/components/admin/MobileSidebarTrigger"
+import Image from "next/image"
+import PointsIcon from "@/app/icon.png"
 
 export default async function MemberDirectoryPage({
     searchParams,
@@ -106,7 +108,7 @@ export default async function MemberDirectoryPage({
                                                 </td>
                                                 <td className="py-4 px-6">
                                                     <div className="flex items-center gap-1">
-                                                        <span className="text-orange-500 text-xs">✨</span>
+                                                        <Image src={PointsIcon} alt="Points" width={16} height={16} className="object-contain" />
                                                         <span className="text-sm font-mono text-slate-600 dark:text-slate-300 font-bold">{user.points.toLocaleString()}</span>
                                                     </div>
                                                 </td>

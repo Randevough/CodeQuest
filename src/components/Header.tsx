@@ -2,6 +2,9 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import Image from 'next/image'
+import PointsIcon from '@/app/icon.png'
+
 
 interface HeaderProps {
     activePage: 'explore' | 'leaderboard' | 'workspace'
@@ -27,9 +30,13 @@ export function Header({ activePage }: HeaderProps) {
                 <div className="flex h-full items-center justify-between">
                     <div className="flex items-center gap-12">
                         <Link href="/" className="flex items-center gap-2">
-                            <div className="flex items-center justify-center size-8 rounded bg-black text-white dark:bg-white dark:text-black shadow-sm">
-                                <span className="material-symbols-outlined text-[20px]">terminal</span>
-                            </div>
+                            <Image
+                                src="/icon-big.png"
+                                alt="CodeQuest Logo"
+                                width={32}
+                                height={32}
+                                className="rounded object-contain"
+                            />
                             <span className="text-lg font-bold tracking-tight text-gray-900 dark:text-white">CodeQuest</span>
                         </Link>
                         {/* Desktop Nav */}
@@ -41,7 +48,13 @@ export function Header({ activePage }: HeaderProps) {
                     </div>
                     <div className="flex items-center gap-3">
                         <div className="hidden sm:flex items-center px-3 py-1 rounded-full bg-yellow-50 border border-yellow-200 text-yellow-700 text-xs font-semibold gap-1.5">
-                            <span className="text-sm">✨</span>
+                            <Image
+                                src={PointsIcon}
+                                alt="Points"
+                                width={16}
+                                height={16}
+                                className="object-contain"
+                            />
                             <span>450 pts</span>
                         </div>
                         <button className="hidden sm:flex items-center gap-2 group ml-1">
@@ -99,7 +112,13 @@ export function Header({ activePage }: HeaderProps) {
                                     <div className="text-xs text-gray-500 dark:text-gray-400">user@student.ac.id</div>
                                 </div>
                                 <div className="ml-auto flex items-center px-2 py-0.5 rounded-full bg-yellow-50 border border-yellow-200 text-yellow-700 text-xs font-semibold gap-1">
-                                    <span className="text-xs">✨</span>
+                                    <Image
+                                        src={PointsIcon}
+                                        alt="Points"
+                                        width={14}
+                                        height={14}
+                                        className="object-contain"
+                                    />
                                     <span>450 pts</span>
                                 </div>
                             </div>

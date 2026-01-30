@@ -39,23 +39,23 @@ export default function LoginPage() {
     return (
         <>
             <div className="mb-8">
-                <h1 className="text-3xl font-bold tracking-tight text-[#111827] mb-2">
+                <h1 className="text-3xl font-bold tracking-tight text-[#0F172A] mb-2 font-[Fira_Sans]">
                     Welcome back
                 </h1>
-                <p className="text-[#6B7280] text-sm">
+                <p className="text-slate-500 text-sm">
                     Enter your credentials to access your account.
                 </p>
             </div>
 
             <form action={dispatch} className="flex flex-col gap-5">
                 <div>
-                    <label className="mb-1 block text-sm font-medium text-[#111827]" htmlFor="email">Email address</label>
-                    <input className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-[#4F46E5] focus:ring-[#4F46E5] sm:text-sm py-2.5 text-black" id="email" name="email" placeholder="name@example.com" type="email" required />
+                    <label className="mb-1.5 block text-sm font-semibold text-[#1E293B]" htmlFor="email">Email address</label>
+                    <input className="block w-full rounded-lg border border-slate-200 bg-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-3 px-4 text-slate-900 transition-all duration-200 ease-in-out hover:border-orange-500 outline-none focus:ring-1" id="email" name="email" placeholder="name@example.com" type="email" required />
                 </div>
                 <div>
-                    <div className="flex items-center justify-between mb-1">
-                        <label className="block text-sm font-medium text-[#111827]" htmlFor="password">Password</label>
-                        <Link className="text-sm font-medium text-[#4F46E5] hover:text-indigo-500" href="#">Forgot password?</Link>
+                    <div className="flex items-center justify-between mb-1.5">
+                        <label className="block text-sm font-semibold text-[#1E293B]" htmlFor="password">Password</label>
+                        <Link className="text-sm font-medium text-orange-500 hover:text-orange-600 hover:underline transition-colors" href="#">Forgot password?</Link>
                     </div>
                     <PasswordInput id="password" name="password" required minLength={6} />
                 </div>
@@ -63,9 +63,9 @@ export default function LoginPage() {
                 <SubmitButton loadingText="Signing in...">Sign In</SubmitButton>
             </form>
 
-            <div className="mt-8 text-center text-sm text-[#6B7280]">
+            <div className="mt-8 text-center text-sm text-slate-500">
                 Don&apos;t have an account?
-                <Link href="/signup" className="font-semibold text-[#4F46E5] hover:text-indigo-500 hover:underline ml-1">
+                <Link href="/signup" className="font-semibold text-orange-500 hover:text-orange-600 hover:underline ml-1 transition-colors">
                     Sign Up
                 </Link>
             </div>

@@ -1,6 +1,7 @@
-'use client';
-
+import Link from 'next/link';
+import { useState } from 'react';
 import Image from 'next/image';
+import PointsIcon from '@/app/icon.png';
 
 interface SubmissionReviewModalProps {
     isOpen: boolean;
@@ -105,7 +106,8 @@ export function SubmissionReviewModal({ isOpen, onClose }: SubmissionReviewModal
                                         <div className="flex justify-between items-start gap-4">
                                             <h4 className="font-bold text-slate-900 dark:text-white leading-tight">React Kanban Board</h4>
                                             <span className="bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-3 py-1.5 rounded-full text-[11px] font-extrabold border border-amber-200 dark:border-amber-800/50 flex items-center gap-1.5 whitespace-nowrap shadow-sm">
-                                                ✨ 450 pts
+                                                <Image src={PointsIcon} alt="Points" width={14} height={14} className="object-contain" />
+                                                450 pts
                                             </span>
                                         </div>
                                         <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Build a fully functional Kanban board using React with drag and drop capabilities.</p>

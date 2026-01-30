@@ -49,7 +49,7 @@ export function QuestAction({ questId, isSnatched }: { questId: string, isSnatch
                                         type="url"
                                     />
                                 </div>
-                                <button className="w-full bg-orange-600 hover:bg-orange-700 text-white font-medium py-2.5 px-6 rounded-lg transition-all shadow-lg shadow-orange-500/20 active:scale-95 flex items-center justify-center gap-2">
+                                <button className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-2.5 px-6 rounded-lg transition-all shadow-lg shadow-orange-500/20 active:scale-95 flex items-center justify-center gap-2">
                                     <span className="material-symbols-outlined text-[20px]">send</span>
                                     Send for Review
                                 </button>
@@ -65,7 +65,7 @@ export function QuestAction({ questId, isSnatched }: { questId: string, isSnatch
                     <p className="text-slate-600 dark:text-slate-400 mb-4">Join this quest to start working on it.</p>
                     <button
                         onClick={() => setShowJoinModal(true)}
-                        className="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 px-4 rounded-lg shadow-lg shadow-orange-500/20 hover:shadow-orange-500/30 transition-all duration-200"
+                        className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-4 rounded-lg shadow-lg shadow-orange-500/20 hover:shadow-orange-500/30 transition-all duration-200"
                     >
                         Join Quest
                     </button>
@@ -90,7 +90,7 @@ export function QuestAction({ questId, isSnatched }: { questId: string, isSnatch
                             <button
                                 onClick={handleJoin}
                                 disabled={loading}
-                                className="flex-1 px-4 py-2 text-sm font-bold text-white bg-orange-600 rounded-lg hover:bg-orange-700 transition-colors shadow-lg shadow-orange-500/20"
+                                className="flex-1 px-4 py-2 text-sm font-bold text-white bg-orange-500 rounded-lg hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/20"
                             >
                                 {loading ? 'Joining...' : 'Confirm Join'}
                             </button>

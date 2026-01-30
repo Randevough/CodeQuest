@@ -9,7 +9,7 @@ export function SubmitButton({ children, className = "", loadingText = "Loading.
         <button
             type="submit"
             disabled={pending}
-            className={`group flex w-full items-center justify-center rounded-lg bg-[#4F46E5] px-6 py-3 text-base font-bold text-white shadow-sm hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all disabled:opacity-70 disabled:cursor-not-allowed ${className}`}
+            className={`group flex w-full items-center justify-center rounded-lg bg-orange-500 px-6 py-3 text-base font-bold text-white shadow-sm hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-all disabled:opacity-70 disabled:cursor-not-allowed ${className}`}
         >
             {pending ? (
                 <div className="flex items-center gap-2">

@@ -82,7 +82,7 @@ export function Pagination({ totalPages }: { totalPages: number }) {
                             href={createPageURL(pageNumber)}
                             className={`min-w-[32px] h-8 flex items-center justify-center text-sm font-medium rounded-lg transition-all
                         ${isActive
-                                    ? 'bg-orange-600 text-white shadow-md shadow-orange-500/30'
+                                    ? 'bg-orange-500 text-white shadow-md shadow-orange-500/30'
                                     : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 dark:bg-white/5 dark:text-gray-400 dark:border-gray-800 dark:hover:bg-white/10'
                                 }
                     `}
