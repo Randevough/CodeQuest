@@ -75,8 +75,8 @@ export function AdminSidebar({ memberCount = 0, submissionCount = 0 }: AdminSide
                             <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname === '/admin' ? 'text-orange-600' : 'text-slate-400 group-hover:text-primary'}`}>dashboard</span>
                             <span className="text-sm font-medium">Overview</span>
                         </Link>
-                        <Link className={getLinkClass('/admin/quests')} href="/admin/quests" onClick={closeMobileSidebar}>
-                            <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname?.startsWith('/admin/quests') ? 'text-orange-600' : 'text-slate-400 group-hover:text-primary'}`}>assignment</span>
+                        <Link className={getLinkClass('/admin/manage-quests')} href="/admin/manage-quests" onClick={closeMobileSidebar}>
+                            <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname?.startsWith('/admin/manage-quests') ? 'text-orange-600' : 'text-slate-400 group-hover:text-primary'}`}>assignment</span>
                             <span className="text-sm font-medium">Manage Quests</span>
                         </Link>
                         <Link className={getLinkClass('/admin/submissions')} href="/admin/submissions" onClick={closeMobileSidebar}>

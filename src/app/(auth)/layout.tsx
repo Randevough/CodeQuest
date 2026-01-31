@@ -47,25 +47,25 @@ export default function AuthLayout({
                         <div className="ml-4 text-xs font-mono text-slate-500">bash — 80x24</div>
                     </div>
 
-                    <div className="flex h-[320px] flex-col p-8 relative bg-[#0F172A]/90">
+                    <div className="flex flex-col p-8 relative bg-[#0F172A]/90">
                         <div className="font-mono text-sm text-slate-300 leading-relaxed font-medium">
-                            <span className="block"><span className="text-orange-500">import</span> &#123; Quest &#125; <span className="text-orange-500">from</span> &apos;forge&apos;;</span>
-                            <span className="block mt-2"><span className="text-purple-400">const</span> dev = <span className="text-orange-500">new</span> Developer();</span>
-                            <span className="block">dev.level = <span className="text-emerald-400">99</span>;</span>
-                            <span className="block mt-4"><span className="text-slate-500">// Initiating career sequence...</span></span>
-                            <span className="block"><span className="text-orange-500">await</span> dev.snatch(Quest.legendary);</span>
-                            <span className="block mt-2"><span className="text-slate-500">// Compiling amazing features...</span></span>
-                            <span className="block mt-4">console.log(<span className="text-emerald-400">&quot;Ship it! 🚀&quot;</span>);</span>
-                            <span className="block mt-2"><span className="text-orange-500">return</span> <span className="text-purple-400">true</span>;</span>
-                            <span className="block mt-4 text-orange-500 animate-pulse">_</span>
+                            <span className="block"><span className="text-[#EA580C]">import</span> &#123; <span className="text-purple-400">Coffee</span>, <span className="text-purple-400">CodeQuest</span> &#125; <span className="text-[#EA580C]">from</span> <span className="text-emerald-400">'student-life'</span>;</span>
+                            <span className="block mt-4"><span className="text-[#EA580C]">while</span> (<span className="text-sky-300">isDeadlineMepet</span>) &#123;</span>
+                            <span className="block pl-4"><span className="text-[#EA580C]">await</span> <span className="text-blue-400">brewCoffee</span>();</span>
+                            <span className="block pl-4"><span className="text-[#EA580C]">if</span> (<span className="text-purple-400">CodeQuest</span>.<span className="text-blue-400">isPointsAvailable</span>(<span className="text-emerald-400">'450pts'</span>)) &#123;</span>
+                            <span className="block pl-8"><span className="text-purple-400">CodeQuest</span>.<span className="text-blue-400">submit</span>(&#123; <span className="text-sky-300">status</span>: <span className="text-emerald-400">'Manifesting Accepted'</span> &#125;);</span>
+                            <span className="block pl-4">&#125;</span>
+                            <span className="block">&#125;</span>
+                            <span className="block mt-4"><span className="text-[#EA580C]">return</span> <span className="text-purple-400">true</span>;</span>
+                            <span className="block mt-1 text-[#EA580C] animate-pulse">_</span>
                         </div>
                     </div>
                 </div>
 
                 {/* Subtitle Slogan */}
                 <div className="mt-12 text-center relative z-10">
-                    <p className="font-[Plus_Jakarta_Sans] text-slate-400 text-lg tracking-wide font-medium">
-                        Level Up Your Career
+                    <p className="font-[Plus_Jakarta_Sans] text-slate-200 text-lg tracking-wide font-medium drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]">
+                        In CodeQuest We Trust
                     </p>
                 </div>
             </div>

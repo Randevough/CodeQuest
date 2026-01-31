@@ -24,19 +24,19 @@ export default function SignupPage() {
                     Create an account
                 </h1>
                 <p className="text-slate-500 text-sm">
-                    All accounts must use a valid <span className="font-mono text-orange-600 bg-orange-50 px-1 py-0.5 rounded">@student.ac.id</span> email.
+                    All accounts must use a valid <span className="font-mono text-orange-600 bg-orange-50 px-1 py-0.5 rounded">@cyber-univ.ac.id</span> email.
                 </p>
             </div>
 
             <form action={dispatch} className="flex flex-col gap-5">
                 <div>
                     <label className="mb-1.5 block text-sm font-semibold text-[#1E293B]" htmlFor="name">Nickname</label>
-                    <input className="block w-full rounded-lg border border-slate-200 bg-white shadow-sm focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 sm:text-sm py-3 px-4 text-slate-900 transition-all duration-200 ease-in-out hover:border-orange-500 outline-none" id="name" name="name" placeholder="SuperCoder99" type="text" />
+                    <input className="block w-full rounded-lg border border-slate-200 bg-white shadow-sm focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 sm:text-sm py-3 px-4 text-slate-900 transition-all duration-200 ease-in-out hover:border-orange-500 outline-none" id="name" name="name" placeholder="IwanRotasi99" type="text" />
                 </div>
 
                 <div>
                     <label className="mb-1.5 block text-sm font-semibold text-[#1E293B]" htmlFor="email">Email address</label>
-                    <input className="block w-full rounded-lg border border-slate-200 bg-white shadow-sm focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 sm:text-sm py-3 px-4 text-slate-900 transition-all duration-200 ease-in-out hover:border-orange-500 outline-none" id="email" name="email" placeholder="student@student.ac.id" type="email" required />
+                    <input className="block w-full rounded-lg border border-slate-200 bg-white shadow-sm focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 sm:text-sm py-3 px-4 text-slate-900 transition-all duration-200 ease-in-out hover:border-orange-500 outline-none" id="email" name="email" placeholder="example@cyber-univ.ac.id" type="email" required />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
