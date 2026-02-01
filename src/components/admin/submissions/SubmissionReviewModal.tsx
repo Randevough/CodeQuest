@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import PointsIcon from '@/app/icon.png';
 import { reviewSubmission } from '@/actions/submission';
+import { toast } from 'sonner';
 
 interface SubmissionReviewModalProps {
     isOpen: boolean;
@@ -16,18 +17,24 @@ export function SubmissionReviewModal({ isOpen, onClose, snatch }: SubmissionRev
     if (!isOpen || !snatch) return null;
 
     const handleAction = async (status: 'ACCEPTED' | 'REJECTED' | 'REVISION_NEEDED') => {
+        if (status === 'REVISION_NEEDED' && !feedback.trim()) {
+            toast.error('Please provide a reason for the revision.');
+            return;
+        }
+
         setIsSubmitting(true);
         try {
             const res = await reviewSubmission(snatch.id, status, feedback);
             if (res.success) {
                 onClose();
                 setFeedback(''); // Reset feedback
+                toast.success('Submission updated successfully');
             } else {
-                alert('Failed to update submission');
+                toast.error('Failed to update submission');
             }
         } catch (error) {
             console.error(error);
-            alert('An error occurred');
+            toast.error('An error occurred');
         } finally {
             setIsSubmitting(false);
         }
@@ -88,7 +95,7 @@ export function SubmissionReviewModal({ isOpen, onClose, snatch }: SubmissionRev
 
                                         {snatch.submissionUrl ? (
                                             <a
-                                                className="flex items-center justify-center gap-2.5 px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-bold hover:bg-indigo-700 transition-all shadow-sm w-full group"
+                                                className="flex items-center justify-center gap-2.5 px-5 py-2.5 bg-orange-500 text-white rounded-lg text-sm font-bold hover:bg-orange-600 transition-all shadow-sm w-full group"
                                                 href={snatch.submissionUrl}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
@@ -123,7 +130,7 @@ export function SubmissionReviewModal({ isOpen, onClose, snatch }: SubmissionRev
                         {/* Right Column */}
                         <div className="md:col-span-5 flex flex-col gap-6">
                             <section className="h-full">
-                                <h3 className="text-xs font-bold text-slate-400 mb-6 uppercase tracking-widest">Quest Reference</h3>
+                                <h3 className="text-xs font-bold text-slate-400 mb-4 uppercase tracking-widest">Quest Reference</h3>
                                 <div className="border border-border-light dark:border-border-dark rounded-xl bg-white dark:bg-surface-dark overflow-hidden flex flex-col h-full shadow-sm">
                                     <div className="p-6 flex flex-col gap-4 border-b border-border-light dark:border-border-dark bg-white dark:bg-surface-dark">
                                         <div className="flex justify-between items-start gap-4">

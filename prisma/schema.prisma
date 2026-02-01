@@ -39,6 +39,10 @@ model Quest {
   points      Int      @default(100)
   category    String   @default("Web") // Web, AI, Mobile
   
+  deadline    DateTime?
+  requirements String? // Stored as JSON or text
+  resources   String?  // Stored as JSON or text
+  
   snatches    Snatch[]
 
   createdAt   DateTime @default(now())

@@ -177,7 +177,7 @@ export default function SubmissionQueuePage() {
                                                 <td className="py-4 px-6">
                                                     <div className="flex flex-col">
                                                         <span className="text-sm font-bold text-slate-900 dark:text-white">{snatch.quest.title}</span>
-                                                        <span className="text-[11px] text-slate-500 font-mono mt-0.5">#{snatch.quest.id.slice(0, 4)}</span>
+                                                        <span className="text-[11px] text-slate-500 font-mono mt-0.5">#{snatch.quest.id.slice(0, 10)}</span>
                                                     </div>
                                                 </td>
                                                 <td className="py-4 px-6">

@@ -167,3 +167,88 @@ export async function dropQuest(questId: string) {
         return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
     }
 }
+import { z } from 'zod';
+
+const QuestSchema = z.object({
+    title: z.string().min(3),
+    description: z.string().min(10),
+    category: z.string(),
+    difficulty: z.string(),
+    points: z.coerce.number().min(1),
+    maxSnatchers: z.coerce.number().min(1).optional(),
+    deadline: z.string().optional(), // Will convert to Date
+    requirements: z.array(z.string()).optional(),
+    resources: z.string().optional(),
+});
+
+export async function createQuest(prevState: any, formData: FormData) {
+    try {
+        const validatedFields = QuestSchema.parse({
+            title: formData.get('title'),
+            description: formData.get('description'),
+            category: formData.get('category'),
+            difficulty: formData.get('difficulty'),
+            points: formData.get('points'),
+            maxSnatchers: formData.get('maxSnatchers') || undefined,
+            deadline: formData.get('deadline') || undefined,
+            requirements: JSON.parse(formData.get('requirements') as string || '[]'),
+            resources: formData.get('resources'),
+        });
+
+        // Generate Custom ID: CQ-YYMM-XXX
+        const now = new Date();
+        const year = now.getFullYear().toString().slice(-2);
+        const month = (now.getMonth() + 1).toString().padStart(2, '0');
+        const prefix = `CQ-${year}${month}-`;
+
+        // Find last quest with this prefix
+        const lastQuest = await prisma.quest.findFirst({
+            where: {
+                id: {
+                    startsWith: prefix
+                }
+            },
+            orderBy: {
+                id: 'desc'
+            }
+        });
+
+        let sequence = 1;
+        if (lastQuest) {
+            const lastIdParts = lastQuest.id.split('-');
+            if (lastIdParts.length === 3) {
+                const lastSeq = parseInt(lastIdParts[2]);
+                if (!isNaN(lastSeq)) {
+                    sequence = lastSeq + 1;
+                }
+            }
+        }
+
+        const customId = `${prefix}${sequence.toString().padStart(3, '0')}`;
+
+        const quest = await prisma.quest.create({
+            data: {
+                id: customId,
+                title: validatedFields.title,
+                description: validatedFields.description,
+                category: validatedFields.category,
+                difficulty: validatedFields.difficulty,
+                points: validatedFields.points,
+                maxSnatchers: validatedFields.maxSnatchers || 1, // Default to 1 if not provided, though schema defaults handled by db usually
+                deadline: validatedFields.deadline ? new Date(validatedFields.deadline) : null,
+                requirements: JSON.stringify(validatedFields.requirements),
+                resources: validatedFields.resources,
+            },
+        });
+
+        revalidatePath('/admin/manage-quests');
+        return { success: true, message: 'Quest created successfully', questId: quest.id };
+
+    } catch (error) {
+        console.error('Failed to create quest:', error);
+        if (error instanceof z.ZodError) {
+            return { success: false, message: error.errors[0].message };
+        }
+        return { success: false, message: 'Failed to create quest' };
+    }
+}

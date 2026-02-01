@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { createQuest } from '@/actions/quest';
+import { toast } from 'sonner';
 
 export default function CreateQuestPage() {
     // State for dynamic checklist
@@ -19,6 +21,33 @@ export default function CreateQuestPage() {
         setRequirements(requirements.filter((_, i) => i !== index));
     };
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+
+        const formData = new FormData(e.currentTarget);
+        // Append dynamic requirements
+        formData.append('requirements', JSON.stringify(requirements));
+
+        try {
+            const res = await createQuest(null, formData);
+            if (res.success) {
+                toast.success('Quest created successfully!');
+                // Redirect or reset form? For now, maybe redirect back to list
+                window.location.href = '/admin/manage-quests';
+            } else {
+                toast.error(res.message);
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('An error occurred');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     return (
         <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900 relative font-['Plus_Jakarta_Sans']">
             {/* Header */}
@@ -34,8 +63,12 @@ export default function CreateQuestPage() {
                     <Link href="/admin/manage-quests" className="flex items-center justify-center h-9 px-4 rounded text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 text-sm font-medium transition-colors focus:outline-none">
                         Cancel
                     </Link>
-                    <button className="flex items-center justify-center h-9 px-4 rounded bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium shadow-sm transition-all focus:ring-2 focus:ring-orange-600/30 focus:outline-none gap-2">
-                        Publish Quest
+                    <button
+                        onClick={() => document.querySelector('form')?.requestSubmit()}
+                        disabled={isSubmitting}
+                        className="flex items-center justify-center h-9 px-4 rounded bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium shadow-sm transition-all focus:ring-2 focus:ring-orange-600/30 focus:outline-none gap-2 disabled:opacity-50"
+                    >
+                        {isSubmitting ? 'Publishing...' : 'Publish Quest'}
                     </button>
                 </div>
             </header>
@@ -43,7 +76,7 @@ export default function CreateQuestPage() {
             {/* Content */}
             <div className="flex-1 overflow-y-auto p-4 sm:p-8">
                 <div className="mx-auto max-w-3xl">
-                    <form className="flex flex-col gap-8" onSubmit={(e) => e.preventDefault()}>
+                    <form className="flex flex-col gap-8" onSubmit={handleSubmit}>
                         {/* Quest Details */}
                         <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm p-6 flex flex-col gap-6">
                             <div className="space-y-1">
@@ -56,14 +89,22 @@ export default function CreateQuestPage() {
                                     <input
                                         className="w-full h-10 px-3 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 placeholder:text-slate-400 transition-all shadow-sm"
                                         id="quest-title"
+                                        name="title" // Added name
                                         placeholder="e.g. Build a Responsive Dashboard with CSS Grid"
                                         type="text"
+                                        required
                                     />
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div className="space-y-1.5">
                                         <label className="text-sm font-medium text-slate-700 dark:text-slate-300" htmlFor="category">Category</label>
-                                        <select className="w-full h-10 px-3 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 transition-all shadow-sm" id="category" defaultValue="">
+                                        <select
+                                            className="w-full h-10 px-3 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 transition-all shadow-sm"
+                                            id="category"
+                                            name="category" // Added name
+                                            defaultValue=""
+                                            required
+                                        >
                                             <option disabled value="">Select a category</option>
                                             <option value="web">Web Development</option>
                                             <option value="ai">Artificial Intelligence</option>
@@ -72,7 +113,13 @@ export default function CreateQuestPage() {
                                     </div>
                                     <div className="space-y-1.5">
                                         <label className="text-sm font-medium text-slate-700 dark:text-slate-300" htmlFor="difficulty">Difficulty</label>
-                                        <select className="w-full h-10 px-3 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 transition-all shadow-sm" id="difficulty" defaultValue="">
+                                        <select
+                                            className="w-full h-10 px-3 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 transition-all shadow-sm"
+                                            id="difficulty"
+                                            name="difficulty" // Added name
+                                            defaultValue=""
+                                            required
+                                        >
                                             <option disabled value="">Select difficulty</option>
                                             <option value="beginner">Beginner</option>
                                             <option value="intermediate">Intermediate</option>
@@ -94,21 +141,39 @@ export default function CreateQuestPage() {
                                     <label className="text-sm font-medium text-slate-700 dark:text-slate-300" htmlFor="points">Points Reward</label>
                                     <div className="relative">
                                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-yellow-500 dark:text-yellow-400 text-[18px]">✨</span>
-                                        <input className="w-full h-10 pl-9 pr-3 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 placeholder:text-slate-400 transition-all shadow-sm" id="points" placeholder="0" type="number" />
+                                        <input
+                                            className="w-full h-10 pl-9 pr-3 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 placeholder:text-slate-400 transition-all shadow-sm"
+                                            id="points"
+                                            name="points" // Added name
+                                            placeholder="0"
+                                            type="number"
+                                            required
+                                        />
                                     </div>
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-sm font-medium text-slate-700 dark:text-slate-300" htmlFor="max-slots">Max Slots</label>
                                     <div className="relative">
                                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined text-[18px]">group</span>
-                                        <input className="w-full h-10 pl-9 pr-3 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 placeholder:text-slate-400 transition-all shadow-sm" id="max-slots" placeholder="Unlimited" type="number" />
+                                        <input
+                                            className="w-full h-10 pl-9 pr-3 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 placeholder:text-slate-400 transition-all shadow-sm"
+                                            id="max-slots"
+                                            name="maxSnatchers" // Added name
+                                            placeholder="Unlimited"
+                                            type="number"
+                                        />
                                     </div>
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-sm font-medium text-slate-700 dark:text-slate-300" htmlFor="deadline">Quest Deadline</label>
                                     <div className="relative">
                                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined text-[18px]">calendar_today</span>
-                                        <input className="w-full h-10 pl-9 pr-3 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 placeholder:text-slate-400 transition-all shadow-sm" id="deadline" type="datetime-local" />
+                                        <input
+                                            className="w-full h-10 pl-9 pr-3 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 placeholder:text-slate-400 transition-all shadow-sm"
+                                            id="deadline"
+                                            name="deadline" // Added name
+                                            type="datetime-local"
+                                        />
                                     </div>
                                 </div>
                             </div>
@@ -182,6 +247,7 @@ export default function CreateQuestPage() {
                                         <textarea
                                             className="w-full min-h-[80px] pl-9 pr-3 py-2.5 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 placeholder:text-slate-400 transition-all shadow-sm resize-y"
                                             id="resource-links"
+                                            name="resources" // Added name
                                             placeholder={`https://github.com/codequest/starter-repo\nhttps://docs.api-service.com/guide`}
                                         ></textarea>
                                     </div>
@@ -191,6 +257,7 @@ export default function CreateQuestPage() {
                                     <label className="text-sm font-medium text-slate-700 dark:text-slate-300" htmlFor="description">Description & Instructions</label>
                                     <div className="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden transition-all focus-within:ring-1 focus-within:ring-orange-500 focus-within:border-orange-500">
                                         <div className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700 px-2 py-2 flex items-center gap-1">
+                                            {/* Toolbar buttons removed for brevity, keeping layout */}
                                             <button className="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors" title="Bold" type="button">
                                                 <span className="material-symbols-outlined text-[20px]">format_bold</span>
                                             </button>
@@ -215,7 +282,9 @@ export default function CreateQuestPage() {
                                         <textarea
                                             className="w-full p-4 min-h-[240px] bg-white dark:bg-slate-800 text-sm text-slate-900 dark:text-slate-100 focus:outline-none resize-y placeholder:text-slate-400"
                                             id="description"
+                                            name="description" // Added name
                                             placeholder="Write your quest description here... Support for Markdown enabled."
+                                            required
                                         ></textarea>
                                     </div>
                                     <p className="text-xs text-slate-500 text-right">0/5000 characters</p>
