@@ -182,19 +182,29 @@ const QuestSchema = z.object({
 });
 
 export async function createQuest(prevState: any, formData: FormData) {
-    try {
-        const validatedFields = QuestSchema.parse({
-            title: formData.get('title'),
-            description: formData.get('description'),
-            category: formData.get('category'),
-            difficulty: formData.get('difficulty'),
-            points: formData.get('points'),
-            maxSnatchers: formData.get('maxSnatchers') || undefined,
-            deadline: formData.get('deadline') || undefined,
-            requirements: JSON.parse(formData.get('requirements') as string || '[]'),
-            resources: formData.get('resources'),
-        });
+    const validatedResult = QuestSchema.safeParse({
+        title: formData.get('title'),
+        description: formData.get('description'),
+        category: formData.get('category'),
+        difficulty: formData.get('difficulty'),
+        points: formData.get('points'),
+        maxSnatchers: formData.get('maxSnatchers') || undefined,
+        deadline: formData.get('deadline') || undefined,
+        requirements: JSON.parse(formData.get('requirements') as string || '[]'),
+        resources: formData.get('resources'),
+    });
 
+    if (!validatedResult.success) {
+        console.error("Validation failed:", validatedResult.error);
+        // ZodError uses .issues, not .errors
+        const firstIssue = validatedResult.error.issues[0];
+        const errorMessage = firstIssue ? `${firstIssue.path.join('.')}: ${firstIssue.message}` : "Invalid input";
+        return { success: false, message: errorMessage, errorDetails: validatedResult.error.format() };
+    }
+
+    const validatedFields = validatedResult.data;
+
+    try {
         // Generate Custom ID: CQ-YYMM-XXX
         const now = new Date();
         const year = now.getFullYear().toString().slice(-2);
@@ -246,9 +256,164 @@ export async function createQuest(prevState: any, formData: FormData) {
 
     } catch (error) {
         console.error('Failed to create quest:', error);
-        if (error instanceof z.ZodError) {
-            return { success: false, message: error.errors[0].message };
-        }
         return { success: false, message: 'Failed to create quest' };
+    }
+}
+
+// --- New Actions for Manage Quests ---
+
+export async function getQuests({
+    page = 1,
+    limit = 10,
+    search = '',
+    status = 'Active' // 'Active', 'Draft', 'Closed'
+}: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    status?: string;
+}) {
+    try {
+        const offset = (page - 1) * limit;
+
+        const where: any = {};
+
+        // Status Filter
+        if (status && status !== 'All') {
+            where.status = status;
+        }
+
+        // Search Filter (Title or ID)
+        if (search) {
+            where.OR = [
+                { title: { contains: search } }, // SQLite search is case-insensitive usually, but Prisma handles it?
+                { id: { contains: search } },
+            ];
+        }
+
+        // Fetch Quests
+        const quests = await prisma.quest.findMany({
+            where,
+            orderBy: { createdAt: 'desc' },
+            skip: offset,
+            take: limit,
+            include: {
+                _count: {
+                    select: { snatches: true }
+                }
+            }
+        });
+
+        // Total Count for Pagination
+        const totalQuests = await prisma.quest.count({ where });
+        const totalPages = Math.ceil(totalQuests / limit);
+
+        return {
+            success: true,
+            data: quests,
+            pagination: {
+                currentPage: page,
+                totalPages,
+                totalItems: totalQuests,
+            }
+        };
+
+    } catch (error) {
+        console.error("Failed to fetch quests:", error);
+        return { success: false, error: "Failed to fetch quests" };
+    }
+}
+
+export async function updateQuestStatus(questId: string, newStatus: string) {
+    try {
+        await prisma.quest.update({
+            where: { id: questId },
+            data: { status: newStatus }
+        });
+        revalidatePath('/admin/manage-quests');
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to update quest status:", error);
+        return { success: false, error: "Failed to update status" };
+    }
+}
+
+export async function deleteQuest(questId: string) {
+    try {
+        // Option 1: Hard Delete (might fail if foreign keys exist)
+        // Option 2: Soft Delete (set status to 'Deleted' or 'Archived')
+        // Let's use clean delete if possible, or maybe cascade? 
+        // For now, let's try delete. If snatches exist, it might error unless cascade is set.
+        // Prisma schema doesn't show Cascade on Snatch->Quest relation in the view I saw earlier?
+        // Let's check schema relative to Snatch. 
+        // @relation(fields: [questId], references: [id]) (Default isn't cascade).
+        // Safest is to soft delete or archive.
+        // But user requirement said "Archive/Delete".
+
+        // Let's just delete for now and handle error if foreign key constraint.
+        // Or actually, delete dependent snatches first?
+        // Better: Set to "Closed" or "Archived" if it has applicants?
+        // Let's implement Delete.
+
+        await prisma.snatch.deleteMany({ where: { questId } }); // Clean up snatches first
+        await prisma.quest.delete({ where: { id: questId } });
+
+        revalidatePath('/admin/manage-quests');
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to delete quest:", error);
+        return { success: false, error: "Failed to delete quest" };
+    }
+}
+
+export async function duplicateQuest(questId: string) {
+    try {
+        const original = await prisma.quest.findUnique({ where: { id: questId } });
+        if (!original) throw new Error("Quest not found");
+
+        // Generate New ID
+        const now = new Date();
+        const year = now.getFullYear().toString().slice(-2);
+        const month = (now.getMonth() + 1).toString().padStart(2, '0');
+        const prefix = `CQ-${year}${month}-`;
+
+        const lastQuest = await prisma.quest.findFirst({
+            where: { id: { startsWith: prefix } },
+            orderBy: { id: 'desc' }
+        });
+
+        let sequence = 1;
+        if (lastQuest) {
+            const lastIdParts = lastQuest.id.split('-');
+            if (lastIdParts.length === 3) {
+                const lastSeq = parseInt(lastIdParts[2]);
+                if (!isNaN(lastSeq)) sequence = lastSeq + 1;
+            }
+        }
+        const customId = `${prefix}${sequence.toString().padStart(3, '0')}`;
+
+        // Create Copy
+        await prisma.quest.create({
+            data: {
+                id: customId,
+                title: `${original.title} (Copy)`,
+                description: original.description,
+                difficulty: original.difficulty,
+                category: original.category,
+                points: original.points,
+                maxSnatchers: original.maxSnatchers,
+                deadline: original.deadline,
+                requirements: original.requirements,
+                resources: original.resources,
+                status: 'Draft', // Always draft
+            }
+        });
+
+        revalidatePath('/admin/manage-quests');
+        return { success: true };
+
+    } catch (error) {
+        console.error("Failed to duplicate quest:", error);
+        return { success: false, error: "Failed to duplicate quest" };
     }
 }

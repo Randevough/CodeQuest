@@ -49,15 +49,15 @@ export default function AuthLayout({
 
                     <div className="flex flex-col p-8 relative bg-[#0F172A]/90">
                         <div className="font-mono text-sm text-slate-300 leading-relaxed font-medium">
-                            <span className="block"><span className="text-[#EA580C]">import</span> &#123; <span className="text-purple-400">Coffee</span>, <span className="text-purple-400">CodeQuest</span> &#125; <span className="text-[#EA580C]">from</span> <span className="text-emerald-400">'student-life'</span>;</span>
-                            <span className="block mt-4"><span className="text-[#EA580C]">while</span> (<span className="text-sky-300">isDeadlineMepet</span>) &#123;</span>
-                            <span className="block pl-4"><span className="text-[#EA580C]">await</span> <span className="text-blue-400">brewCoffee</span>();</span>
-                            <span className="block pl-4"><span className="text-[#EA580C]">if</span> (<span className="text-purple-400">CodeQuest</span>.<span className="text-blue-400">isPointsAvailable</span>(<span className="text-emerald-400">'450pts'</span>)) &#123;</span>
+                            <span className="block"><span className="text-orange-500">import</span> &#123; <span className="text-purple-400">Coffee</span>, <span className="text-purple-400">CodeQuest</span> &#125; <span className="text-orange-500">from</span> <span className="text-emerald-400">'student-life'</span>;</span>
+                            <span className="block mt-4"><span className="text-orange-500">while</span> (<span className="text-sky-300">isDeadlineMepet</span>) &#123;</span>
+                            <span className="block pl-4"><span className="text-orange-500">await</span> <span className="text-blue-400">brewCoffee</span>();</span>
+                            <span className="block pl-4"><span className="text-orange-500">if</span> (<span className="text-purple-400">CodeQuest</span>.<span className="text-blue-400">isPointsAvailable</span>(<span className="text-emerald-400">'450pts'</span>)) &#123;</span>
                             <span className="block pl-8"><span className="text-purple-400">CodeQuest</span>.<span className="text-blue-400">submit</span>(&#123; <span className="text-sky-300">status</span>: <span className="text-emerald-400">'Manifesting Accepted'</span> &#125;);</span>
                             <span className="block pl-4">&#125;</span>
                             <span className="block">&#125;</span>
-                            <span className="block mt-4"><span className="text-[#EA580C]">return</span> <span className="text-purple-400">true</span>;</span>
-                            <span className="block mt-1 text-[#EA580C] animate-pulse">_</span>
+                            <span className="block mt-4"><span className="text-orange-500">return</span> <span className="text-purple-400">true</span>;</span>
+                            <span className="block mt-1 text-orange-500 animate-pulse">_</span>
                         </div>
                     </div>
                 </div>

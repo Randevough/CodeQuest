@@ -38,6 +38,7 @@ model Quest {
   difficulty  String   @default("Beginner") // Beginner, Intermediate, Advanced
   points      Int      @default(100)
   category    String   @default("Web") // Web, AI, Mobile
+  status      String   @default("Draft") // Active, Draft, Closed
   
   deadline    DateTime?
   requirements String? // Stored as JSON or text

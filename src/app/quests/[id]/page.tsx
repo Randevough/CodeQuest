@@ -4,6 +4,7 @@ import { getUserActiveSnatches } from '@/actions/quest'
 import Link from 'next/link'
 import { QuestAction } from '@/components/QuestAction'
 import { Header } from '@/components/Header'
+import { QuestTimer } from '@/components/QuestTimer'
 import Image from 'next/image'
 import PointsIcon from '@/app/icon.png'
 
@@ -51,12 +52,22 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
     const activeSnatches = await getUserActiveSnatches();
     const isSnatched = activeSnatches.includes(quest.id);
 
+    // Parse Requirements (Checklist)
+    let requirements: string[] = [];
+    try {
+        if (quest.requirements) {
+            const parsed = JSON.parse(quest.requirements);
+            if (Array.isArray(parsed)) {
+                requirements = parsed;
+            }
+        }
+    } catch (e) {
+        // user might have saved as simple string? fallback
+        console.error("Failed to parse requirements", e);
+    }
+
     return (
         <div className="min-h-screen bg-[#fafafa] dark:bg-black text-slate-800 dark:text-slate-200">
-            {/* Header - Reused from layout/page or just simplified for now as per design which doesn't explicitly show the full nav in the body snippet, 
-                but assuming we keep the app shell. The snippet above only had <main>, so we'll wrap it.
-            */}
-            {/* Header */}
             {/* Header */}
             <Header activePage="explore" />
 
@@ -74,9 +85,9 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                                     </Link>
 
                                     <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
-                                        <span>Quest ID: #{quest.id.slice(0, 6)}</span>
+                                        <span>Quest ID: #{quest.id}</span>
                                         <span className="text-slate-300 dark:text-slate-700">•</span>
-                                        <span>{quest.category || 'Core Infrastructure'}</span>
+                                        <span className="uppercase">{quest.category || 'Core Infrastructure'}</span>
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
@@ -100,7 +111,7 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
 
                                             return (
                                                 <div className={`inline-flex items-center px-3 py-1 rounded-full border ${diffInfo.color}`}>
-                                                    <span className={`text-xs font-bold ${diffInfo.text} tracking-wide`}>{quest.difficulty || 'Advanced'}</span>
+                                                    <span className={`text-xs font-bold ${diffInfo.text} tracking-wide capitalize`}>{quest.difficulty || 'Advanced'}</span>
                                                 </div>
                                             );
                                         })()}
@@ -111,7 +122,7 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                                             <span className="text-xs font-bold uppercase tracking-wide">{quest.points || 500} pts</span>
                                         </div>
                                         <div className="inline-flex items-center px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800">
-                                            <span className="text-xs font-bold text-slate-600 dark:text-slate-300">{quest.category}</span>
+                                            <span className="text-xs font-bold text-slate-600 dark:text-slate-300 capitalize">{quest.category}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -125,6 +136,55 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                                         <p>{quest.description}</p>
                                     </div>
                                 </section>
+
+                                {/* Checklist Section */}
+                                {requirements.length > 0 && (
+                                    <section>
+                                        <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
+                                            <span className="material-symbols-outlined text-[18px]">checklist</span> Submission Checklist
+                                        </h3>
+                                        <ul className="space-y-3">
+                                            {requirements.map((req, index) => (
+                                                <li key={index} className="flex items-start gap-3 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-lg border border-slate-100 dark:border-slate-800">
+                                                    <div className="mt-0.5 min-w-[20px]">
+                                                        <span className="material-symbols-outlined text-green-500 text-[20px]">check_circle</span>
+                                                    </div>
+                                                    <span className="text-slate-700 dark:text-slate-300 text-sm font-medium">{req}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </section>
+                                )}
+
+                                {/* Resources Section */}
+                                {quest.resources && (
+                                    <section>
+                                        <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
+                                            <span className="material-symbols-outlined text-[18px]">link</span> Resources
+                                        </h3>
+                                        <div className="bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/30 rounded-lg p-4">
+                                            <div className="flex items-start gap-3">
+                                                <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 mt-0.5">description</span>
+                                                <div>
+                                                    <h5 className="font-semibold text-blue-900 dark:text-blue-100 text-sm mb-1">Provided Materials</h5>
+                                                    {/* Simple URL detection or rendering */}
+                                                    {quest.resources.startsWith('http') ? (
+                                                        <a
+                                                            href={quest.resources}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="text-blue-600 dark:text-blue-400 underline hover:text-blue-800 dark:hover:text-blue-300 text-sm break-all"
+                                                        >
+                                                            {quest.resources}
+                                                        </a>
+                                                    ) : (
+                                                        <p className="text-slate-600 dark:text-slate-300 text-sm whitespace-pre-wrap">{quest.resources}</p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
+                                )}
 
                                 {/* Submission Section or Join/Drop Actions */}
                                 <section className="border-t border-slate-100 dark:border-slate-800 pt-8 mt-10">
@@ -147,22 +207,7 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                                 <span className="material-symbols-outlined text-primary text-[20px]">timer</span>
                                 <h4 className="text-sm font-bold text-slate-900 dark:text-white">Time Remaining</h4>
                             </div>
-                            <div className="flex gap-2">
-                                <div className="flex-1 bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3 text-center border border-slate-100 dark:border-slate-800">
-                                    <span className="block text-2xl font-mono font-bold text-slate-900 dark:text-white">02</span>
-                                    <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Days</span>
-                                </div>
-                                <div className="flex items-center text-slate-300 dark:text-slate-600 text-xl font-bold">:</div>
-                                <div className="flex-1 bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3 text-center border border-slate-100 dark:border-slate-800">
-                                    <span className="block text-2xl font-mono font-bold text-slate-900 dark:text-white">04</span>
-                                    <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Hrs</span>
-                                </div>
-                                <div className="flex items-center text-slate-300 dark:text-slate-600 text-xl font-bold">:</div>
-                                <div className="flex-1 bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3 text-center border border-slate-100 dark:border-slate-800">
-                                    <span className="block text-2xl font-mono font-bold text-slate-900 dark:text-white">12</span>
-                                    <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Mins</span>
-                                </div>
-                            </div>
+                            <QuestTimer deadline={quest.deadline} />
                         </div>
 
                         {/* Squad Members */}
