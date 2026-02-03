@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import Image from 'next/image'
-import PointsIcon from '@/app/icon.png'
 
 
 interface HeaderProps {
@@ -49,7 +48,7 @@ export function Header({ activePage }: HeaderProps) {
                     <div className="flex items-center gap-3">
                         <div className="hidden sm:flex items-center px-3 py-1 rounded-full bg-yellow-50 border border-yellow-200 text-yellow-700 text-xs font-semibold gap-1.5">
                             <Image
-                                src={PointsIcon}
+                                src="/icon.png"
                                 alt="Points"
                                 width={16}
                                 height={16}
@@ -113,7 +112,7 @@ export function Header({ activePage }: HeaderProps) {
                                 </div>
                                 <div className="ml-auto flex items-center px-2 py-0.5 rounded-full bg-yellow-50 border border-yellow-200 text-yellow-700 text-xs font-semibold gap-1">
                                     <Image
-                                        src={PointsIcon}
+                                        src="/icon.png"
                                         alt="Points"
                                         width={14}
                                         height={14}

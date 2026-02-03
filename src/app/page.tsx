@@ -54,7 +54,7 @@ async function getQuests(searchParams: { q?: string, difficulty?: string, sort?:
 
   // 4. Availability Check (The Core Fix)
   // Check if count of ACTIVE snatches is less than maxSnatchers
-  whereClause = Prisma.sql`${whereClause} AND (
+  whereClause = Prisma.sql`${whereClause} AND "status" = 'Active' AND (
     SELECT COUNT(*) FROM "Snatch" 
     WHERE "Snatch"."questId" = "Quest"."id" 
     AND "Snatch"."status" = 'ACTIVE'

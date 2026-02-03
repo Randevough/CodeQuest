@@ -19,6 +19,7 @@ export default async function ManageQuestsPage({ searchParams }: ManageQuestsPag
     const status = params.status || 'Active';
     const query = params.q || '';
 
+    // TODO: Update getQuests to support sorting by updatedAt desc
     const { success, data: quests, pagination } = await getQuests({
         page,
         limit: 10,
@@ -58,9 +59,10 @@ export default async function ManageQuestsPage({ searchParams }: ManageQuestsPag
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 text-xs uppercase text-slate-500 dark:text-slate-400 font-medium tracking-wider">
-                                    <th className="px-6 py-3 w-[40%]">Quest</th>
+                                    <th className="px-6 py-3 w-[35%]">Quest</th>
                                     <th className="px-6 py-3">Category & Difficulty</th>
-                                    <th className="px-6 py-3 text-right">Applicants</th>
+                                    <th className="px-6 py-3 text-center">Points</th>
+                                    <th className="px-6 py-3 text-center">Applicants</th>
                                     <th className="px-6 py-3">Status</th>
                                     <th className="px-6 py-3 text-right">Actions</th>
                                 </tr>
@@ -68,7 +70,7 @@ export default async function ManageQuestsPage({ searchParams }: ManageQuestsPag
                             <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
                                 {!hasQuests ? (
                                     <tr>
-                                        <td colSpan={5}>
+                                        <td colSpan={6}>
                                             <EmptyState />
                                         </td>
                                     </tr>
@@ -77,8 +79,8 @@ export default async function ManageQuestsPage({ searchParams }: ManageQuestsPag
                                         <tr key={quest.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/40 transition-colors group">
                                             <td className="px-6 py-4">
                                                 <div className="flex flex-col">
-                                                    <span className="font-medium text-slate-900 dark:text-slate-100 text-sm line-clamp-1">{quest.title}</span>
-                                                    <span className="text-xs text-slate-500 font-mono mt-0.5">{quest.id}</span>
+                                                    <span className="font-bold text-slate-900 dark:text-slate-100 text-sm line-clamp-1">{quest.title}</span>
+                                                    <span className="text-[11px] text-slate-500 font-mono mt-0.5">{quest.id}</span>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
@@ -86,15 +88,22 @@ export default async function ManageQuestsPage({ searchParams }: ManageQuestsPag
                                                     <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                                                         {quest.category}
                                                     </span>
-                                                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
-                                                        {quest.difficulty}
-                                                    </span>
+                                                    <DifficultyBadge difficulty={quest.difficulty} />
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 text-right">
-                                                <span className="text-sm font-mono text-slate-600 dark:text-slate-400">
-                                                    {quest._count.snatches}/{quest.maxSnatchers}
-                                                </span>
+                                            <td className="px-6 py-4 text-center">
+                                                <div className="inline-flex items-center justify-center gap-1.5 font-bold text-slate-700 dark:text-slate-300">
+                                                    <span>{quest.points}</span>
+                                                    <img src="/icon.png" alt="XP" className="w-5 h-5 object-contain" />
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4 text-center">
+                                                <div className="inline-flex items-center justify-center gap-1.5 text-slate-600 dark:text-slate-400">
+                                                    <span className="material-symbols-outlined text-[18px] text-slate-400">group</span>
+                                                    <span className="text-sm font-bold">
+                                                        {quest._count.snatches}/{quest.maxSnatchers}
+                                                    </span>
+                                                </div>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <StatusBadge status={quest.status} />
@@ -127,6 +136,26 @@ export default async function ManageQuestsPage({ searchParams }: ManageQuestsPag
     );
 }
 
+function DifficultyBadge({ difficulty }: { difficulty: string }) {
+    const d = difficulty.toLowerCase();
+    let displayClass = "";
+    if (d === 'beginner') {
+        displayClass = "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800/50";
+    } else if (d === 'intermediate') {
+        displayClass = "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50";
+    } else if (d === 'advanced' || d === 'advance') { // Handling potential typo in data
+        displayClass = "bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-800/50";
+    } else {
+        displayClass = "bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700";
+    }
+
+    return (
+        <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold capitalize ${displayClass}`}>
+            {difficulty}
+        </span>
+    );
+}
+
 function StatusBadge({ status }: { status: string }) {
     const s = status.toLowerCase();
     if (s === 'active') {
@@ -138,8 +167,8 @@ function StatusBadge({ status }: { status: string }) {
         );
     } else if (s === 'draft') {
         return (
-            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
-                <span className="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-800/50">
+                <span className="w-1.5 h-1.5 rounded-full bg-yellow-500"></span>
                 Draft
             </span>
         );

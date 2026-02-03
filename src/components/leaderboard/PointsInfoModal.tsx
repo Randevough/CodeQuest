@@ -3,7 +3,6 @@
 
 import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
-import PointsIcon from '@/app/icon.png'
 
 export function PointsInfoModal() {
     const [isOpen, setIsOpen] = useState(false)
@@ -55,7 +54,7 @@ export function PointsInfoModal() {
                         <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-slate-800">
                             <h3 id="modal-title" className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                                 Point & Ranking Rules
-                                <Image src={PointsIcon} alt="Points" width={20} height={20} className="object-contain" />
+                                <Image src="/icon.png" alt="Points" width={20} height={20} className="object-contain" />
                             </h3>
                             <button
                                 onClick={() => setIsOpen(false)}
@@ -76,7 +75,7 @@ export function PointsInfoModal() {
                                     <div>
                                         <h4 className="font-semibold text-slate-900 dark:text-white mb-1">Approved Quests Only</h4>
                                         <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                                            Points <span className="inline-flex align-baseline translate-y-0.5"><Image src={PointsIcon} alt="Points" width={14} height={14} className="object-contain" /></span> displayed on the leaderboard are strictly from quests that have been <strong className="text-slate-900 dark:text-slate-200 font-medium">'Approved'</strong> by the Admin team.
+                                            Points <span className="inline-flex align-baseline translate-y-0.5"><Image src="/icon.png" alt="Points" width={14} height={14} className="object-contain" /></span> displayed on the leaderboard are strictly from quests that have been <strong className="text-slate-900 dark:text-slate-200 font-medium">'Approved'</strong> by the Admin team.
                                         </p>
                                     </div>
                                 </div>

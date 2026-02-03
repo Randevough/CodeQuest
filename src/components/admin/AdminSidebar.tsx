@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAdminSidebar } from './AdminSidebarContext';
 import Image from 'next/image';
-import PointsIcon from '@/app/icon.png';
 
 interface AdminSidebarProps {
     memberCount?: number;
@@ -97,7 +96,7 @@ export function AdminSidebar({ memberCount = 0, submissionCount = 0 }: AdminSide
                 </div>
                 <div className="p-4 border-t border-border-light dark:border-border-dark flex flex-col gap-3">
                     <div className="bg-slate-50 dark:bg-slate-800/20 text-slate-600 dark:text-slate-300 px-3 py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 border border-slate-200 dark:border-slate-800/50">
-                        <Image src={PointsIcon} alt="Points" width={14} height={14} className="object-contain" />
+                        <Image src="/icon.png" alt="Points" width={14} height={14} className="object-contain" />
                         <span>450 pts</span>
                     </div>
                     <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-colors">

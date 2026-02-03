@@ -294,7 +294,7 @@ export async function getQuests({
         // Fetch Quests
         const quests = await prisma.quest.findMany({
             where,
-            orderBy: { createdAt: 'desc' },
+            orderBy: { updatedAt: 'desc' }, // Updated to sort by latest modified
             skip: offset,
             take: limit,
             include: {
@@ -340,21 +340,6 @@ export async function updateQuestStatus(questId: string, newStatus: string) {
 
 export async function deleteQuest(questId: string) {
     try {
-        // Option 1: Hard Delete (might fail if foreign keys exist)
-        // Option 2: Soft Delete (set status to 'Deleted' or 'Archived')
-        // Let's use clean delete if possible, or maybe cascade? 
-        // For now, let's try delete. If snatches exist, it might error unless cascade is set.
-        // Prisma schema doesn't show Cascade on Snatch->Quest relation in the view I saw earlier?
-        // Let's check schema relative to Snatch. 
-        // @relation(fields: [questId], references: [id]) (Default isn't cascade).
-        // Safest is to soft delete or archive.
-        // But user requirement said "Archive/Delete".
-
-        // Let's just delete for now and handle error if foreign key constraint.
-        // Or actually, delete dependent snatches first?
-        // Better: Set to "Closed" or "Archived" if it has applicants?
-        // Let's implement Delete.
-
         await prisma.snatch.deleteMany({ where: { questId } }); // Clean up snatches first
         await prisma.quest.delete({ where: { id: questId } });
 
@@ -415,5 +400,76 @@ export async function duplicateQuest(questId: string) {
     } catch (error) {
         console.error("Failed to duplicate quest:", error);
         return { success: false, error: "Failed to duplicate quest" };
+    }
+}
+
+export async function getQuestById(id: string) {
+    try {
+        const quest = await prisma.quest.findUnique({
+            where: { id },
+        });
+        if (!quest) return { success: false, error: 'Quest not found' };
+
+        // Parse requirements if string
+        let requirements: string[] = [];
+        if (typeof quest.requirements === 'string') {
+            try {
+                requirements = JSON.parse(quest.requirements);
+            } catch (e) {
+                requirements = [];
+            }
+        }
+
+        return { success: true, data: { ...quest, requirements } };
+    } catch (error) {
+        console.error('Failed to get quest:', error);
+        return { success: false, error: 'Failed to fetch quest' };
+    }
+}
+
+export async function updateQuest(questId: string, prevState: any, formData: FormData) {
+    const validatedResult = QuestSchema.safeParse({
+        title: formData.get('title'),
+        description: formData.get('description'),
+        category: formData.get('category'),
+        difficulty: formData.get('difficulty'),
+        points: formData.get('points'),
+        maxSnatchers: formData.get('maxSnatchers') || undefined,
+        deadline: formData.get('deadline') || undefined,
+        requirements: JSON.parse(formData.get('requirements') as string || '[]'),
+        resources: formData.get('resources'),
+    });
+
+    if (!validatedResult.success) {
+        console.error("Validation failed:", validatedResult.error);
+        const firstIssue = validatedResult.error.issues[0];
+        const errorMessage = firstIssue ? `${firstIssue.path.join('.')}: ${firstIssue.message}` : "Invalid input";
+        return { success: false, message: errorMessage };
+    }
+
+    const validatedFields = validatedResult.data;
+
+    try {
+        await prisma.quest.update({
+            where: { id: questId },
+            data: {
+                title: validatedFields.title,
+                description: validatedFields.description,
+                category: validatedFields.category,
+                difficulty: validatedFields.difficulty,
+                points: validatedFields.points,
+                maxSnatchers: validatedFields.maxSnatchers || 1,
+                deadline: validatedFields.deadline ? new Date(validatedFields.deadline) : null,
+                requirements: JSON.stringify(validatedFields.requirements),
+                resources: validatedFields.resources,
+            },
+        });
+
+        revalidatePath('/admin/manage-quests');
+        return { success: true, message: 'Quest updated successfully' };
+
+    } catch (error) {
+        console.error('Failed to update quest:', error);
+        return { success: false, message: 'Failed to update quest' };
     }
 }

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import Image from 'next/image';
-import PointsIcon from '@/app/icon.png';
 import { reviewSubmission } from '@/actions/submission';
 import { toast } from 'sonner';
 
@@ -136,7 +135,7 @@ export function SubmissionReviewModal({ isOpen, onClose, snatch }: SubmissionRev
                                         <div className="flex justify-between items-start gap-4">
                                             <h4 className="font-bold text-slate-900 dark:text-white leading-tight">{snatch.quest.title}</h4>
                                             <span className="bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-3 py-1.5 rounded-full text-[11px] font-extrabold border border-amber-200 dark:border-amber-800/50 flex items-center gap-1.5 whitespace-nowrap shadow-sm">
-                                                <Image src={PointsIcon} alt="Points" width={14} height={14} className="object-contain" />
+                                                <Image src="/icon.png" alt="Points" width={14} height={14} className="object-contain" />
                                                 {snatch.quest.points} pts
                                             </span>
                                         </div>
