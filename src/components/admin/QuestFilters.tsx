@@ -9,7 +9,7 @@ export function QuestFilters() {
     const searchParams = useSearchParams();
     const [isPending, startTransition] = useTransition();
 
-    const initialStatus = searchParams.get('status') || 'Active';
+    const initialStatus = searchParams.get('status') || 'All';
     const initialSearch = searchParams.get('q') || '';
 
     const [status, setStatus] = useState(initialStatus);
@@ -58,7 +58,7 @@ export function QuestFilters() {
             </div>
             <div className="flex flex-wrap items-center gap-2">
                 <div className="flex items-center bg-white dark:bg-slate-800 rounded-md p-1 border border-slate-200 dark:border-slate-700 shadow-sm h-9">
-                    {['Active', 'Draft', 'Closed'].map((s) => (
+                    {['All', 'Active', 'Draft', 'Closed'].map((s) => (
                         <button
                             key={s}
                             onClick={() => handleStatusChange(s)}

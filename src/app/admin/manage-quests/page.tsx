@@ -16,7 +16,7 @@ interface ManageQuestsPageProps {
 export default async function ManageQuestsPage({ searchParams }: ManageQuestsPageProps) {
     const params = await searchParams;
     const page = Number(params.page) || 1;
-    const status = params.status || 'Active';
+    const status = params.status || 'All';
     const query = params.q || '';
 
     // TODO: Update getQuests to support sorting by updatedAt desc

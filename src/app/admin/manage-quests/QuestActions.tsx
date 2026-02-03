@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { duplicateQuest, deleteQuest } from '@/actions/quest';
+import { duplicateQuest, deleteQuest, updateQuestStatus } from '@/actions/quest';
 import { toast } from 'sonner';
 import { DeleteQuestModal } from '@/components/admin/DeleteQuestModal';
 
@@ -45,6 +45,25 @@ export function QuestActions({ questId }: QuestActionsProps) {
         } catch (error) {
             console.error("Failed to duplicate", error);
             toast.error("Failed to duplicate quest");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handlePublish = async () => {
+        setIsLoading(true);
+        setIsOpen(false);
+        try {
+            const res = await updateQuestStatus(questId, 'Active');
+            if (res.success) {
+                toast.success("Quest published successfully");
+                router.refresh();
+            } else {
+                toast.error(res.error || "Failed to publish quest");
+            }
+        } catch (error) {
+            console.error("Failed to publish", error);
+            toast.error("Failed to publish quest");
         } finally {
             setIsLoading(false);
         }
@@ -99,6 +118,13 @@ export function QuestActions({ questId }: QuestActionsProps) {
                             <span className="material-symbols-outlined text-[18px]">edit</span>
                             Edit Quest
                         </Link>
+                        <button
+                            onClick={handlePublish}
+                            className="flex items-center px-4 py-2 text-sm text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 w-full text-left gap-2"
+                        >
+                            <span className="material-symbols-outlined text-[18px]">publish</span>
+                            Publish
+                        </button>
                         <button
                             onClick={handleDuplicate}
                             className="flex items-center px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 w-full text-left gap-2"

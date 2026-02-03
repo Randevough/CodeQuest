@@ -252,6 +252,7 @@ export async function createQuest(prevState: any, formData: FormData) {
         });
 
         revalidatePath('/admin/manage-quests');
+        revalidatePath('/'); // Update Explore Page
         return { success: true, message: 'Quest created successfully', questId: quest.id };
 
     } catch (error) {
@@ -331,6 +332,7 @@ export async function updateQuestStatus(questId: string, newStatus: string) {
             data: { status: newStatus }
         });
         revalidatePath('/admin/manage-quests');
+        revalidatePath('/');
         return { success: true };
     } catch (error) {
         console.error("Failed to update quest status:", error);
@@ -466,6 +468,7 @@ export async function updateQuest(questId: string, prevState: any, formData: For
         });
 
         revalidatePath('/admin/manage-quests');
+        revalidatePath('/');
         return { success: true, message: 'Quest updated successfully' };
 
     } catch (error) {
