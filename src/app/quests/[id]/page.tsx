@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/db'
 import { notFound } from 'next/navigation'
-import { getUserActiveSnatches } from '@/actions/quest'
+import { getUserActiveSnatches, getQuestUserStatus } from '@/actions/quest'
 import Link from 'next/link'
 import { QuestAction } from '@/components/QuestAction'
 import { Header } from '@/components/Header'
@@ -48,8 +48,11 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
     }
 
     // Check if user has snatched this quest
+    // Check if user has snatched this quest
     const activeSnatches = await getUserActiveSnatches();
     const isSnatched = activeSnatches.includes(quest.id);
+    const userStatus = await getQuestUserStatus(quest.id);
+    const isPending = userStatus?.status === 'SUBMITTED';
 
     // Parse Requirements (Checklist)
     let requirements: string[] = [];
@@ -92,8 +95,11 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                                         <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
                                             {quest.title}
                                         </h1>
-                                        <span className={`px-2.5 py-1 text-[11px] font-bold uppercase rounded-full border align-middle ${isSnatched ? 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800' : 'bg-gray-100 text-gray-700 border-gray-200'}`}>
-                                            {isSnatched ? 'Active' : 'Available'}
+                                        <span className={`px-2.5 py-1 text-[11px] font-bold uppercase rounded-full border align-middle ${isPending ? 'bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800' :
+                                            isSnatched ? 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800' :
+                                                'bg-gray-100 text-gray-700 border-gray-200'
+                                            }`}>
+                                            {isPending ? 'Pending' : isSnatched ? 'Active' : 'Available'}
                                         </span>
                                     </div>
                                     <div className="flex flex-wrap gap-3 items-center">
@@ -201,10 +207,12 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                                 {/* Submission Section or Join/Drop Actions */}
                                 <section className="border-t border-slate-100 dark:border-slate-800 pt-8 mt-10">
                                     <div className="flex items-center gap-2 mb-6">
-                                        <h3 className="text-xl font-bold text-slate-900 dark:text-white">Submit Your Quest!</h3>
+                                        <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+                                            {isPending ? 'Mission Logged' : 'Submit Your Quest'}
+                                        </h3>
                                     </div>
 
-                                    <QuestAction questId={quest.id} isSnatched={isSnatched} />
+                                    <QuestAction questId={quest.id} isSnatched={isSnatched} userStatus={userStatus} />
 
                                 </section>
                             </div>
@@ -276,7 +284,7 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                         {/* Help / Discord */}
                         <div className="bg-gradient-to-br from-[#EA580C] to-[#FB923C] rounded-xl shadow-[0_4px_6px_-1px_rgb(0_0_0_/_0.05)] p-6 text-white">
                             <h4 className="text-lg font-bold mb-2">Need a teammate?</h4>
-                            <p className="text-white/90 text-sm mb-6 leading-relaxed">
+                            <p className="text-white/90 text-sm mb-4 leading-relaxed">
                                 Most advanced quests are easier with a partner. Check Discord to find a buddy.
                             </p>
 

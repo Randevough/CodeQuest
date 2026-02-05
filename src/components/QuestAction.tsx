@@ -1,11 +1,16 @@
 'use client'
 
 import { useState } from 'react'
-import { joinQuest, dropQuest } from '@/actions/quest'
+import { joinQuest, submitQuest } from '@/actions/quest'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
-export function QuestAction({ questId, isSnatched }: { questId: string, isSnatched: boolean }) {
+interface UserStatus {
+    status: string
+    submissionUrl: string | null
+}
+
+export function QuestAction({ questId, isSnatched, userStatus }: { questId: string, isSnatched: boolean, userStatus: UserStatus | null }) {
     const [loading, setLoading] = useState(false)
     const [showJoinModal, setShowJoinModal] = useState(false)
     const router = useRouter()
@@ -29,6 +34,33 @@ export function QuestAction({ questId, isSnatched }: { questId: string, isSnatch
         }
     }
 
+    const handleSubmit = async () => {
+        const input = document.getElementById('repo-url') as HTMLInputElement
+        const url = input?.value
+
+        if (!url) {
+            toast.error('Please enter a URL')
+            return
+        }
+
+        setLoading(true)
+        try {
+            const result = await submitQuest(questId, url)
+            if (result.success) {
+                toast.success('Quest Submitted! Retrieval Drones dispatched.')
+                router.refresh()
+            } else {
+                toast.error(result.error as string)
+            }
+        } catch (e) {
+            toast.error('Submission failed')
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const isPending = userStatus?.status === 'SUBMITTED'
+
     return (
         <>
             {/* If Snatched, show Submission Form (Mocked) */}
@@ -43,21 +75,42 @@ export function QuestAction({ questId, isSnatched }: { questId: string, isSnatch
                                         <span className="material-symbols-outlined icon-filled text-[20px]">link</span>
                                     </span>
                                     <input
-                                        className="block w-full pl-10 pr-3 py-2.5 bg-white dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-orange-600 focus:border-transparent transition-shadow"
+                                        className="block w-full pl-10 pr-3 py-2.5 bg-white dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-orange-600 focus:border-transparent transition-shadow disabled:opacity-60 disabled:cursor-not-allowed"
                                         id="repo-url"
                                         placeholder="https://your-project-link.com"
                                         type="url"
+                                        defaultValue={userStatus?.submissionUrl || ''}
+                                        disabled={isPending}
                                     />
                                 </div>
-                                <button className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-2.5 px-6 rounded-lg transition-all shadow-lg shadow-orange-500/20 active:scale-95 flex items-center justify-center gap-2">
-                                    <span className="material-symbols-outlined text-[20px]">send</span>
-                                    Submit Quest
+                                <button
+                                    onClick={handleSubmit}
+                                    disabled={loading || isPending}
+                                    className={`w-full font-medium py-2.5 px-6 rounded-lg transition-all flex items-center justify-center gap-2 ${isPending
+                                        ? 'bg-slate-300 dark:bg-slate-700 text-slate-500 cursor-not-allowed'
+                                        : 'bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/20 active:scale-95'
+                                        }`}
+                                >
+                                    {isPending ? (
+                                        <>
+                                            <span className="material-symbols-outlined text-[20px]">hourglass_empty</span>
+                                            Awaiting Evaluation
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span className="material-symbols-outlined text-[20px]">send</span>
+                                            {loading ? 'Submitting...' : 'Submit Quest'}
+                                        </>
+                                    )}
                                 </button>
                             </div>
                         </div>
                     </div>
                     <p className="text-xs text-slate-500 text-center sm:text-left">
-                        Submissions are manually reviewed by our Admin team. Ensure all requirements are met before deployment.
+                        {isPending
+                            ? "Your solution is currently being evaluated by the Admin Command Center. You will be notified once the review is complete."
+                            : "Submissions are manually reviewed by our Admin team. Ensure all requirements are met before deployment."
+                        }
                     </p>
                 </div>
             ) : (

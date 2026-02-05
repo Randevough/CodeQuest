@@ -110,13 +110,66 @@ export async function getUserActiveSnatches() {
     const snatches = await prisma.snatch.findMany({
         where: {
             userId: user.id,
-            status: 'ACTIVE'
+            userId: user.id,
+            status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED'] }
         },
         select: {
             questId: true
         }
     });
     return snatches.map(s => s.questId);
+}
+
+export async function getQuestUserStatus(questId: string) {
+    const user = await getCurrentUser();
+    if (!user) return null;
+
+    const snatch = await prisma.snatch.findUnique({
+        where: {
+            userId_questId: {
+                userId: user.id,
+                questId: questId
+            }
+        },
+        select: {
+            status: true,
+            submissionUrl: true
+        }
+    });
+
+    if (!snatch) return null;
+    return snatch;
+}
+
+export async function submitQuest(questId: string, submissionUrl: string) {
+    const user = await getCurrentUser();
+    if (!user) return { success: false, error: "Unauthorized" };
+
+    if (!submissionUrl || !submissionUrl.startsWith('http')) {
+        return { success: false, error: "Please provide a valid URL" };
+    }
+
+    try {
+        await prisma.snatch.update({
+            where: {
+                userId_questId: {
+                    userId: user.id,
+                    questId: questId
+                }
+            },
+            data: {
+                status: 'SUBMITTED',
+                submissionUrl: submissionUrl
+            }
+        });
+
+        revalidatePath('/quests/[id]');
+        revalidatePath('/admin/dashboard');
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to submit quest:", error);
+        return { success: false, error: "Failed to submit quest" };
+    }
 }
 
 export async function dropQuest(questId: string) {
