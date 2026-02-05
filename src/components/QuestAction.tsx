@@ -36,7 +36,7 @@ export function QuestAction({ questId, isSnatched }: { questId: string, isSnatch
                 <div className="grid grid-cols-1 gap-6">
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5" htmlFor="repo-url">GitHub Repository URL</label>
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5" htmlFor="repo-url">Project Repository URL</label>
                             <div className="flex flex-col gap-3 mb-4">
                                 <div className="relative w-full">
                                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
@@ -45,19 +45,19 @@ export function QuestAction({ questId, isSnatched }: { questId: string, isSnatch
                                     <input
                                         className="block w-full pl-10 pr-3 py-2.5 bg-white dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-orange-600 focus:border-transparent transition-shadow"
                                         id="repo-url"
-                                        placeholder="https://github.com/username/repo"
+                                        placeholder="https://your-project-link.com"
                                         type="url"
                                     />
                                 </div>
                                 <button className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-2.5 px-6 rounded-lg transition-all shadow-lg shadow-orange-500/20 active:scale-95 flex items-center justify-center gap-2">
                                     <span className="material-symbols-outlined text-[20px]">send</span>
-                                    Send for Review
+                                    Submit Quest
                                 </button>
                             </div>
                         </div>
                     </div>
                     <p className="text-xs text-slate-500 text-center sm:text-left">
-                        Submissions are reviewed automatically. Ensure your test coverage meets the requirements before sending.
+                        Submissions are manually reviewed by our Admin team. Ensure all requirements are met before deployment.
                     </p>
                 </div>
             ) : (
