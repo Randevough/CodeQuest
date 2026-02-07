@@ -57,12 +57,11 @@ export async function joinQuest(questId: string) {
             }
 
             // 3. Check quest limits
-            // 3. Check quest limits
-            // We need to count only ACTIVE snatches.
+            // We need to count ACTIVE AND COMPLETED snatches to strictly enforce maxSnatchers
             const currentActiveSnatchers = await tx.snatch.count({
                 where: {
                     questId: questId,
-                    status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED'] }
+                    status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED', 'ARCHIVED'] }
                 }
             });
             const quest = await tx.quest.findUniqueOrThrow({
@@ -77,12 +76,12 @@ export async function joinQuest(questId: string) {
             const activeQuestsCount = await tx.snatch.count({
                 where: {
                     userId: user.id,
-                    status: 'ACTIVE'
+                    status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED'] }
                 }
             });
 
             if (activeQuestsCount >= 3) {
-                throw new Error("Maximum quest is 3, finish your quest first!");
+                throw new Error("Mission capacity reached. Finish an active quest to snatch more.");
             }
 
             // 4. Create snatch
@@ -119,6 +118,95 @@ export async function getUserActiveSnatches() {
     return snatches.map(s => s.questId);
 }
 
+export async function getAllUserQuestIds() {
+    const user = await getCurrentUser();
+    if (!user) return [];
+
+    const snatches = await prisma.snatch.findMany({
+        where: {
+            userId: user.id,
+            // Exclude DROPPED so they can be retaken? Or include everything?
+            // Assuming if you drop it, you might want to try again. 
+            // But if you completed/archived it, you shouldn't see it.
+            status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED', 'ARCHIVED'] }
+        },
+        select: {
+            questId: true
+        }
+    });
+    return snatches.map(s => s.questId);
+}
+
+export async function getWorkspaceQuests() {
+    const user = await getCurrentUser();
+    if (!user) return { success: false, error: 'Unauthorized' };
+
+    try {
+        // Fetch snatches with full quest details
+        const snatches = await prisma.snatch.findMany({
+            where: {
+                userId: user.id,
+                status: {
+                    in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED']
+                }
+            },
+            include: {
+                quest: {
+                    include: {
+                        _count: {
+                            select: {
+                                snatches: {
+                                    where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED'] } }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            orderBy: { updatedAt: 'desc' }
+        });
+
+        return { success: true, data: snatches };
+    } catch (error) {
+        console.error("Failed to fetch workspace quests:", error);
+        return { success: false, error: "Failed to fetch quests" };
+    }
+}
+
+export async function archiveQuest(questId: string) {
+    const user = await getCurrentUser();
+    if (!user) return { success: false, error: 'Unauthorized' };
+
+    try {
+        const snatch = await prisma.snatch.findUnique({
+            where: {
+                userId_questId: {
+                    userId: user.id,
+                    questId: questId
+                }
+            }
+        });
+
+        if (!snatch) return { success: false, error: 'Quest not found in your list' };
+
+        // Only allow archiving if completed/accepted
+        if (!['COMPLETED', 'ACCEPTED'].includes(snatch.status)) {
+            return { success: false, error: 'Only completed quests can be archived' };
+        }
+
+        await prisma.snatch.update({
+            where: { id: snatch.id },
+            data: { status: 'ARCHIVED' }
+        });
+
+        revalidatePath('/workspace');
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to archive quest:", error);
+        return { success: false, error: "Failed to archive quest" };
+    }
+}
+
 export async function getQuestUserStatus(questId: string) {
     const user = await getCurrentUser();
     if (!user) return null;
@@ -132,7 +220,8 @@ export async function getQuestUserStatus(questId: string) {
         },
         select: {
             status: true,
-            submissionUrl: true
+            submissionUrl: true,
+            feedback: true
         }
     });
 

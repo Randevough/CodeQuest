@@ -46,17 +46,42 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }),
     ],
     callbacks: {
-        async jwt({ token, user }) {
+        async jwt({ token, user, trigger, session }) {
             if (user) {
+                token.sub = user.id
                 token.role = user.role
                 token.points = user.points
                 token.avatar = user.avatar
             }
+
+            // If we have a user ID, fetch the latest data from the database
+            if (token.sub) {
+                try {
+                    const freshUser = await prisma.user.findUnique({
+                        where: { id: token.sub },
+                        select: {
+                            role: true,
+                            points: true,
+                            avatar: true
+                        }
+                    });
+
+                    if (freshUser) {
+                        token.role = freshUser.role;
+                        token.points = freshUser.points;
+                        token.avatar = freshUser.avatar;
+                    }
+                } catch (error) {
+                    console.error("Error fetching fresh user data in JWT callback:", error);
+                }
+            }
+
             return token
         },
         async session({ session, token }) {
             if (session.user) {
-                session.user.role = token.role
+                session.user.id = token.sub as string
+                session.user.role = token.role as string
                 session.user.points = token.points as number
                 session.user.avatar = token.avatar as string | null
             }

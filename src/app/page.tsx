@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/db'
 import { QuestCard } from '@/components/QuestCard'
 import { QuestSearch } from '@/components/QuestSearch'
-import { getUserActiveSnatches } from '@/actions/quest'
+import { getUserActiveSnatches, getAllUserQuestIds } from '@/actions/quest'
 import Link from 'next/link'
 import { LoginToast } from '@/components/LoginToast'
 import { Header } from '@/components/Header'
@@ -52,12 +52,12 @@ async function getQuests(searchParams: { q?: string, difficulty?: string, sort?:
     whereClause = Prisma.sql`${whereClause} AND "id" NOT IN (${Prisma.join(excludedIds)})`
   }
 
-  // 4. Availability Check (The Core Fix)
-  // Check if count of ACTIVE snatches is less than maxSnatchers
+  // 4. Availability Check (Refined: "Done" means "Taken")
+  // Check if count of ALL non-dropped snatches (Active + Completed) is less than maxSnatchers
   whereClause = Prisma.sql`${whereClause} AND "status" = 'Active' AND (
     SELECT COUNT(*) FROM "Snatch" 
     WHERE "Snatch"."questId" = "Quest"."id" 
-    AND "Snatch"."status" = 'ACTIVE'
+    AND "Snatch"."status" IN ('ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED', 'ARCHIVED')
   ) < "maxSnatchers"`
 
   // Sorting
@@ -182,11 +182,13 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
   // 1. Get my active quests first (needed for exclusion)
   const myActiveQuests = await getMyActiveQuests();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const myActiveIds = myActiveQuests.map((q: any) => q.id);
 
-  // 2. Get filtered available quests
+  // 2. Get ALL interacted IDs for exclusion from board (Active + Completed + Archived)
+  const allExcludedIds = await getAllUserQuestIds();
+
+  // 3. Get filtered available quests
   // Now passing excluded IDs to handle filtering in DB
-  const { quests: availableQuests, total, limit } = await getQuests(params, myActiveIds);
+  const { quests: availableQuests, total, limit } = await getQuests(params, allExcludedIds);
 
   const totalPages = Math.ceil(total / limit)
 
