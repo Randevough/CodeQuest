@@ -62,7 +62,7 @@ export async function joinQuest(questId: string) {
             const currentActiveSnatchers = await tx.snatch.count({
                 where: {
                     questId: questId,
-                    status: 'ACTIVE'
+                    status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED'] }
                 }
             });
             const quest = await tx.quest.findUniqueOrThrow({
@@ -110,7 +110,6 @@ export async function getUserActiveSnatches() {
     const snatches = await prisma.snatch.findMany({
         where: {
             userId: user.id,
-            userId: user.id,
             status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED'] }
         },
         select: {
@@ -145,30 +144,64 @@ export async function submitQuest(questId: string, submissionUrl: string) {
     const user = await getCurrentUser();
     if (!user) return { success: false, error: "Unauthorized" };
 
-    if (!submissionUrl || !submissionUrl.startsWith('http')) {
-        return { success: false, error: "Please provide a valid URL" };
+    // Strict URL Validation
+    const urlSchema = z.string().url().max(255); // Prevent DB overflow
+    const urlCheck = urlSchema.safeParse(submissionUrl);
+    if (!urlCheck.success) {
+        return { success: false, error: "Please provide a valid URL (max 255 chars)" };
     }
 
     try {
-        await prisma.snatch.update({
-            where: {
-                userId_questId: {
-                    userId: user.id,
-                    questId: questId
-                }
-            },
-            data: {
-                status: 'SUBMITTED',
-                submissionUrl: submissionUrl
+        const result = await prisma.$transaction(async (tx) => {
+            // 1. Fetch Quest & Snatch details with Locking would be deal, but standard read is fine here
+            const quest = await tx.quest.findUnique({
+                where: { id: questId },
+                select: { deadline: true, status: true }
+            });
+
+            if (!quest) throw new Error("Quest not found");
+
+            // 2. Deadline Check (The Late Hero)
+            if (quest.deadline && new Date() > quest.deadline) {
+                throw new Error("Mission Deadline Exceeded. Submission Rejected.");
             }
+
+            // 3. Status Check (Prevent Overwrite)
+            const activeSnatch = await tx.snatch.findUnique({
+                where: {
+                    userId_questId: {
+                        userId: user.id,
+                        questId: questId
+                    }
+                }
+            });
+
+            if (!activeSnatch) throw new Error("You have not joined this quest.");
+
+            if (['ACCEPTED', 'COMPLETED'].includes(activeSnatch.status)) {
+                throw new Error("Mission already completed. No further submissions allowed.");
+            }
+
+            // 4. Update
+            await tx.snatch.update({
+                where: { id: activeSnatch.id },
+                data: {
+                    status: 'SUBMITTED',
+                    submissionUrl: submissionUrl,
+                    updatedAt: new Date() // Explicitly mark update time
+                }
+            });
+
+            return { success: true };
         });
 
         revalidatePath('/quests/[id]');
         revalidatePath('/admin/dashboard');
-        return { success: true };
+        return result;
+
     } catch (error) {
         console.error("Failed to submit quest:", error);
-        return { success: false, error: "Failed to submit quest" };
+        return { success: false, error: error instanceof Error ? error.message : "Failed to submit quest" };
     }
 }
 
@@ -350,21 +383,36 @@ export async function getQuests({
             where,
             orderBy: { updatedAt: 'desc' }, // Updated to sort by latest modified
             skip: offset,
-            take: limit,
+            take: limit + 5, // Fetch a few more to handle filtering of full quests (basic mitigation)
             include: {
                 _count: {
-                    select: { snatches: true }
+                    select: {
+                        snatches: {
+                            where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED'] } }
+                        }
+                    }
                 }
             }
         });
 
-        // Total Count for Pagination
+        // Filter out full quests
+        const visibleQuests = quests.filter(q => {
+            const activeCount = q._count.snatches;
+            return activeCount < q.maxSnatchers;
+        });
+
+        // Slice to limit (if we fetched extra)
+        const paginatedQuests = visibleQuests.slice(0, limit);
+
+        // Total Count for Pagination (Approximation or separate query if needed)
+        // Accurate count of "non-full" quests is hard without raw SQL. 
+        // We will return totalQuests as is or maybe adjustable. For now keep as is.
         const totalQuests = await prisma.quest.count({ where });
         const totalPages = Math.ceil(totalQuests / limit);
 
         return {
             success: true,
-            data: quests,
+            data: paginatedQuests,
             pagination: {
                 currentPage: page,
                 totalPages,

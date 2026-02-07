@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import Image from 'next/image'
+import { useSession } from 'next-auth/react'
 
 
 interface HeaderProps {
@@ -11,6 +12,8 @@ interface HeaderProps {
 
 export function Header({ activePage }: HeaderProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const { data: session } = useSession()
+    const isAdmin = session?.user?.role === 'Admin'
 
     const getLinkClass = (page: string, isMobile = false) => {
         const baseClass = isMobile
@@ -43,6 +46,14 @@ export function Header({ activePage }: HeaderProps) {
                             <Link className={getLinkClass('explore')} href="/">Explore Quests</Link>
                             <Link className={getLinkClass('leaderboard')} href="/leaderboard">Leaderboard</Link>
                             <Link className={getLinkClass('workspace')} href="/workspace">My Workspace</Link>
+                            {isAdmin && (
+                                <Link
+                                    className="px-3 py-1.5 text-sm font-bold rounded-md transition-colors text-white bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
+                                    href="/admin/manage-quests"
+                                >
+                                    Admin Dashboard
+                                </Link>
+                            )}
                         </nav>
                     </div>
                     <div className="flex items-center gap-3">
@@ -54,11 +65,15 @@ export function Header({ activePage }: HeaderProps) {
                                 height={16}
                                 className="object-contain"
                             />
-                            <span>450 pts</span>
+                            <span>{session?.user?.points || 0} pts</span>
                         </div>
                         <button className="hidden sm:flex items-center gap-2 group ml-1">
                             <div className="size-8 rounded-full bg-gray-100 border border-gray-200 overflow-hidden group-hover:border-gray-300 transition-all flex items-center justify-center">
-                                <span className="material-symbols-outlined text-gray-400">person</span>
+                                {session?.user?.avatar ? (
+                                    <img src={session.user.avatar} alt="User" className="w-full h-full object-cover" />
+                                ) : (
+                                    <span className="material-symbols-outlined text-gray-400">person</span>
+                                )}
                             </div>
                         </button>
 
@@ -100,15 +115,28 @@ export function Header({ activePage }: HeaderProps) {
                         >
                             My Workspace
                         </Link>
+                        {isAdmin && (
+                            <Link
+                                className="block px-3 py-2 text-base font-bold rounded-md transition-colors text-slate-900 bg-slate-100 hover:bg-slate-200 dark:text-white dark:bg-slate-800 dark:hover:bg-slate-700"
+                                href="/admin/manage-quests"
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                Admin Dashboard
+                            </Link>
+                        )}
                         {/* Mobile User Info */}
                         <div className="pt-4 mt-4 border-t border-gray-100 dark:border-gray-800">
                             <div className="flex items-center px-3 gap-3">
                                 <div className="size-8 rounded-full bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center">
-                                    <span className="material-symbols-outlined text-gray-400">person</span>
+                                    {session?.user?.avatar ? (
+                                        <img src={session.user.avatar} alt="User" className="w-full h-full object-cover" />
+                                    ) : (
+                                        <span className="material-symbols-outlined text-gray-400">person</span>
+                                    )}
                                 </div>
                                 <div>
-                                    <div className="text-sm font-medium text-gray-900 dark:text-white">User Name</div>
-                                    <div className="text-xs text-gray-500 dark:text-gray-400">user@student.ac.id</div>
+                                    <div className="text-sm font-medium text-gray-900 dark:text-white">{session?.user?.name || 'User Name'}</div>
+                                    <div className="text-xs text-gray-500 dark:text-gray-400">{session?.user?.email || 'user@student.ac.id'}</div>
                                 </div>
                                 <div className="ml-auto flex items-center px-2 py-0.5 rounded-full bg-yellow-50 border border-yellow-200 text-yellow-700 text-xs font-semibold gap-1">
                                     <Image
@@ -118,7 +146,7 @@ export function Header({ activePage }: HeaderProps) {
                                         height={14}
                                         className="object-contain"
                                     />
-                                    <span>450 pts</span>
+                                    <span>{session?.user?.points || 0} pts</span>
                                 </div>
                             </div>
                         </div>

@@ -15,10 +15,10 @@ async function getQuest(id: string) {
         where: { id },
         include: {
             _count: {
-                select: { snatches: { where: { status: 'ACTIVE' } } }
+                select: { snatches: { where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED'] } } } }
             },
             snatches: {
-                where: { status: 'ACTIVE' },
+                where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED'] } },
                 include: {
                     user: {
                         select: {
@@ -89,18 +89,17 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                                     <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
                                         <span>Quest ID: #{quest.id}</span>
                                         <span className="text-slate-300 dark:text-slate-700">•</span>
-                                        <span className="uppercase">{quest.category || 'Core Infrastructure'}</span>
+                                        <span className={`px-2 py-0.5 rounded ${isPending ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' :
+                                                isSnatched ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
+                                                    'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                                            }`}>
+                                            {isPending ? 'Pending Review' : isSnatched ? 'Active' : 'Available'}
+                                        </span>
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
                                             {quest.title}
                                         </h1>
-                                        <span className={`px-2.5 py-1 text-[11px] font-bold uppercase rounded-full border align-middle ${isPending ? 'bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800' :
-                                            isSnatched ? 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800' :
-                                                'bg-gray-100 text-gray-700 border-gray-200'
-                                            }`}>
-                                            {isPending ? 'Pending' : isSnatched ? 'Active' : 'Available'}
-                                        </span>
                                     </div>
                                     <div className="flex flex-wrap gap-3 items-center">
                                         {/* Multicolor Difficulty Badge */}

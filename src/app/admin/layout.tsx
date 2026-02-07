@@ -10,7 +10,9 @@ export default async function AdminLayout({
     children: React.ReactNode;
 }) {
     const session = await auth();
-    if (!session || !session.user || session.user.email !== 'codequest@cyber-univ.ac.id') {
+
+    // Check if user is authenticated and has Admin role
+    if (!session || !session.user || session.user.role !== 'Admin') {
         redirect('/');
     }
 

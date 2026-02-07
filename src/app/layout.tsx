@@ -1,22 +1,10 @@
+import { Providers } from "@/components/Providers";
 import type { Metadata } from "next";
 // import { Geist, Geist_Mono } from "next/font/google"; // Removing Geist for Inter
 import "./globals.css";
 import { Toaster } from 'sonner';
 
-// const geistSans = Geist({
-//   variable: "--font-geist-sans",
-//   subsets: ["latin"],
-// });
-
-// const geistMono = Geist_Mono({
-//   variable: "--font-geist-mono",
-//   subsets: ["latin"],
-// });
-
-export const metadata: Metadata = {
-  title: "CodeQuest",
-  description: "Internal quest board for university coding club",
-};
+// ... (omitted code)
 
 export default function RootLayout({
   children,
@@ -34,8 +22,10 @@ export default function RootLayout({
         className="antialiased bg-gray-50 dark:bg-black text-gray-900 dark:text-white"
         suppressHydrationWarning
       >
-        {children}
-        <Toaster richColors position="top-center" />
+        <Providers>
+          {children}
+          <Toaster richColors position="top-center" />
+        </Providers>
       </body>
     </html>
   );
