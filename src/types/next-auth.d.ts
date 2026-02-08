@@ -11,6 +11,10 @@ declare module "next-auth" {
             role: string | null | undefined
             points: number
             avatar: string | null
+            image: string | null
+            bio: string | null
+            githubUrl: string | null
+            linkedinUrl: string | null
         } & DefaultSession["user"]
     }
 
@@ -18,6 +22,10 @@ declare module "next-auth" {
         role: string | null | undefined
         points: number
         avatar: string | null
+        image: string | null
+        bio: string | null
+        githubUrl: string | null
+        linkedinUrl: string | null
     }
 }
 
@@ -28,5 +36,9 @@ declare module "next-auth/jwt" {
         role: string | null | undefined
         points: number
         avatar: string | null
+        image: string | null
+        bio: string | null
+        githubUrl: string | null
+        linkedinUrl: string | null
     }
 }

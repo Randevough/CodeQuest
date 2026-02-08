@@ -49,10 +49,11 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
 
     // Check if user has snatched this quest
     // Check if user has snatched this quest
-    const activeSnatches = await getUserActiveSnatches();
-    const isSnatched = activeSnatches.includes(quest.id);
-    const userStatus = await getQuestUserStatus(quest.id);
-    const isPending = userStatus?.status === 'SUBMITTED';
+    const userStatus = await getQuestUserStatus(quest.id)
+    const activeStatuses = ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED']
+    const isSnatched = activeStatuses.includes(userStatus?.status || '')
+    const isPending = userStatus?.status === 'SUBMITTED'
+    const isCompleted = ['COMPLETED', 'ACCEPTED', 'ARCHIVED'].includes(userStatus?.status || '')
 
     // Parse Requirements (Checklist)
     let requirements: string[] = [];
@@ -89,11 +90,12 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                                     <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
                                         <span>Quest ID: #{quest.id}</span>
                                         <span className="text-slate-300 dark:text-slate-700">•</span>
-                                        <span className={`px-2 py-0.5 rounded ${isPending ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' :
+                                        <span className={`px-2 py-0.5 rounded ${isCompleted ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' :
+                                            isPending ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' :
                                                 isSnatched ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
                                                     'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
                                             }`}>
-                                            {isPending ? 'Pending Review' : isSnatched ? 'Active' : 'Available'}
+                                            {isCompleted ? 'Completed' : isPending ? 'Pending Review' : isSnatched ? 'Active' : 'Available'}
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-3">
@@ -104,18 +106,18 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                                     <div className="flex flex-wrap gap-3 items-center">
                                         {/* Multicolor Difficulty Badge */}
                                         {(() => {
-                                            const diff = (quest.difficulty || 'Advanced').toLowerCase();
-                                            let diffInfo = { color: 'bg-violet-50 border-violet-100 shadow-sm dark:bg-violet-900/20 dark:border-violet-800/30', text: 'text-violet-700 dark:text-violet-300' };
+                                            const d = (quest.difficulty || 'Beginner').toLowerCase();
+                                            let badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800/30';
 
-                                            if (diff === 'intermediate') {
-                                                diffInfo = { color: 'bg-blue-50 border-blue-100 dark:bg-blue-900/20 dark:border-blue-800/30', text: 'text-blue-700 dark:text-blue-300' };
-                                            } else if (diff === 'beginner') {
-                                                diffInfo = { color: 'bg-emerald-50 border-emerald-100 dark:bg-emerald-900/20 dark:border-emerald-800/30', text: 'text-emerald-700 dark:text-emerald-300' };
+                                            if (d === 'expert' || d === 'hard' || d === 'advanced') {
+                                                badgeClass = 'bg-violet-50 text-violet-700 border-violet-100 dark:bg-violet-900/20 dark:text-violet-300 dark:border-violet-800/30';
+                                            } else if (d === 'intermediate') {
+                                                badgeClass = 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800/30';
                                             }
 
                                             return (
-                                                <div className={`inline-flex items-center px-3 py-1 rounded-full border ${diffInfo.color}`}>
-                                                    <span className={`text-xs font-bold ${diffInfo.text} tracking-wide capitalize`}>{quest.difficulty || 'Advanced'}</span>
+                                                <div className={`inline-flex items-center px-3 py-1 rounded-full border ${badgeClass}`}>
+                                                    <span className="text-xs font-bold tracking-wide capitalize">{quest.difficulty || 'Advanced'}</span>
                                                 </div>
                                             );
                                         })()}
@@ -207,7 +209,7 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                                 <section className="border-t border-slate-100 dark:border-slate-800 pt-8 mt-10">
                                     <div className="flex items-center gap-2 mb-6">
                                         <h3 className="text-xl font-bold text-slate-900 dark:text-white">
-                                            {isPending ? 'Mission Logged' : 'Submit Your Quest'}
+                                            {isCompleted ? 'Mission Status' : isPending ? 'Mission Logged' : 'Submit Your Quest'}
                                         </h3>
                                     </div>
 

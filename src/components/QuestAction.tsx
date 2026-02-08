@@ -50,7 +50,7 @@ export function QuestAction({ questId, isSnatched, userStatus }: { questId: stri
                 toast.success('Quest Submitted! Retrieval Drones dispatched.')
                 router.refresh()
             } else {
-                toast.error(result.error as string)
+                toast.error((result as any).error)
             }
         } catch (e) {
             toast.error('Submission failed')
@@ -60,6 +60,33 @@ export function QuestAction({ questId, isSnatched, userStatus }: { questId: stri
     }
 
     const isPending = userStatus?.status === 'SUBMITTED'
+    const isCompleted = ['COMPLETED', 'ACCEPTED', 'ARCHIVED'].includes(userStatus?.status || '')
+
+    if (isCompleted) {
+        return (
+            <div className="p-6 bg-green-50 dark:bg-green-900/10 rounded-xl border border-green-100 dark:border-green-900/30 text-center">
+                <div className="flex flex-col items-center gap-2">
+                    <div className="size-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400 mb-2">
+                        <span className="material-symbols-outlined text-[24px]">trophy</span>
+                    </div>
+                    <h3 className="text-lg font-bold text-green-800 dark:text-green-300">Mission Accomplished!</h3>
+                    <p className="text-green-700 dark:text-green-400 mb-2">
+                        You have successfully completed this quest.
+                    </p>
+                    {userStatus?.submissionUrl && (
+                        <a
+                            href={userStatus.submissionUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs font-medium text-green-600 dark:text-green-400 hover:underline flex items-center gap-1"
+                        >
+                            View your submission <span className="material-symbols-outlined text-[14px]">open_in_new</span>
+                        </a>
+                    )}
+                </div>
+            </div>
+        )
+    }
 
     return (
         <>

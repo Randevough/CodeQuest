@@ -15,6 +15,10 @@ model User {
   email     String   @unique
   name      String?
   avatar    String?
+  image     String?
+  bio       String?
+  githubUrl String?
+  linkedinUrl String?
   handle    String?
   role      String?  @default("Member")
   password  String?

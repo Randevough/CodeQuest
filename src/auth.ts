@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials"
 import { prisma } from "@/lib/db"
 import bcrypt from "bcryptjs"
 import { z } from "zod"
+import { authConfig } from "./auth.config"
 
 async function getUser(email: string) {
     try {
@@ -17,6 +18,7 @@ async function getUser(email: string) {
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+    ...authConfig,
     providers: [
         Credentials({
             async authorize(credentials) {
@@ -62,7 +64,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                         select: {
                             role: true,
                             points: true,
-                            avatar: true
+                            avatar: true,
+                            // @ts-ignore: Prisma client not generated yet
+                            image: true,
+                            // @ts-ignore: Prisma client not generated yet
+                            bio: true,
+                            // @ts-ignore: Prisma client not generated yet
+                            githubUrl: true,
+                            // @ts-ignore: Prisma client not generated yet
+                            linkedinUrl: true
                         }
                     });
 
@@ -70,6 +80,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                         token.role = freshUser.role;
                         token.points = freshUser.points;
                         token.avatar = freshUser.avatar;
+                        // @ts-ignore: Prisma client not generated yet
+                        token.image = freshUser.image;
+                        // @ts-ignore: Prisma client not generated yet
+                        token.bio = freshUser.bio;
+                        // @ts-ignore: Prisma client not generated yet
+                        token.githubUrl = freshUser.githubUrl;
+                        // @ts-ignore: Prisma client not generated yet
+                        token.linkedinUrl = freshUser.linkedinUrl;
                     }
                 } catch (error) {
                     console.error("Error fetching fresh user data in JWT callback:", error);
@@ -84,6 +102,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 session.user.role = token.role as string
                 session.user.points = token.points as number
                 session.user.avatar = token.avatar as string | null
+                session.user.image = (token.image as string | null) || (token.avatar as string | null)
+                session.user.bio = token.bio as string | null
+                session.user.githubUrl = token.githubUrl as string | null
+                session.user.linkedinUrl = token.linkedinUrl as string | null
             }
             return session
         }

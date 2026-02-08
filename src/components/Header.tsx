@@ -67,7 +67,7 @@ export function Header({ activePage }: HeaderProps) {
                             />
                             <span>{session?.user?.points || 0} pts</span>
                         </div>
-                        <button className="hidden sm:flex items-center gap-2 group ml-1">
+                        <Link href="/profile" className="hidden sm:flex items-center gap-2 group ml-1">
                             <div className="size-8 rounded-full bg-gray-100 border border-gray-200 overflow-hidden group-hover:border-gray-300 transition-all flex items-center justify-center">
                                 {session?.user?.avatar ? (
                                     <img src={session.user.avatar} alt="User" className="w-full h-full object-cover" />
@@ -75,7 +75,7 @@ export function Header({ activePage }: HeaderProps) {
                                     <span className="material-symbols-outlined text-gray-400">person</span>
                                 )}
                             </div>
-                        </button>
+                        </Link>
 
                         {/* Mobile Menu Button */}
                         <button
