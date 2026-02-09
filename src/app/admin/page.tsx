@@ -9,6 +9,7 @@ export default async function AdminOverviewPage() {
     // Default empty state if fetch fails
     const stats = statsResult.success && statsResult.data ? statsResult.data : {
         totalMembers: 0,
+        totalAdmins: 0,
         activeQuests: 0,
         pendingReviews: 0,
         totalPoints: 0,
@@ -89,7 +90,7 @@ export default async function AdminOverviewPage() {
                             </div>
                             <div className="p-6 grid grid-cols-1 gap-4 flex-1">
                                 <Link href="/admin/manage-quests/create" className="group flex items-center gap-4 p-4 rounded-lg border border-border-light dark:border-border-dark hover:border-accent hover:bg-orange-50/50 dark:hover:bg-orange-900/10 transition-all text-left">
-                                    <div className="h-10 w-10 rounded-full bg-orange-100 dark:bg-orange-900/20 text-accent flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                    <div className="h-10 w-10 rounded-full bg-orange-500 text-white flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
                                         <span className="material-symbols-outlined">add_circle</span>
                                     </div>
                                     <div className="flex flex-col">
@@ -98,7 +99,7 @@ export default async function AdminOverviewPage() {
                                     </div>
                                 </Link>
                                 <Link href="/admin/submissions" className="group flex items-center gap-4 p-4 rounded-lg border border-border-light dark:border-border-dark hover:border-accent hover:bg-orange-50/50 dark:hover:bg-orange-900/10 transition-all text-left">
-                                    <div className="h-10 w-10 rounded-full bg-orange-100 dark:bg-orange-900/20 text-accent flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                    <div className="h-10 w-10 rounded-full bg-orange-500 text-white flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
                                         <span className="material-symbols-outlined">rate_review</span>
                                     </div>
                                     <div className="flex flex-col">
@@ -107,7 +108,7 @@ export default async function AdminOverviewPage() {
                                     </div>
                                 </Link>
                                 <Link href="/admin/members" className="group flex items-center gap-4 p-4 rounded-lg border border-border-light dark:border-border-dark hover:border-accent hover:bg-orange-50/50 dark:hover:bg-orange-900/10 transition-all text-left">
-                                    <div className="h-10 w-10 rounded-full bg-orange-100 dark:bg-orange-900/20 text-accent flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                    <div className="h-10 w-10 rounded-full bg-orange-500 text-white flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
                                         <span className="material-symbols-outlined">manage_accounts</span>
                                     </div>
                                     <div className="flex flex-col">

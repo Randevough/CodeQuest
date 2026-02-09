@@ -6,17 +6,21 @@ import { subDays, format, startOfDay, endOfDay } from 'date-fns';
 export async function getAdminDashboardStats() {
     try {
         // 1. Basic Stats
-        const [totalMembers, activeQuests, pendingReviews, totalPointsResult] = await Promise.all([
+        const [totalMembers, activeQuests, pendingReviews, acceptedSnatches] = await Promise.all([
             prisma.user.count({ where: { role: 'Member' } }),
             prisma.quest.count({ where: { status: 'Active' } }),
             prisma.snatch.count({ where: { status: 'SUBMITTED' } }),
-            prisma.user.aggregate({
-                _sum: { points: true },
-                where: { role: 'Member' }
+            prisma.snatch.findMany({
+                where: { status: 'ACCEPTED' },
+                select: {
+                    quest: {
+                        select: { points: true }
+                    }
+                }
             })
         ]);
 
-        const totalPoints = totalPointsResult._sum.points || 0;
+        const totalPoints = acceptedSnatches.reduce((acc, snatch) => acc + (snatch.quest?.points || 0), 0);
 
         // 2. Activity Trend (Last 30 Days)
         // Group snatches by date. Since SQLite doesn't support complex date grouping easily in Prisma,

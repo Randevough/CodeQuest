@@ -24,7 +24,14 @@ interface DifficultyData {
     value: number;
 }
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
+// Difficulty colors mapping
+// Difficulty colors mapping
+const DIFFICULTY_COLORS: Record<string, string> = {
+    'Beginner': '#10b981', // emerald-500
+    'Intermediate': '#3b82f6', // blue-500
+    'Advanced': '#8b5cf6', // violet-500
+};
+const DEFAULT_COLOR = '#94a3b8'; // slate-400
 
 export function ActivityTrendChart({ data }: { data: ActivityData[] }) {
     return (
@@ -79,10 +86,19 @@ export function DifficultyDistributionChart({ data }: { data: DifficultyData[] }
                         dataKey="value"
                     >
                         {data.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            <Cell
+                                key={`cell-${index}`}
+                                fill={DIFFICULTY_COLORS[entry.name] || DEFAULT_COLOR}
+                            />
                         ))}
                     </Pie>
-                    <Tooltip />
+                    <Tooltip
+                        contentStyle={{ backgroundColor: '#fff', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                        itemStyle={{ color: '#1e293b' }}
+                        wrapperStyle={{ zIndex: 1000 }}
+                        offset={20}
+                        cursor={{ fill: 'transparent' }}
+                    />
                     <Legend verticalAlign="bottom" height={36} />
                 </PieChart>
             </ResponsiveContainer>

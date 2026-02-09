@@ -8,9 +8,17 @@ import Image from 'next/image';
 interface AdminSidebarProps {
     memberCount?: number;
     submissionCount?: number;
+    user?: {
+        name: string | null;
+        email: string | null;
+        image: string | null;
+        avatar: string | null;
+        points: number;
+        handle: string | null;
+    } | null;
 }
 
-export function AdminSidebar({ memberCount = 0, submissionCount = 0 }: AdminSidebarProps) {
+export function AdminSidebar({ memberCount = 0, submissionCount = 0, user }: AdminSidebarProps) {
     const pathname = usePathname();
     const { isMobileOpen, closeMobileSidebar } = useAdminSidebar();
 
@@ -22,6 +30,20 @@ export function AdminSidebar({ memberCount = 0, submissionCount = 0 }: AdminSide
         }
         return "flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group";
     };
+
+    // Helper to get initials
+    const getInitials = (name: string | null) => {
+        const displayName = name || '?';
+        const parts = displayName.split(' ').filter(Boolean);
+        if (parts.length >= 2) {
+            return (parts[0][0] + parts[1][0]).toUpperCase();
+        }
+        return displayName.substring(0, 2).toUpperCase();
+    };
+
+    const userImage = user?.avatar || user?.image;
+    const userName = user?.name || user?.handle || 'Admin User';
+    const userEmail = user?.email || '';
 
     return (
         <>
@@ -97,15 +119,25 @@ export function AdminSidebar({ memberCount = 0, submissionCount = 0 }: AdminSide
                 <div className="p-4 border-t border-border-light dark:border-border-dark flex flex-col gap-3">
                     <div className="bg-slate-50 dark:bg-slate-800/20 text-slate-600 dark:text-slate-300 px-3 py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 border border-slate-200 dark:border-slate-800/50">
                         <Image src="/icon.png" alt="Points" width={14} height={14} className="object-contain" />
-                        <span>450 pts</span>
+                        <span>{user?.points?.toLocaleString() ?? 0} pts</span>
                     </div>
                     <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-colors">
-                        <div className="h-8 w-8 rounded bg-gradient-to-tr from-purple-500 to-indigo-500 flex items-center justify-center text-white text-xs font-bold">
-                            AD
-                        </div>
-                        <div className="flex flex-col">
-                            <span className="text-sm font-medium text-slate-900 dark:text-slate-100">Admin User</span>
-                            <span className="text-xs text-slate-500">codequest@cyber-univ.ac.id</span>
+                        {userImage ? (
+                            <Image
+                                src={userImage}
+                                alt={userName}
+                                width={32}
+                                height={32}
+                                className="rounded-full object-cover h-8 w-8 border border-slate-200 dark:border-slate-700"
+                            />
+                        ) : (
+                            <div className="h-8 w-8 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 font-bold text-xs border border-slate-200 dark:border-slate-600">
+                                {getInitials(userName)}
+                            </div>
+                        )}
+                        <div className="flex flex-col overflow-hidden">
+                            <span className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">{userName}</span>
+                            <span className="text-xs text-slate-500 truncate">{userEmail}</span>
                         </div>
                     </div>
                 </div>

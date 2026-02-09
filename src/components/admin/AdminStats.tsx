@@ -1,6 +1,17 @@
 'use client';
 
 import Image from 'next/image';
+import { useState } from 'react';
+
+// ... (StatsGrid and StatsProps remain unchanged)
+
+// ... (LeaderboardPreview remains unchanged, just need to ensure UserAvatar is defined before or after)
+
+// Define UserAvatar at the end or before LeaderboardPreview. 
+// Since I can't easily target "End of file" without a distinct anchor, I'll replace the last closing brace of LeaderboardPreview and append MemberAvatar.
+// Wait, replacing the whole file content is expensive/risky.
+// I'll replace the import first.
+
 
 interface StatsProps {
     totalMembers: number;
@@ -36,12 +47,12 @@ export function StatsGrid({ stats }: { stats: StatsProps }) {
                 </div>
             </div>
             <div className="bg-surface-light dark:bg-surface-dark p-6 rounded-lg border border-border-light dark:border-border-dark shadow-sm">
-                <div className="text-slate-500 text-sm font-medium mb-2">Total Sparkles</div>
+                <div className="text-slate-500 text-sm font-medium mb-2">Total Points</div>
                 <div className="flex items-center gap-2">
                     <span className="text-3xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
                         {stats.totalPoints >= 1000 ? `${(stats.totalPoints / 1000).toFixed(1)}k` : stats.totalPoints}
                     </span>
-                    <span className="text-2xl">✨</span>
+                    <Image src="/icon.png" alt="Points" width={24} height={24} className="object-contain" />
                 </div>
             </div>
         </div>
@@ -57,18 +68,28 @@ interface LeaderboardUser {
 }
 
 export function LeaderboardPreview({ users }: { users: LeaderboardUser[] }) {
+    // Helper to get initials
+    const getInitials = (name: string | null, handle: string | null) => {
+        const displayName = name || handle || '?';
+        const parts = displayName.split(' ').filter(Boolean);
+        if (parts.length >= 2) {
+            return (parts[0][0] + parts[1][0]).toUpperCase();
+        }
+        return displayName.substring(0, 2).toUpperCase();
+    };
+
     return (
         <div className="bg-surface-light dark:bg-surface-dark rounded-lg border border-border-light dark:border-border-dark shadow-sm">
             <div className="px-6 py-4 border-b border-border-light dark:border-border-dark flex items-center justify-between">
                 <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Leaderboard Preview</h3>
-                <button className="text-sm text-slate-500 hover:text-slate-800 dark:hover:text-slate-300">View Full</button>
+                <button className="text-sm text-slate-500 hover:text-orange-500 transition-colors">View Full</button>
             </div>
             <div className="p-0">
                 <table className="w-full text-left border-collapse">
                     <thead className="bg-slate-50 dark:bg-slate-800/50 text-xs text-slate-500 uppercase font-semibold">
                         <tr>
                             <th className="px-6 py-3 w-16 text-center">Rank</th>
-                            <th className="px-6 py-3">Student</th>
+                            <th className="px-6 py-3">User</th>
                             <th className="px-6 py-3 text-right">Points</th>
                         </tr>
                     </thead>
@@ -93,27 +114,17 @@ export function LeaderboardPreview({ users }: { users: LeaderboardUser[] }) {
                                     </td>
                                     <td className="px-6 py-3">
                                         <div className="flex items-center gap-3">
-                                            {user.avatar ? (
-                                                <Image
-                                                    src={user.avatar}
-                                                    alt={user.name || 'User'}
-                                                    width={32}
-                                                    height={32}
-                                                    className="rounded-full border border-border-light"
-                                                />
-                                            ) : (
-                                                <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 font-bold text-xs">
-                                                    {(user.name || user.handle || '?').charAt(0).toUpperCase()}
-                                                </div>
-                                            )}
-
+                                            <UserAvatar name={user.name} handle={user.handle} avatar={user.avatar} />
                                             <span className="font-medium text-slate-900 dark:text-slate-100">
                                                 {user.name || user.handle || 'Anonymous'}
                                             </span>
                                         </div>
                                     </td>
                                     <td className="px-6 py-3 text-right font-bold text-slate-900 dark:text-slate-100">
-                                        {user.points.toLocaleString()} ✨
+                                        <div className="flex items-center justify-end gap-1">
+                                            {user.points.toLocaleString()}
+                                            <Image src="/icon.png" alt="Points" width={16} height={16} className="object-contain" />
+                                        </div>
                                     </td>
                                 </tr>
                             ))
@@ -121,6 +132,38 @@ export function LeaderboardPreview({ users }: { users: LeaderboardUser[] }) {
                     </tbody>
                 </table>
             </div>
+        </div>
+    );
+}
+
+function UserAvatar({ name, handle, avatar }: { name: string | null, handle: string | null, avatar: string | null }) {
+    const [imageError, setImageError] = useState(false);
+
+    const getInitials = (name: string | null, handle: string | null) => {
+        const displayName = name || handle || '?';
+        const parts = displayName.split(' ').filter(Boolean);
+        if (parts.length >= 2) {
+            return (parts[0][0] + parts[1][0]).toUpperCase();
+        }
+        return displayName.substring(0, 2).toUpperCase();
+    };
+
+    if (avatar && !imageError) {
+        return (
+            <Image
+                src={avatar}
+                alt={name || 'User'}
+                width={32}
+                height={32}
+                className="rounded-full border border-border-light object-cover aspect-square"
+                onError={() => setImageError(true)}
+            />
+        );
+    }
+
+    return (
+        <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 font-bold text-xs border border-slate-200 dark:border-slate-700">
+            {getInitials(name, handle)}
         </div>
     );
 }
