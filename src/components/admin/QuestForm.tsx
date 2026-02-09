@@ -15,9 +15,9 @@ interface QuestData {
     difficulty: string;
     points: number;
     maxSnatchers: number;
-    deadline?: Date | string;
+    deadline?: Date | string | null;
     requirements: string[];
-    resources?: string;
+    resources?: string | null;
 }
 
 interface QuestFormProps {

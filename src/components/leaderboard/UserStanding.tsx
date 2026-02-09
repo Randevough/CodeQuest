@@ -4,7 +4,7 @@ import { PointsInfoModal } from "./PointsInfoModal";
 import Image from "next/image";
 
 export async function UserStanding({ timeframe = 'all' }: { timeframe?: string }) {
-    const standing = await getLeaderboardStanding(timeframe);
+    const standing = await getLeaderboardStanding();
 
     if (!standing) {
         return (

@@ -13,7 +13,7 @@ export default async function LeaderboardPage(props: { searchParams: Promise<{ p
     const page = Number(searchParams.page) || 1
     const timeframe = searchParams.timeframe || 'all'
     const pageSize = 10
-    const { users, total } = await getLeaderboardUsers(page, pageSize, timeframe)
+    const { users, total } = await getLeaderboardUsers(page, pageSize)
 
     // Cast users to strict type if needed, or rely on implicit compatibility
     // In a real app we'd map/validate. For now we assume Prisma returns compatible types.
