@@ -122,16 +122,30 @@ export async function seedUsers(formData?: FormData) {
 export async function getLeaderboardUsers(page: number = 1, pageSize: number = 20) {
     const skip = (page - 1) * pageSize
 
-    const [users, total] = await Promise.all([
+    const [usersData, total] = await Promise.all([
         prisma.user.findMany({
             orderBy: {
                 points: 'desc'
+            },
+            include: {
+                _count: {
+                    select: {
+                        snatches: {
+                            where: { status: 'COMPLETED' }
+                        }
+                    }
+                }
             },
             skip,
             take: pageSize
         }),
         prisma.user.count()
     ])
+
+    const users = usersData.map(user => ({
+        ...user,
+        completedQuests: user._count.snatches
+    }))
 
     return { users, total }
 }

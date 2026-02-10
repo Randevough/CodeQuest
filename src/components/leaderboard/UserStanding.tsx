@@ -22,7 +22,7 @@ export async function UserStanding({ timeframe = 'all' }: { timeframe?: string }
             <div className="sticky top-24 bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-base font-bold text-slate-900 dark:text-white">Your Standing</h2>
-                    <span className="text-slate-400 dark:text-slate-500 material-symbols-outlined text-[20px]">info</span>
+                    <PointsInfoModal />
                 </div>
                 <div className="flex flex-col items-center mb-6">
                     <div className="size-16 rounded-full border-2 border-slate-100 dark:border-slate-700 p-0.5 mb-3 bg-white dark:bg-gray-800 flex items-center justify-center overflow-hidden">

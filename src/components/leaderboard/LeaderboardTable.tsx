@@ -64,7 +64,7 @@ export function LeaderboardTable({ users, page, pageSize }: LeaderboardTableProp
                                         </div>
                                         <div className="ml-4">
                                             <div className={`text-sm ${rank <= 3 ? 'font-bold' : 'font-medium'} text-slate-900 dark:text-white`}>{user.name}</div>
-                                            <div className={`text-xs ${rank === 1 ? 'text-yellow-700 dark:text-yellow-400 font-medium' : 'text-slate-500'}`}>{rank === 1 ? user.role : user.handle}</div>
+                                            <div className={`text-xs ${rank === 1 ? 'text-yellow-700 dark:text-yellow-400 font-medium' : 'text-slate-500'}`}>{rank === 1 ? user.role : user.email}</div>
                                         </div>
                                     </div>
                                 </td>

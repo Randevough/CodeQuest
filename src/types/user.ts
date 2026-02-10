@@ -6,4 +6,5 @@ export interface LeaderboardUser {
     handle: string
     points: number
     completedQuests: number
+    email: string
 }
