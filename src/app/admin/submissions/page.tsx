@@ -154,19 +154,20 @@ export default function SubmissionQueuePage() {
                                                 <td className="py-4 px-6">
                                                     <div className="flex items-center gap-4">
                                                         <div className="flex items-center gap-3">
-                                                            {snatch.user.avatar ? (
-                                                                <Image
-                                                                    alt={snatch.user.name}
-                                                                    width={36}
-                                                                    height={36}
-                                                                    className="rounded-full object-cover border border-slate-200 dark:border-slate-700"
-                                                                    src={snatch.user.avatar}
-                                                                />
-                                                            ) : (
-                                                                <div className="w-9 h-9 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-500">
-                                                                    {snatch.user.name?.charAt(0) || '?'}
-                                                                </div>
-                                                            )}
+                                                            <div className="relative w-10 h-10 flex-shrink-0">
+                                                                {snatch.user.avatar ? (
+                                                                    <Image
+                                                                        alt={snatch.user.name}
+                                                                        fill
+                                                                        className="rounded-full object-cover border border-slate-200 dark:border-slate-700"
+                                                                        src={snatch.user.avatar}
+                                                                    />
+                                                                ) : (
+                                                                    <div className="w-full h-full rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-600">
+                                                                        {snatch.user.name?.charAt(0) || '?'}
+                                                                    </div>
+                                                                )}
+                                                            </div>
                                                             <div className="flex flex-col">
                                                                 <span className="text-sm font-bold text-slate-900 dark:text-slate-100">{snatch.user.name}</span>
                                                                 <span className="text-xs text-slate-500">{snatch.user.email}</span>
