@@ -131,7 +131,7 @@ export async function getLeaderboardUsers(page: number = 1, pageSize: number = 2
                 _count: {
                     select: {
                         snatches: {
-                            where: { status: 'COMPLETED' }
+                            where: { status: { in: ['COMPLETED', 'ACCEPTED', 'ARCHIVED'] } }
                         }
                     }
                 }

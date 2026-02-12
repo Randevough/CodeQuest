@@ -7,7 +7,12 @@ import { redirect } from 'next/navigation'
 
 export default async function ProfilePage() {
     const session = await auth()
-    const user = session?.user
+    if (!session?.user?.email) redirect('/login')
+
+    const user = await prisma.user.findUnique({
+        where: { email: session.user.email }
+    })
+
     if (!user) redirect('/login')
 
     // Fetch all relevant snatches for the user
