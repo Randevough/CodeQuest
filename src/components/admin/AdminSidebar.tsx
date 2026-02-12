@@ -9,6 +9,7 @@ interface AdminSidebarProps {
     memberCount?: number;
     submissionCount?: number;
     user?: {
+        id: string;
         name: string | null;
         email: string | null;
         image: string | null;
@@ -117,11 +118,11 @@ export function AdminSidebar({ memberCount = 0, submissionCount = 0, user }: Adm
                     </nav>
                 </div>
                 <div className="p-4 border-t border-border-light dark:border-border-dark flex flex-col gap-3">
-                    <div className="bg-slate-50 dark:bg-slate-800/20 text-slate-600 dark:text-slate-300 px-3 py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 border border-slate-200 dark:border-slate-800/50">
+                    <div className="bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 px-3 py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 border border-orange-200 dark:border-orange-800/50">
                         <Image src="/icon.png" alt="Points" width={14} height={14} className="object-contain" />
-                        <span>{user?.points?.toLocaleString() ?? 0} pts</span>
+                        <span>{user?.points?.toLocaleString('en-US') ?? 0} pts</span>
                     </div>
-                    <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-colors">
+                    <Link href={`/profile/${user?.id}`} className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-colors">
                         {userImage ? (
                             <Image
                                 src={userImage}
@@ -139,7 +140,7 @@ export function AdminSidebar({ memberCount = 0, submissionCount = 0, user }: Adm
                             <span className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">{userName}</span>
                             <span className="text-xs text-slate-500 truncate">{userEmail}</span>
                         </div>
-                    </div>
+                    </Link>
                 </div>
             </aside>
         </>

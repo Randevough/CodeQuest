@@ -26,7 +26,7 @@ export function StatsGrid({ stats }: { stats: StatsProps }) {
             <div className="bg-surface-light dark:bg-surface-dark p-6 rounded-lg border border-border-light dark:border-border-dark shadow-sm">
                 <div className="text-slate-500 text-sm font-medium mb-2">Total Members</div>
                 <div className="text-3xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
-                    {stats.totalMembers.toLocaleString()}
+                    {stats.totalMembers.toLocaleString('en-US')}
                 </div>
             </div>
             <div className="bg-surface-light dark:bg-surface-dark p-6 rounded-lg border border-border-light dark:border-border-dark shadow-sm">
@@ -122,7 +122,7 @@ export function LeaderboardPreview({ users }: { users: LeaderboardUser[] }) {
                                     </td>
                                     <td className="px-6 py-3 text-right font-bold text-slate-900 dark:text-slate-100">
                                         <div className="flex items-center justify-end gap-1">
-                                            {user.points.toLocaleString()}
+                                            {user.points.toLocaleString('en-US')}
                                             <Image src="/icon.png" alt="Points" width={16} height={16} className="object-contain" />
                                         </div>
                                     </td>

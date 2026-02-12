@@ -46,7 +46,7 @@ export async function UserStanding({ timeframe = 'all' }: { timeframe?: string }
                         <span className="text-xs font-bold text-orange-800 dark:text-orange-200 uppercase tracking-wider mb-1">Current Points</span>
                         <div className="flex items-center gap-2 text-slate-900 dark:text-orange-50">
                             <Image src="/icon.png" alt="Points" width={24} height={24} className="object-contain" />
-                            <span className="text-2xl font-mono font-bold">{standing.points.toLocaleString()}</span>
+                            <span className="text-2xl font-mono font-bold">{standing.points.toLocaleString('en-US')}</span>
                         </div>
                     </div>
 
@@ -68,7 +68,7 @@ export async function UserStanding({ timeframe = 'all' }: { timeframe?: string }
                                     <div>
                                         <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Keep climbing!</p>
                                         <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                                            You need <span className="font-bold text-orange-600 dark:text-orange-400">{standing.pointsToNext.toLocaleString()} pts</span> to overtake the next rank.
+                                            You need <span className="font-bold text-orange-600 dark:text-orange-400">{standing.pointsToNext.toLocaleString('en-US')} pts</span> to overtake the next rank.
                                         </p>
                                     </div>
                                 </>

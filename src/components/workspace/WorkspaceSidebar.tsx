@@ -25,7 +25,7 @@ export async function WorkspaceSidebar() {
                                 className="object-contain"
                             />
                             <div className="text-2xl font-bold text-orange-600 dark:text-orange-400 font-mono leading-none">
-                                {standing ? standing.points.toLocaleString() : '0'}
+                                {standing ? standing.points.toLocaleString('en-US') : '0'}
                             </div>
                         </div>
                         <div className="text-xs text-orange-600/80 dark:text-orange-400/80 font-medium uppercase tracking-wide">Total Points</div>

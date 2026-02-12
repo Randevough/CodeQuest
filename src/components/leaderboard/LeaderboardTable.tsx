@@ -74,7 +74,7 @@ export function LeaderboardTable({ users, page, pageSize }: LeaderboardTableProp
                                 <td className="px-6 py-4 whitespace-nowrap text-right">
                                     <div className="flex items-center justify-end gap-1.5 text-sm font-bold font-mono group-hover:scale-105 transition-transform origin-right">
                                         <Image src="/icon.png" alt="Points" width={16} height={16} className="object-contain" />
-                                        <span className="text-slate-900 dark:text-white">{user.points.toLocaleString()}</span>
+                                        <span className="text-slate-900 dark:text-white">{user.points.toLocaleString('en-US')}</span>
                                     </div>
                                 </td>
                             </tr>

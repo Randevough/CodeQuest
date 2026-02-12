@@ -32,6 +32,7 @@ export default async function AdminLayout({
     const adminUser = await prisma.user.findUnique({
         where: { email: session.user.email! },
         select: {
+            id: true,
             name: true,
             email: true,
             avatar: true,

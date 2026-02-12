@@ -93,7 +93,7 @@ export function ProfileSidebar({ user }: ProfileSidebarProps) {
                     <div className="flex flex-col">
                         <div className="flex items-center gap-2">
                             <img src="/icon.png" alt="Points" className="w-6 h-6 object-contain" />
-                            <span className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">{user.points?.toLocaleString() || 0}</span>
+                            <span className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">{user.points?.toLocaleString('en-US') || 0}</span>
                         </div>
                         <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">Total Points</span>
                     </div>
