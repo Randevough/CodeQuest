@@ -41,6 +41,7 @@ export function ProfileSidebar({ user }: ProfileSidebarProps) {
                         currentAvatar={user.image || user.avatar}
                         name={user.name}
                         size={128}
+                        editable={isOwnProfile}
                     />
                 </div>
                 <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">{user.name}</h1>

@@ -244,21 +244,20 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                             </div>
                             <div className="space-y-4">
                                 {quest.snatches.map((snatch) => (
-                                    <div key={snatch.user.id} className="flex items-center gap-3">
+                                    <Link href={`/profile/${snatch.user.id}`} key={snatch.user.id} className="flex items-center gap-3 p-2 -mx-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
                                         {snatch.user.avatar ? (
-                                            <img src={snatch.user.avatar} alt={snatch.user.name || 'User'} className="size-10 rounded-full object-cover" />
+                                            <img src={snatch.user.avatar} alt={snatch.user.name || 'User'} className="size-10 rounded-full object-cover group-hover:scale-105 transition-transform" />
                                         ) : (
-                                            <div className="size-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-slate-500">
+                                            <div className="size-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-slate-500 group-hover:scale-105 transition-transform">
                                                 {(snatch.user.name || snatch.user.handle || '?')[0].toUpperCase()}
                                             </div>
                                         )}
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">
+                                            <p className="text-sm font-semibold text-slate-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
                                                 {snatch.user.name || snatch.user.handle || 'Anonymous'}
                                             </p>
-                                            <p className="text-xs text-slate-500 truncate">{snatch.user.role || 'Member'}</p>
                                         </div>
-                                    </div>
+                                    </Link>
                                 ))}
 
                                 {/* Empty Slots or "No Members" */}

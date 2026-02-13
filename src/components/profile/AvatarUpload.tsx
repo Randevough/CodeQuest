@@ -9,9 +9,10 @@ interface AvatarUploadProps {
     currentAvatar?: string | null
     name?: string | null
     size?: number
+    editable?: boolean
 }
 
-export function AvatarUpload({ currentAvatar, name, size = 128 }: AvatarUploadProps) {
+export function AvatarUpload({ currentAvatar, name, size = 128, editable = false }: AvatarUploadProps) {
     const [isUploading, setIsUploading] = useState(false)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -67,18 +68,18 @@ export function AvatarUpload({ currentAvatar, name, size = 128 }: AvatarUploadPr
         : 'U'
 
     return (
-        <div className="relative group cursor-pointer" onClick={handleClick}>
+        <div className={`relative ${editable ? 'group cursor-pointer' : ''}`} onClick={editable ? handleClick : undefined}>
             <input
                 type="file"
                 ref={fileInputRef}
                 className="hidden"
                 accept="image/jpeg,image/png,image/webp"
                 onChange={handleFileChange}
-                disabled={isUploading}
+                disabled={isUploading || !editable}
             />
 
             <div
-                className={`rounded-full overflow-hidden border-2 border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm relative transition-all group-hover:border-orange-500`}
+                className={`rounded-full overflow-hidden border-2 border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm relative transition-all ${editable ? 'group-hover:border-orange-500' : ''}`}
                 style={{ width: size, height: size }}
             >
                 {currentAvatar ? (
@@ -94,13 +95,15 @@ export function AvatarUpload({ currentAvatar, name, size = 128 }: AvatarUploadPr
                 )}
 
                 {/* Overlay for hover/loading */}
-                <div className={`absolute inset-0 flex items-center justify-center bg-black/40 transition-opacity ${isUploading ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
-                    {isUploading ? (
-                        <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    ) : (
-                        <span className="material-symbols-outlined text-white text-3xl">photo_camera</span>
-                    )}
-                </div>
+                {editable && (
+                    <div className={`absolute inset-0 flex items-center justify-center bg-black/40 transition-opacity ${isUploading ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                        {isUploading ? (
+                            <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        ) : (
+                            <span className="material-symbols-outlined text-white text-3xl">photo_camera</span>
+                        )}
+                    </div>
+                )}
             </div>
 
             <div className={`absolute bottom-1 right-1 size-4 rounded-full border-2 border-white dark:border-slate-800 ${isUploading ? 'bg-yellow-400' : 'bg-green-500'}`} title={isUploading ? "Uploading..." : "Online"}></div>

@@ -98,11 +98,11 @@ export function QuestAction({ questId, isSnatched, userStatus }: { questId: stri
                             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5" htmlFor="repo-url">Project Repository URL</label>
                             <div className="flex flex-col gap-3 mb-4">
                                 <div className="relative w-full">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none flex items-center justify-center">
                                         <span className="material-symbols-outlined icon-filled text-[20px]">link</span>
                                     </span>
                                     <input
-                                        className="block w-full pl-10 pr-3 py-2.5 bg-white dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-orange-600 focus:border-transparent transition-shadow disabled:opacity-60 disabled:cursor-not-allowed"
+                                        className="block w-full pl-10 pr-3 py-2.5 bg-white dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:ring-0 focus:border-orange-500 focus:outline-none transition-shadow disabled:opacity-60 disabled:cursor-not-allowed"
                                         id="repo-url"
                                         placeholder="https://your-project-link.com"
                                         type="url"

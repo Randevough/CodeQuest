@@ -87,9 +87,28 @@ export function ProfileTabs({ activeSnatches, portfolioSnatches = [], user }: Pr
                                     <div className="flex justify-between items-start">
                                         <div className="space-y-3 w-full">
                                             <div className="flex items-center gap-3">
-                                                <span className="text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-wider">
-                                                    Active Mission
-                                                </span>
+                                                {(() => {
+                                                    const status = snatch.status
+                                                    if (status === 'SUBMITTED') {
+                                                        return (
+                                                            <span className="text-yellow-600 dark:text-yellow-400 text-xs font-bold uppercase tracking-wider">
+                                                                Pending Review
+                                                            </span>
+                                                        )
+                                                    }
+                                                    if (status === 'REVISION_NEEDED') {
+                                                        return (
+                                                            <span className="text-red-600 dark:text-red-400 text-xs font-bold uppercase tracking-wider">
+                                                                Revision Needed
+                                                            </span>
+                                                        )
+                                                    }
+                                                    return (
+                                                        <span className="text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-wider">
+                                                            Active Mission
+                                                        </span>
+                                                    )
+                                                })()}
                                             </div>
 
                                             <h3 className="text-lg font-bold text-gray-900 dark:text-white leading-tight">{snatch.quest.title}</h3>
@@ -139,9 +158,28 @@ export function ProfileTabs({ activeSnatches, portfolioSnatches = [], user }: Pr
 
                                         {/* Right: Primary Action Button */}
                                         <div className="w-full sm:w-auto">
-                                            <Link href={`/quests/${snatch.quest.id}`} className="block w-full sm:w-auto bg-orange-600 hover:bg-orange-700 text-white font-bold px-6 py-2.5 rounded-lg text-sm transition-all shadow hover:shadow-md text-center">
-                                                Continue Quest
-                                            </Link>
+                                            {(() => {
+                                                const status = snatch.status
+                                                if (status === 'SUBMITTED') {
+                                                    return (
+                                                        <Link href={`/quests/${snatch.quest.id}`} className="block w-full sm:w-auto bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold px-6 py-2.5 rounded-lg text-sm transition-all text-center">
+                                                            View Details
+                                                        </Link>
+                                                    )
+                                                }
+                                                if (status === 'REVISION_NEEDED') {
+                                                    return (
+                                                        <Link href={`/quests/${snatch.quest.id}`} className="block w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-2.5 rounded-lg text-sm transition-all shadow hover:shadow-md text-center">
+                                                            Update Submission
+                                                        </Link>
+                                                    )
+                                                }
+                                                return (
+                                                    <Link href={`/quests/${snatch.quest.id}`} className="block w-full sm:w-auto bg-orange-600 hover:bg-orange-700 text-white font-bold px-6 py-2.5 rounded-lg text-sm transition-all shadow hover:shadow-md text-center">
+                                                        Continue Quest
+                                                    </Link>
+                                                )
+                                            })()}
                                         </div>
                                     </div>
                                 </div>
