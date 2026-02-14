@@ -58,7 +58,7 @@ export function EditProfileModal({ isOpen, onClose, user }: EditProfileModalProp
 
     const modalContent = (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onClose}>
-            <div className="bg-white dark:bg-surface-dark rounded-xl shadow-xl max-w-lg w-full p-6 border border-slate-100 dark:border-slate-800 transform transition-all" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white dark:bg-surface-dark rounded-xl shadow-xl max-w-xl w-full p-6 border border-slate-100 dark:border-slate-800 transform transition-all" onClick={(e) => e.stopPropagation()}>
                 <div className="flex justify-between items-center mb-6">
                     <h3 className="text-xl font-bold text-slate-900 dark:text-white">Edit Profile</h3>
                     <button onClick={onClose} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
@@ -97,18 +97,18 @@ export function EditProfileModal({ isOpen, onClose, user }: EditProfileModalProp
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 mt-2">
                         <div>
                             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                                 GitHub URL
                             </label>
                             <div className="relative">
-                                <span className="absolute left-3 top-2.5 text-slate-400 material-symbols-outlined text-[18px]">code</span>
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined text-[18px]">code</span>
                                 <input
                                     type="url"
                                     value={githubUrl}
                                     onChange={(e) => setGithubUrl(e.target.value)}
-                                    className="w-full pl-9 pr-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all"
+                                    className="w-full pl-10 pr-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all"
                                     placeholder="https://github.com/..."
                                 />
                             </div>
@@ -119,12 +119,12 @@ export function EditProfileModal({ isOpen, onClose, user }: EditProfileModalProp
                                 LinkedIn URL
                             </label>
                             <div className="relative">
-                                <span className="absolute left-3 top-2.5 text-slate-400 material-symbols-outlined text-[18px]">work</span>
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined text-[18px]">work</span>
                                 <input
                                     type="url"
                                     value={linkedinUrl}
                                     onChange={(e) => setLinkedinUrl(e.target.value)}
-                                    className="w-full pl-9 pr-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all"
+                                    className="w-full pl-10 pr-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all"
                                     placeholder="https://linkedin.com/in/..."
                                 />
                             </div>

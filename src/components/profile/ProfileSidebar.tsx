@@ -44,10 +44,8 @@ export function ProfileSidebar({ user }: ProfileSidebarProps) {
                         editable={isOwnProfile}
                     />
                 </div>
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">{user.name}</h1>
-                <div className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-600/10 text-orange-600 mb-4">
-                    {user.role === 'Admin' ? 'Administrator' : 'CodeQuest Member'}
-                </div>
+                <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">{user.name}</h1>
+
 
                 {/* Bio Section */}
                 {/* @ts-ignore: Prisma client field */}
