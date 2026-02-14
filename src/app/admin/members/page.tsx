@@ -30,6 +30,15 @@ export default async function MemberDirectoryPage({
             include: {
                 penalties: {
                     where: { expiresAt: { gt: new Date() } }
+                },
+                _count: {
+                    select: {
+                        snatches: {
+                            where: {
+                                status: { in: ['ACCEPTED', 'COMPLETED', 'ARCHIVED'] }
+                            }
+                        }
+                    }
                 }
             },
             take: limit,
@@ -96,9 +105,20 @@ export default async function MemberDirectoryPage({
                                             <tr key={user.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
                                                 <td className="py-4 px-6">
                                                     <div className="flex items-center gap-3">
-                                                        <div className="h-9 w-9 rounded-full bg-orange-100 dark:bg-orange-900/50 flex items-center justify-center text-orange-600 dark:text-orange-400 text-xs font-bold ring-2 ring-white dark:ring-slate-800">
-                                                            {user.name?.[0] || user.email[0].toUpperCase()}
-                                                        </div>
+                                                        {user.image ? (
+                                                            <div className="h-9 w-9 relative rounded-full overflow-hidden ring-2 ring-white dark:ring-slate-800 shrink-0">
+                                                                <Image
+                                                                    src={user.image}
+                                                                    alt={user.name || 'User'}
+                                                                    fill
+                                                                    className="object-cover"
+                                                                />
+                                                            </div>
+                                                        ) : (
+                                                            <div className="h-9 w-9 rounded-full bg-orange-100 dark:bg-orange-900/50 flex items-center justify-center text-orange-600 dark:text-orange-400 text-xs font-bold ring-2 ring-white dark:ring-slate-800 shrink-0">
+                                                                {user.name?.[0] || user.email[0].toUpperCase()}
+                                                            </div>
+                                                        )}
                                                         <div className="flex flex-col">
                                                             <span className="text-sm font-bold text-slate-900 dark:text-slate-100">{user.name || 'Unknown'}</span>
                                                             <span className="text-xs text-slate-500">{user.email}</span>
@@ -112,7 +132,10 @@ export default async function MemberDirectoryPage({
                                                     </div>
                                                 </td>
                                                 <td className="py-4 px-6">
-                                                    <span className="text-sm text-slate-600 dark:text-slate-300 font-medium whitespace-nowrap">{user.completedQuests} Completed</span>
+                                                    <span className="text-sm text-slate-600 dark:text-slate-300 font-medium whitespace-nowrap">
+                                                        {/* @ts-ignore: _count property from prisma include */}
+                                                        {user._count?.snatches || 0} Completed
+                                                    </span>
                                                 </td>
                                                 <td className="py-4 px-6">
                                                     <span className="text-sm text-slate-500 dark:text-slate-400 font-medium font-['Plus_Jakarta_Sans']">

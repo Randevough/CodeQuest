@@ -50,14 +50,14 @@ export default function LoginPage() {
             <form action={dispatch} className="flex flex-col gap-5">
                 <div>
                     <label className="mb-1.5 block text-sm font-semibold text-[#1E293B]" htmlFor="email">Email address</label>
-                    <input className="block w-full rounded-lg border border-slate-200 bg-white shadow-sm focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 sm:text-sm py-3 px-4 text-slate-900 transition-all duration-200 ease-in-out hover:border-orange-500 outline-none" id="email" name="email" placeholder="example@cyber-univ.ac.id" type="email" required />
+                    <input className="block w-full rounded-lg border border-slate-200 bg-white shadow-sm focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 sm:text-sm py-3 px-4 text-slate-900 transition-all duration-200 ease-in-out hover:border-orange-500 outline-none" id="email" name="email" placeholder="example@cyber-univ.ac.id" type="email" required maxLength={255} />
                 </div>
                 <div>
                     <div className="flex items-center justify-between mb-1.5">
                         <label className="block text-sm font-semibold text-[#1E293B]" htmlFor="password">Password</label>
                         <Link className="text-sm font-medium text-orange-500 hover:text-orange-600 hover:underline transition-colors" href="#">Forgot password?</Link>
                     </div>
-                    <PasswordInput id="password" name="password" required minLength={6} />
+                    <PasswordInput id="password" name="password" required minLength={6} maxLength={128} />
                 </div>
 
                 <SubmitButton loadingText="Signing in...">Sign In</SubmitButton>

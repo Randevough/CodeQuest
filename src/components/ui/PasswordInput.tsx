@@ -8,9 +8,10 @@ interface PasswordInputProps {
     placeholder?: string;
     required?: boolean;
     minLength?: number;
+    maxLength?: number;
 }
 
-export function PasswordInput({ id, name, placeholder = "••••••••", required = false, minLength }: PasswordInputProps) {
+export function PasswordInput({ id, name, placeholder = "••••••••", required = false, minLength, maxLength }: PasswordInputProps) {
     const [showPassword, setShowPassword] = useState(false);
 
     return (
@@ -23,6 +24,7 @@ export function PasswordInput({ id, name, placeholder = "•••••••�
                 type={showPassword ? "text" : "password"}
                 required={required}
                 minLength={minLength}
+                maxLength={maxLength}
             />
             <button
                 type="button"

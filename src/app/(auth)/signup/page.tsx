@@ -31,22 +31,22 @@ export default function SignupPage() {
             <form action={dispatch} className="flex flex-col gap-5">
                 <div>
                     <label className="mb-1.5 block text-sm font-semibold text-[#1E293B]" htmlFor="name">Nickname</label>
-                    <input className="block w-full rounded-lg border border-slate-200 bg-white shadow-sm focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 sm:text-sm py-3 px-4 text-slate-900 transition-all duration-200 ease-in-out hover:border-orange-500 outline-none" id="name" name="name" placeholder="IwanRotasi99" type="text" />
+                    <input className="block w-full rounded-lg border border-slate-200 bg-white shadow-sm focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 sm:text-sm py-3 px-4 text-slate-900 transition-all duration-200 ease-in-out hover:border-orange-500 outline-none" id="name" name="name" placeholder="IwanRotasi99" type="text" maxLength={50} />
                 </div>
 
                 <div>
                     <label className="mb-1.5 block text-sm font-semibold text-[#1E293B]" htmlFor="email">Email address</label>
-                    <input className="block w-full rounded-lg border border-slate-200 bg-white shadow-sm focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 sm:text-sm py-3 px-4 text-slate-900 transition-all duration-200 ease-in-out hover:border-orange-500 outline-none" id="email" name="email" placeholder="example@cyber-univ.ac.id" type="email" required />
+                    <input className="block w-full rounded-lg border border-slate-200 bg-white shadow-sm focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 sm:text-sm py-3 px-4 text-slate-900 transition-all duration-200 ease-in-out hover:border-orange-500 outline-none" id="email" name="email" placeholder="example@cyber-univ.ac.id" type="email" required maxLength={255} />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label className="block text-sm font-semibold text-[#1E293B] mb-1.5" htmlFor="password">Password</label>
-                        <PasswordInput id="password" name="password" required minLength={6} />
+                        <PasswordInput id="password" name="password" required minLength={6} maxLength={128} />
                     </div>
                     <div>
                         <label className="block text-sm font-semibold text-[#1E293B] mb-1.5" htmlFor="confirmPassword">Confirm Password</label>
-                        <PasswordInput id="confirmPassword" name="confirmPassword" required minLength={6} />
+                        <PasswordInput id="confirmPassword" name="confirmPassword" required minLength={6} maxLength={128} />
                     </div>
                 </div>
 
