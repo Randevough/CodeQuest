@@ -64,7 +64,26 @@ export async function getSubmissions({
                         select: {
                             id: true,
                             title: true,
-                            points: true
+                            points: true,
+                            description: true,
+                            requirements: true,
+                            difficulty: true,
+                            category: true,
+                            deadline: true,
+                            snatches: {
+                                where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED'] } },
+                                include: {
+                                    user: {
+                                        select: {
+                                            id: true,
+                                            name: true,
+                                            avatar: true,
+                                            handle: true
+                                        }
+                                    }
+                                },
+                                take: 10
+                            }
                         }
                     }
                 },

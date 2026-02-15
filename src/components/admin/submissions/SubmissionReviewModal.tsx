@@ -72,6 +72,10 @@ export function SubmissionReviewModal({ isOpen, onClose, snatch }: SubmissionRev
                                 <h3 className="text-xs font-bold text-slate-400 mb-4 uppercase tracking-widest">Submission Content</h3>
                                 <div className="p-5 border border-border-light dark:border-border-dark rounded-lg bg-slate-50/50 dark:bg-slate-800/20 flex flex-col">
                                     <div className="w-full">
+                                        <h5 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5">
+                                            <span className="material-symbols-outlined text-[14px]">person</span>
+                                            Submitter
+                                        </h5>
                                         <div className="flex items-center gap-3 mb-5">
                                             {snatch.user.avatar ? (
                                                 <Image
@@ -91,6 +95,38 @@ export function SubmissionReviewModal({ isOpen, onClose, snatch }: SubmissionRev
                                                 <span className="text-xs text-slate-500">{snatch.user.email}</span>
                                             </div>
                                         </div>
+
+                                        {/* Squad Members */}
+                                        {snatch.quest.snatches && snatch.quest.snatches.length > 0 && (
+                                            <div className="mb-5 border-t border-b border-slate-100 dark:border-slate-800 py-4">
+                                                <h5 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5">
+                                                    <span className="material-symbols-outlined text-[14px]">groups</span>
+                                                    Squad Members
+                                                </h5>
+                                                <div className="flex flex-col gap-2">
+                                                    {snatch.quest.snatches.map((s: any) => (
+                                                        <div key={s.user.id} className="flex items-center gap-2.5">
+                                                            {s.user.avatar ? (
+                                                                <Image
+                                                                    src={s.user.avatar}
+                                                                    alt={s.user.name}
+                                                                    width={24}
+                                                                    height={24}
+                                                                    className="rounded-full object-cover w-6 h-6 min-w-6 shrink-0"
+                                                                />
+                                                            ) : (
+                                                                <div className="w-6 h-6 min-w-6 shrink-0 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-[10px] font-bold text-slate-500">
+                                                                    {s.user.name?.charAt(0) || '?'}
+                                                                </div>
+                                                            )}
+                                                            <span className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                                                                {s.user.name}
+                                                            </span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
 
                                         {snatch.submissionUrl ? (
                                             <a
@@ -139,9 +175,64 @@ export function SubmissionReviewModal({ isOpen, onClose, snatch }: SubmissionRev
                                                 {snatch.quest.points} pts
                                             </span>
                                         </div>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-4">{snatch.quest.description || 'No description available.'}</p>
+
+                                        <div className="flex flex-wrap gap-2 mt-1">
+                                            <span className="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-bold border border-slate-200 dark:border-slate-700 uppercase tracking-wider">
+                                                {snatch.quest.category}
+                                            </span>
+                                            <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold border uppercase tracking-wider ${snatch.quest.difficulty === 'Beginner' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800/50' :
+                                                    snatch.quest.difficulty === 'Intermediate' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800/50' :
+                                                        'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-800/50'
+                                                }`}>
+                                                {snatch.quest.difficulty}
+                                            </span>
+                                            {snatch.quest.deadline && (
+                                                <span className="px-2.5 py-1 rounded-md bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-[10px] font-bold border border-red-200 dark:border-red-800/50 uppercase tracking-wider flex items-center gap-1">
+                                                    <span className="material-symbols-outlined text-[10px]">timer</span>
+                                                    {new Date(snatch.quest.deadline).toLocaleDateString()}
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        <div className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-h-32 overflow-y-auto pr-2">
+                                            <h5 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Description</h5>
+                                            <p>{snatch.quest.description || 'No description available.'}</p>
+                                        </div>
                                     </div>
-                                    <div className="p-6 space-y-6 bg-slate-50/30 dark:bg-slate-800/20 flex-1">
+                                    <div className="p-6 space-y-6 bg-slate-50/30 dark:bg-slate-800/20 flex-1 overflow-y-auto">
+                                        {/* Requirements */}
+                                        {(() => {
+                                            let requirements: string[] = [];
+                                            try {
+                                                if (snatch.quest.requirements) {
+                                                    const parsed = JSON.parse(snatch.quest.requirements);
+                                                    if (Array.isArray(parsed)) requirements = parsed;
+                                                }
+                                            } catch (e) { console.error("Failed to parse requirements", e); }
+
+                                            if (requirements.length > 0) {
+                                                return (
+                                                    <div>
+                                                        <h5 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5">
+                                                            <span className="material-symbols-outlined text-[14px]">checklist</span>
+                                                            Submission Checklist
+                                                        </h5>
+                                                        <ul className="space-y-2">
+                                                            {requirements.map((req: string, i: number) => (
+                                                                <li key={i} className="flex items-start gap-2 text-xs text-slate-600 dark:text-slate-300 bg-white dark:bg-surface-dark p-2 rounded border border-slate-100 dark:border-slate-800/50">
+                                                                    <span className="material-symbols-outlined text-[14px] text-slate-400 mt-0.5">radio_button_unchecked</span>
+                                                                    <span>{req}</span>
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    </div>
+                                                );
+                                            }
+                                            return null;
+                                        })()}
+
+
+
                                         <div>
                                             {/* Static requirements for demo, or real if we had them */}
                                             <h5 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Quest ID</h5>
