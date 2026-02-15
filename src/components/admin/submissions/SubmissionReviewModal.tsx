@@ -167,7 +167,7 @@ export function SubmissionReviewModal({ isOpen, onClose, snatch }: SubmissionRev
                             <section className="h-full">
                                 <h3 className="text-xs font-bold text-slate-400 mb-4 uppercase tracking-widest">Quest Reference</h3>
                                 <div className="border border-border-light dark:border-border-dark rounded-xl bg-white dark:bg-surface-dark overflow-hidden flex flex-col h-full shadow-sm">
-                                    <div className="p-6 flex flex-col gap-4 border-b border-border-light dark:border-border-dark bg-white dark:bg-surface-dark">
+                                    <div className="p-6 flex flex-col gap-3 border-b border-border-light dark:border-border-dark bg-white dark:bg-surface-dark">
                                         <div className="flex justify-between items-start gap-4">
                                             <h4 className="font-bold text-slate-900 dark:text-white leading-tight">{snatch.quest.title}</h4>
                                             <span className="bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-3 py-1.5 rounded-full text-[11px] font-extrabold border border-amber-200 dark:border-amber-800/50 flex items-center gap-1.5 whitespace-nowrap shadow-sm">
@@ -176,13 +176,13 @@ export function SubmissionReviewModal({ isOpen, onClose, snatch }: SubmissionRev
                                             </span>
                                         </div>
 
-                                        <div className="flex flex-wrap gap-2 mt-1">
+                                        <div className="flex flex-wrap gap-2">
                                             <span className="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-bold border border-slate-200 dark:border-slate-700 uppercase tracking-wider">
                                                 {snatch.quest.category}
                                             </span>
                                             <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold border uppercase tracking-wider ${snatch.quest.difficulty === 'Beginner' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800/50' :
-                                                    snatch.quest.difficulty === 'Intermediate' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800/50' :
-                                                        'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-800/50'
+                                                snatch.quest.difficulty === 'Intermediate' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800/50' :
+                                                    'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-800/50'
                                                 }`}>
                                                 {snatch.quest.difficulty}
                                             </span>

@@ -271,6 +271,19 @@ export async function submitQuest(questId: string, submissionUrl: string) {
                 throw new Error("Mission already completed. No further submissions allowed.");
             }
 
+            // Check if ANYONE in the squad has submitted (Team Submission)
+            const teamStatus = await tx.snatch.findFirst({
+                where: {
+                    questId: questId,
+                    status: { in: ['SUBMITTED', 'ACCEPTED', 'COMPLETED'] },
+                    NOT: { id: activeSnatch.id } // exclude self if we are updating (though logic below sets self to submitted)
+                }
+            });
+
+            if (teamStatus) {
+                throw new Error("A squad member has already submitted this quest. Please wait for review.");
+            }
+
             // 4. Update
             await tx.snatch.update({
                 where: { id: activeSnatch.id },
@@ -517,6 +530,19 @@ export async function getQuests({
 
 export async function updateQuestStatus(questId: string, newStatus: string) {
     try {
+        if (newStatus === 'Draft') {
+            const activeSnatchesCount = await prisma.snatch.count({
+                where: {
+                    questId: questId,
+                    status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED'] }
+                }
+            });
+
+            if (activeSnatchesCount > 0) {
+                return { success: false, error: "Cannot revert to Draft: Quest has active members." };
+            }
+        }
+
         await prisma.quest.update({
             where: { id: questId },
             data: { status: newStatus }

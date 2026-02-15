@@ -10,7 +10,19 @@ interface UserStatus {
     submissionUrl: string | null
 }
 
-export function QuestAction({ questId, isSnatched, userStatus }: { questId: string, isSnatched: boolean, userStatus: UserStatus | null }) {
+export function QuestAction({
+    questId,
+    isSnatched,
+    userStatus,
+    isPending = false,
+    isCompleted = false
+}: {
+    questId: string,
+    isSnatched: boolean,
+    userStatus: UserStatus | null,
+    isPending?: boolean,
+    isCompleted?: boolean
+}) {
     const [loading, setLoading] = useState(false)
     const [showJoinModal, setShowJoinModal] = useState(false)
     const router = useRouter()
@@ -59,8 +71,9 @@ export function QuestAction({ questId, isSnatched, userStatus }: { questId: stri
         }
     }
 
-    const isPending = userStatus?.status === 'SUBMITTED'
-    const isCompleted = ['COMPLETED', 'ACCEPTED', 'ARCHIVED'].includes(userStatus?.status || '')
+    // derived state is now props
+    // const isPending = userStatus?.status === 'SUBMITTED'
+    // const isCompleted = ['COMPLETED', 'ACCEPTED', 'ARCHIVED'].includes(userStatus?.status || '')
 
     if (isCompleted) {
         return (

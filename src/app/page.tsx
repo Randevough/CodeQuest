@@ -94,7 +94,7 @@ async function getQuests(searchParams: { q?: string, difficulty?: string, sort?:
     },
     include: {
       _count: {
-        select: { snatches: { where: { status: 'ACTIVE' } } }
+        select: { snatches: { where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED'] } } } }
       }
     }
   })
@@ -120,7 +120,7 @@ async function getMyActiveQuests() {
       id: { in: activeIds }
     },
     include: {
-      _count: { select: { snatches: { where: { status: 'ACTIVE' } } } }
+      _count: { select: { snatches: { where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED'] } } } } }
     }
   });
 }

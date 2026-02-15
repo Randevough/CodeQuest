@@ -52,8 +52,12 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
     const userStatus = await getQuestUserStatus(quest.id)
     const activeStatuses = ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED']
     const isSnatched = activeStatuses.includes(userStatus?.status || '')
-    const isPending = userStatus?.status === 'SUBMITTED'
-    const isCompleted = ['COMPLETED', 'ACCEPTED', 'ARCHIVED'].includes(userStatus?.status || '')
+    // Check for Team Status
+    const isTeamPending = quest.snatches.some(s => s.status === 'SUBMITTED');
+    const isTeamCompleted = quest.snatches.some(s => ['COMPLETED', 'ACCEPTED', 'ARCHIVED'].includes(s.status));
+
+    const isPending = userStatus?.status === 'SUBMITTED' || isTeamPending;
+    const isCompleted = ['COMPLETED', 'ACCEPTED', 'ARCHIVED'].includes(userStatus?.status || '') || isTeamCompleted;
 
     // Parse Requirements (Checklist)
     let requirements: string[] = [];
@@ -213,7 +217,13 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                                         </h3>
                                     </div>
 
-                                    <QuestAction questId={quest.id} isSnatched={isSnatched} userStatus={userStatus} />
+                                    <QuestAction
+                                        questId={quest.id}
+                                        isSnatched={isSnatched}
+                                        userStatus={userStatus}
+                                        isPending={isPending}
+                                        isCompleted={isCompleted}
+                                    />
 
                                 </section>
                             </div>

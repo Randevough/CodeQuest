@@ -9,9 +9,10 @@ import { DeleteQuestModal } from '@/components/admin/DeleteQuestModal';
 
 interface QuestActionsProps {
     questId: string;
+    status: string;
 }
 
-export function QuestActions({ questId }: QuestActionsProps) {
+export function QuestActions({ questId, status }: QuestActionsProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -50,20 +51,20 @@ export function QuestActions({ questId }: QuestActionsProps) {
         }
     };
 
-    const handlePublish = async () => {
+    const handleStatusUpdate = async (newStatus: string) => {
         setIsLoading(true);
         setIsOpen(false);
         try {
-            const res = await updateQuestStatus(questId, 'Active');
+            const res = await updateQuestStatus(questId, newStatus);
             if (res.success) {
-                toast.success("Quest published successfully");
+                toast.success(newStatus === 'Active' ? "Quest published successfully" : "Quest reverted to draft");
                 router.refresh();
             } else {
-                toast.error(res.error || "Failed to publish quest");
+                toast.error(res.error || "Failed to update quest status");
             }
         } catch (error) {
-            console.error("Failed to publish", error);
-            toast.error("Failed to publish quest");
+            console.error("Failed to update status", error);
+            toast.error("Failed to update quest status");
         } finally {
             setIsLoading(false);
         }
@@ -100,7 +101,7 @@ export function QuestActions({ questId }: QuestActionsProps) {
                 <button
                     onClick={() => setIsOpen(!isOpen)}
                     disabled={isLoading}
-                    className="text-slate-400 hover:text-orange-600 dark:hover:text-orange-500 p-1 rounded hover:bg-orange-50 dark:hover:bg-orange-900/10 transition-all disabled:opacity-50"
+                    className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-orange-600 dark:hover:text-orange-500 rounded hover:bg-orange-50 dark:hover:bg-orange-900/10 hover:border hover:border-orange-200 dark:hover:border-orange-900/50 transition-all disabled:opacity-50"
                 >
                     <span className="material-symbols-outlined text-[20px]">
                         {isLoading ? 'hourglass_empty' : 'more_vert'}
@@ -118,13 +119,23 @@ export function QuestActions({ questId }: QuestActionsProps) {
                             <span className="material-symbols-outlined text-[18px]">edit</span>
                             Edit Quest
                         </Link>
-                        <button
-                            onClick={handlePublish}
-                            className="flex items-center px-4 py-2 text-sm text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 w-full text-left gap-2"
-                        >
-                            <span className="material-symbols-outlined text-[18px]">publish</span>
-                            Publish
-                        </button>
+                        {status === 'Active' ? (
+                            <button
+                                onClick={() => handleStatusUpdate('Draft')}
+                                className="flex items-center px-4 py-2 text-sm text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 w-full text-left gap-2"
+                            >
+                                <span className="material-symbols-outlined text-[18px]">unpublished</span>
+                                Back to Draft
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => handleStatusUpdate('Active')}
+                                className="flex items-center px-4 py-2 text-sm text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 w-full text-left gap-2"
+                            >
+                                <span className="material-symbols-outlined text-[18px]">publish</span>
+                                Publish
+                            </button>
+                        )}
                         <button
                             onClick={handleDuplicate}
                             className="flex items-center px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 w-full text-left gap-2"
