@@ -25,6 +25,7 @@ export default async function ManageQuestsPage({ searchParams }: ManageQuestsPag
         limit: 10,
         search: query,
         status,
+        includeFull: true,
     });
 
     const hasQuests = quests && quests.length > 0;

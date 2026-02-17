@@ -455,12 +455,14 @@ export async function getQuests({
     page = 1,
     limit = 10,
     search = '',
-    status = 'Active' // 'Active', 'Draft', 'Closed'
+    status,
+    includeFull = false // Default to false to preserve existing behavior for other callers
 }: {
     page?: number;
     limit?: number;
     search?: string;
     status?: string;
+    includeFull?: boolean;
 }) {
     try {
         const offset = (page - 1) * limit;
@@ -490,15 +492,15 @@ export async function getQuests({
                 _count: {
                     select: {
                         snatches: {
-                            where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED'] } }
+                            where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED', 'ARCHIVED'] } }
                         }
                     }
                 }
             }
         });
 
-        // Filter out full quests
-        const visibleQuests = quests.filter(q => {
+        // Filter out full quests ONLY if includeFull is false
+        const visibleQuests = includeFull ? quests : quests.filter(q => {
             const activeCount = q._count.snatches;
             return activeCount < q.maxSnatchers;
         });
