@@ -104,7 +104,7 @@ export default async function MemberDirectoryPage({
                                         return (
                                             <tr key={user.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
                                                 <td className="py-4 px-6">
-                                                    <div className="flex items-center gap-3">
+                                                    <Link href={`/profile/${user.id}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
                                                         {user.image ? (
                                                             <div className="h-9 w-9 relative rounded-full overflow-hidden ring-2 ring-white dark:ring-slate-800 shrink-0">
                                                                 <Image
@@ -123,7 +123,7 @@ export default async function MemberDirectoryPage({
                                                             <span className="text-sm font-bold text-slate-900 dark:text-slate-100">{user.name || 'Unknown'}</span>
                                                             <span className="text-xs text-slate-500">{user.email}</span>
                                                         </div>
-                                                    </div>
+                                                    </Link>
                                                 </td>
                                                 <td className="py-4 px-6">
                                                     <div className="flex items-center gap-1">
