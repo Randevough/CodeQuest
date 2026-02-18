@@ -28,9 +28,16 @@ interface ProfileTabsProps {
     activeSnatches: Snatch[]
     portfolioSnatches?: Snatch[]
     user: any // Ideally typed with NextAuth User
+    badges?: {
+        id: string
+        name: string
+        imageUrl: string | null
+        description: string
+        slug: string
+    }[]
 }
 
-export function ProfileTabs({ activeSnatches, portfolioSnatches = [], user }: ProfileTabsProps) {
+export function ProfileTabs({ activeSnatches, portfolioSnatches = [], user, badges = [] }: ProfileTabsProps) {
     const [activeTab, setActiveTab] = useState<'active' | 'portfolio' | 'badges'>('active')
 
     return (
@@ -282,36 +289,30 @@ export function ProfileTabs({ activeSnatches, portfolioSnatches = [], user }: Pr
                 <div className="mt-2">
                     <div className="bg-white dark:bg-surface-dark border border-gray-100 dark:border-border-dark rounded-xl p-6 shadow-sm">
                         <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-6">Earned Badges</h3>
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                            {/* Badge 1 */}
-                            <div className="flex flex-col items-center justify-center gap-3 p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 group hover:border-orange-600/30 transition-all">
-                                <div className="size-12 rounded-full bg-gradient-to-br from-orange-500 to-purple-600 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
-                                    <span className="material-symbols-outlined text-[24px]">commit</span>
-                                </div>
-                                <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 text-center">First Commit</span>
+                        {badges.length > 0 ? (
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                                {badges.map((badge) => (
+                                    <div key={badge.id} className="flex flex-col items-center justify-center gap-3 p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 group hover:border-orange-600/30 transition-all">
+                                        <div className="size-16 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-white shadow-sm group-hover:scale-110 transition-transform relative overflow-hidden">
+                                            {badge.imageUrl ? (
+                                                <img src={badge.imageUrl} alt={badge.name} className="w-10 h-10 object-contain max-w-full" />
+                                            ) : (
+                                                <span className="material-symbols-outlined text-orange-500 text-[24px]">verified</span>
+                                            )}
+                                        </div>
+                                        <div className="text-center">
+                                            <span className="block text-xs font-bold text-slate-700 dark:text-slate-300">{badge.name}</span>
+                                            <span className="block text-[10px] text-slate-400 mt-1">{badge.description}</span>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                            {/* Badge 2 */}
-                            <div className="flex flex-col items-center justify-center gap-3 p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 group hover:border-orange-600/30 transition-all">
-                                <div className="size-12 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
-                                    <span className="material-symbols-outlined text-[24px]">pest_control</span>
-                                </div>
-                                <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 text-center">Bug Smasher</span>
+                        ) : (
+                            <div className="p-8 text-center text-slate-500">
+                                <span className="material-symbols-outlined text-4xl mb-2 text-slate-300 block">military_tech</span>
+                                <p>No badges earned yet. Complete quests to unlock them!</p>
                             </div>
-                            {/* Badge 3 */}
-                            <div className="flex flex-col items-center justify-center gap-3 p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 group hover:border-orange-600/30 transition-all">
-                                <div className="size-12 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
-                                    <span className="material-symbols-outlined text-[24px]">group</span>
-                                </div>
-                                <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 text-center">Team Player</span>
-                            </div>
-                            {/* Badge 4 (Locked example) */}
-                            <div className="flex flex-col items-center justify-center gap-3 p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-dashed border-slate-200 dark:border-slate-700 opacity-60">
-                                <div className="size-12 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500">
-                                    <span className="material-symbols-outlined text-[24px]">lock</span>
-                                </div>
-                                <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 text-center">Code Ninja</span>
-                            </div>
-                        </div>
+                        )}
                     </div>
                 </div>
             )}

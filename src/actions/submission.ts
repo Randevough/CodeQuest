@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/db"
 import { revalidatePath } from "next/cache"
+import { checkBadges } from "@/lib/badges"
 
 // Fetch Submissions with Pagination and Filter
 export async function getSubmissions({
@@ -140,6 +141,9 @@ export async function reviewSubmission(snatchId: string, status: 'ACCEPTED' | 'R
                         completedQuests: { increment: 1 }
                     }
                 })
+
+                // Check for new badges
+                await checkBadges(snatch.userId)
             }
 
             // If it was previously accepted and now Rejected (reversion), ideally we should deduct points?

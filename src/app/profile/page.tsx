@@ -10,7 +10,13 @@ export default async function ProfilePage() {
     if (!session?.user?.email) redirect('/login')
 
     const user = await prisma.user.findUnique({
-        where: { email: session.user.email }
+        where: { email: session.user.email },
+        include: {
+            // @ts-ignore: Prisma client field
+            badges: {
+                include: { badge: true }
+            }
+        }
     })
 
     if (!user) redirect('/login')
@@ -43,11 +49,15 @@ export default async function ProfilePage() {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                         <ProfileSidebar
                             user={{ ...user, completedQuests: completedQuestsCount }}
+                            // @ts-ignore: Prisma client field
+                            badges={user.badges.map((ub: any) => ub.badge)}
                         />
                         <ProfileTabs
                             activeSnatches={activeSnatches}
                             portfolioSnatches={portfolioSnatches}
                             user={user}
+                            // @ts-ignore: Prisma client field
+                            badges={user.badges.map((ub: any) => ub.badge)}
                         />
                     </div>
                 </div>

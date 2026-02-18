@@ -12,9 +12,16 @@ interface ProfileSidebarProps {
         completedQuests: number // We'll pass this in
         image?: string | null
     }
+    badges: {
+        id: string
+        name: string
+        imageUrl: string | null
+        description: string
+        slug: string
+    }[]
 }
 
-export function ProfileSidebar({ user }: ProfileSidebarProps) {
+export function ProfileSidebar({ user, badges }: ProfileSidebarProps) {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const { data: session } = useSession()
     const isOwnProfile = session?.user?.email === user.email
@@ -84,6 +91,35 @@ export function ProfileSidebar({ user }: ProfileSidebarProps) {
                         <div className="text-xs text-slate-400">No social links added</div>
                     )}
                 </div>
+
+                {/* Badges Section */}
+                {badges.length > 0 && (
+                    <div className="w-full mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">
+                        <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4 text-left">Badges</h3>
+                        <div className="flex flex-wrap gap-2 justify-center">
+                            {badges.map((badge) => (
+                                <div
+                                    key={badge.id}
+                                    className="group relative flex items-center justify-center p-2 rounded-lg bg-orange-50 dark:bg-orange-900/10 border border-orange-100 dark:border-orange-900/20 hover:border-orange-200 dark:hover:border-orange-900/40 transition-all cursor-help"
+                                    title={badge.description}
+                                >
+                                    {badge.imageUrl ? (
+                                        <img src={badge.imageUrl} alt={badge.name} className="w-8 h-8 object-contain" />
+                                    ) : (
+                                        <span className="material-symbols-outlined text-orange-500 text-[24px]">verified</span>
+                                    )}
+
+                                    {/* Tooltip */}
+                                    <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-max max-w-[200px] px-3 py-2 bg-slate-900 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 pointer-events-none">
+                                        <div className="font-bold mb-0.5">{badge.name}</div>
+                                        <div className="text-slate-300 font-normal">{badge.description}</div>
+                                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-slate-900"></div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
             {/* Stats Card */}
             <div className="bg-white dark:bg-surface-dark border border-gray-100 dark:border-border-dark rounded-xl p-6 shadow-[0_4px_12px_rgba(0,0,0,0.04)]">

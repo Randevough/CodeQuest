@@ -12,7 +12,13 @@ export default async function PublicProfilePage(props: { params: Promise<{ id: s
 
     // Fetch user by ID
     const user = await prisma.user.findUnique({
-        where: { id: params.id }
+        where: { id: params.id },
+        include: {
+            // @ts-ignore: Prisma client field
+            badges: {
+                include: { badge: true }
+            }
+        }
     })
 
     if (!user) {
@@ -51,11 +57,15 @@ export default async function PublicProfilePage(props: { params: Promise<{ id: s
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                         <ProfileSidebar
                             user={{ ...user, completedQuests: completedQuestsCount }}
+                            // @ts-ignore: Prisma client field
+                            badges={user.badges.map((ub: any) => ub.badge)}
                         />
                         <ProfileTabs
                             activeSnatches={activeSnatches}
                             portfolioSnatches={portfolioSnatches}
                             user={user}
+                            // @ts-ignore: Prisma client field
+                            badges={user.badges.map((ub: any) => ub.badge)}
                         />
                     </div>
                 </div>
