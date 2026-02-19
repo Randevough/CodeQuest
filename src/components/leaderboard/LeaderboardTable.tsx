@@ -58,15 +58,15 @@ export function LeaderboardTable({ users, page, pageSize }: LeaderboardTableProp
                                     {rankBadge}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="flex items-center">
+                                    <Link href={`/profile/${user.id}`} className="flex items-center group/user hover:opacity-80 transition-opacity">
                                         <div className={`flex-shrink-0 ${rank <= 3 ? 'size-10 ring-2' : 'size-9'} rounded-full overflow-hidden ${rank === 1 ? 'ring-yellow-400' : rank === 2 ? 'ring-slate-300 dark:ring-slate-500' : rank === 3 ? 'ring-orange-300 dark:ring-orange-700' : 'bg-slate-100'}`}>
                                             <img alt="Member Avatar" className="h-full w-full object-cover" src={user.avatar || "https://api.dicebear.com/9.x/avataaars/svg?seed=fallback"} />
                                         </div>
                                         <div className="ml-4">
-                                            <div className={`text-sm ${rank <= 3 ? 'font-bold' : 'font-medium'} text-slate-900 dark:text-white`}>{user.name}</div>
+                                            <div className={`text-sm ${rank <= 3 ? 'font-bold' : 'font-medium'} text-slate-900 dark:text-white group-hover/user:text-orange-600 dark:group-hover/user:text-orange-400 transition-colors`}>{user.name}</div>
                                             <div className={`text-xs ${rank === 1 ? 'text-yellow-700 dark:text-yellow-400 font-medium' : 'text-slate-500'}`}>{rank === 1 ? user.role : user.email}</div>
                                         </div>
-                                    </div>
+                                    </Link>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 hidden md:table-cell">
                                     {user.completedQuests} completed
