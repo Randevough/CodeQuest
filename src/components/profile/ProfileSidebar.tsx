@@ -32,7 +32,7 @@ export function ProfileSidebar({ user, badges }: ProfileSidebarProps) {
     return (
         <aside className="lg:col-span-4 xl:col-span-3 flex flex-col gap-6 sticky top-[88px]">
             {/* Profile Card */}
-            <div className="bg-white dark:bg-surface-dark border border-gray-100 dark:border-border-dark rounded-xl p-6 shadow-[0_4px_12px_rgba(0,0,0,0.04)] flex flex-col items-center text-center relative overflow-hidden group">
+            <div className="bg-white dark:bg-surface-dark border border-gray-100 dark:border-border-dark rounded-xl p-6 shadow-[0_4px_12px_rgba(0,0,0,0.04)] flex flex-col items-center text-center relative overflow-hidden group/card">
                 {/* Decorative background accent */}
                 <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-orange-600/5 to-transparent pointer-events-none"></div>
 
@@ -103,7 +103,7 @@ export function ProfileSidebar({ user, badges }: ProfileSidebarProps) {
                             {badges.filter(b => b.isFeatured).map((badge) => (
                                 <div
                                     key={badge.id}
-                                    className="group relative flex items-center justify-center p-2 rounded-lg bg-orange-50 dark:bg-orange-900/10 border border-orange-100 dark:border-orange-900/20 hover:border-orange-200 dark:hover:border-orange-900/40 transition-all cursor-help"
+                                    className="group/badge relative flex items-center justify-center p-2 rounded-lg bg-orange-50 dark:bg-orange-900/10 border border-orange-100 dark:border-orange-900/20 hover:border-orange-200 dark:hover:border-orange-900/40 transition-all cursor-help"
                                     title={badge.description}
                                 >
                                     {badge.imageUrl ? (
@@ -112,7 +112,7 @@ export function ProfileSidebar({ user, badges }: ProfileSidebarProps) {
                                         <span className="material-symbols-outlined text-orange-500 text-[24px]">verified</span>
                                     )}
                                     {/* Tooltip */}
-                                    <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-max max-w-[200px] px-3 py-2 bg-slate-900 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 pointer-events-none">
+                                    <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-max max-w-[200px] px-3 py-2 bg-slate-900 text-white text-xs rounded opacity-0 invisible group-hover/badge:opacity-100 group-hover/badge:visible transition-all z-20 pointer-events-none">
                                         <div className="font-bold mb-0.5">{badge.name}</div>
                                         <div className="text-slate-300 font-normal">{badge.description}</div>
                                         <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-slate-900"></div>
