@@ -58,7 +58,7 @@ export default async function PublicProfilePage(props: { params: Promise<{ id: s
                         <ProfileSidebar
                             user={{ ...user, completedQuests: completedQuestsCount }}
                             // @ts-ignore: Prisma client field
-                            badges={user.badges.map((ub: any) => ub.badge)}
+                            badges={user.badges.map((ub: any) => ({ ...ub.badge, isFeatured: ub.isFeatured }))}
                         />
                         <ProfileTabs
                             activeSnatches={activeSnatches}

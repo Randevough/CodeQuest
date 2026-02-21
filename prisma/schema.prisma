@@ -120,14 +120,15 @@ model Badge {
 }
 
 model UserBadge {
-  id        String   @id @default(cuid())
-  userId    String
-  badgeId   String
+  id          String   @id @default(cuid())
+  userId      String
+  badgeId     String
+  isFeatured  Boolean  @default(false)
   
-  user      User     @relation(fields: [userId], references: [id])
-  badge     Badge    @relation(fields: [badgeId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
+  badge       Badge    @relation(fields: [badgeId], references: [id])
   
-  earnedAt  DateTime @default(now())
+  earnedAt    DateTime @default(now())
 
   @@unique([userId, badgeId])
 }

@@ -6,19 +6,22 @@ import { useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { EditProfileModal } from './EditProfileModal'
 
+interface Badge {
+    id: string
+    name: string
+    imageUrl: string | null
+    description: string
+    slug: string
+    isFeatured?: boolean
+}
+
 interface ProfileSidebarProps {
     user: User & {
         points: number
-        completedQuests: number // We'll pass this in
+        completedQuests: number
         image?: string | null
     }
-    badges: {
-        id: string
-        name: string
-        imageUrl: string | null
-        description: string
-        slug: string
-    }[]
+    badges: Badge[]
 }
 
 export function ProfileSidebar({ user, badges }: ProfileSidebarProps) {
@@ -92,12 +95,12 @@ export function ProfileSidebar({ user, badges }: ProfileSidebarProps) {
                     )}
                 </div>
 
-                {/* Badges Section */}
-                {badges.length > 0 && (
+                {/* Featured Badges Section — shown only if user has featured some */}
+                {badges.filter(b => b.isFeatured).length > 0 && (
                     <div className="w-full mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">
-                        <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4 text-left">Badges</h3>
+                        <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 text-left">Featured Badges</h3>
                         <div className="flex flex-wrap gap-2 justify-center">
-                            {badges.map((badge) => (
+                            {badges.filter(b => b.isFeatured).map((badge) => (
                                 <div
                                     key={badge.id}
                                     className="group relative flex items-center justify-center p-2 rounded-lg bg-orange-50 dark:bg-orange-900/10 border border-orange-100 dark:border-orange-900/20 hover:border-orange-200 dark:hover:border-orange-900/40 transition-all cursor-help"
@@ -108,7 +111,6 @@ export function ProfileSidebar({ user, badges }: ProfileSidebarProps) {
                                     ) : (
                                         <span className="material-symbols-outlined text-orange-500 text-[24px]">verified</span>
                                     )}
-
                                     {/* Tooltip */}
                                     <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-max max-w-[200px] px-3 py-2 bg-slate-900 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 pointer-events-none">
                                         <div className="font-bold mb-0.5">{badge.name}</div>
@@ -152,6 +154,7 @@ export function ProfileSidebar({ user, badges }: ProfileSidebarProps) {
                     // @ts-ignore: Prisma client field
                     linkedinUrl: user.linkedinUrl
                 }}
+                badges={badges}
             />
         </aside>
     )

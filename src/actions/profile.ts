@@ -85,3 +85,37 @@ export async function updateProfile(data: UpdateProfileData) {
         return { success: false, error: 'Failed to update profile' }
     }
 }
+
+export async function updateFeaturedBadges(badgeIds: string[]) {
+    const session = await auth()
+    if (!session?.user?.id) {
+        return { success: false, error: 'Unauthorized' }
+    }
+
+    // Limit to 3 featured badges max
+    const limited = badgeIds.slice(0, 3)
+
+    try {
+        const userId = session.user.id
+
+        // Reset all featured flags for this user
+        await prisma.userBadge.updateMany({
+            where: { userId },
+            data: { isFeatured: false }
+        })
+
+        // Set selected ones as featured
+        if (limited.length > 0) {
+            await prisma.userBadge.updateMany({
+                where: { userId, badgeId: { in: limited } },
+                data: { isFeatured: true }
+            })
+        }
+
+        revalidatePath('/profile')
+        return { success: true }
+    } catch (error) {
+        console.error('Failed to update featured badges:', error)
+        return { success: false, error: 'Failed to update featured badges' }
+    }
+}
