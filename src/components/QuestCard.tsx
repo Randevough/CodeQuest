@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { dropQuest } from '@/actions/quest'
 
 type Quest = {
@@ -44,6 +45,7 @@ export function QuestCard({ quest, isSnatched }: { quest: Quest, isSnatched: boo
     const isFull = quest._count.snatches >= quest.maxSnatchers
     const daysLeft = 2
 
+
     const getDifficultyStyle = (diff?: string | null) => {
         const d = diff?.toLowerCase() || ''
         if (d === 'expert' || d === 'hard' || d === 'advanced')
@@ -65,17 +67,17 @@ export function QuestCard({ quest, isSnatched }: { quest: Quest, isSnatched: boo
             {/* Header: difficulty + category tags + points badge */}
             <div className="flex justify-between items-start mb-4">
                 <div className="flex gap-2 flex-wrap">
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ${getDifficultyStyle(quest.difficulty)}`}>
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold tracking-wide ${getDifficultyStyle(quest.difficulty)}`}>
                         {quest.difficulty || 'Beginner'}
                     </span>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold tracking-wide bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300">
                         {quest.category || 'Web'}
                     </span>
                 </div>
 
-                {/* Points badge — bolt icon, orange pill, consistent style */}
-                <span className="flex items-center gap-1 text-orange-600 font-mono text-[10px] font-bold bg-orange-50 dark:bg-orange-900/20 px-2 py-0.5 rounded border border-orange-100 dark:border-orange-800/30 shrink-0 ml-2">
-                    <span className="material-symbols-outlined text-[12px]">bolt</span>
+                {/* Points badge — consistent with navbar style */}
+                <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-yellow-50 border border-yellow-200 text-yellow-700 text-xs font-semibold shrink-0 ml-2">
+                    <Image src="/icon.png" alt="pts" width={13} height={13} className="object-contain" />
                     {quest.points || 100} pts
                 </span>
             </div>
