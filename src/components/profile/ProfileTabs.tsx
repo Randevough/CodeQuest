@@ -24,20 +24,23 @@ interface Snatch {
     quest: Quest
 }
 
+interface Badge {
+    id: string
+    name: string
+    imageUrl: string | null
+    description: string
+    slug: string
+}
+
 interface ProfileTabsProps {
     activeSnatches: Snatch[]
     portfolioSnatches?: Snatch[]
-    user: any // Ideally typed with NextAuth User
-    badges?: {
-        id: string
-        name: string
-        imageUrl: string | null
-        description: string
-        slug: string
-    }[]
+    user: any
+    badges?: Badge[]       // earned badges
+    allBadges?: Badge[]   // every badge in the system
 }
 
-export function ProfileTabs({ activeSnatches, portfolioSnatches = [], user, badges = [] }: ProfileTabsProps) {
+export function ProfileTabs({ activeSnatches, portfolioSnatches = [], user, badges = [], allBadges = [] }: ProfileTabsProps) {
     const [activeTab, setActiveTab] = useState<'active' | 'portfolio' | 'badges'>('active')
 
     return (
@@ -288,29 +291,58 @@ export function ProfileTabs({ activeSnatches, portfolioSnatches = [], user, badg
             {activeTab === 'badges' && (
                 <div className="mt-2">
                     <div className="bg-white dark:bg-surface-dark border border-gray-100 dark:border-border-dark rounded-xl p-6 shadow-sm">
-                        <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-6">Earned Badges</h3>
-                        {badges.length > 0 ? (
+                        <div className="flex items-center justify-between mb-6">
+                            <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">All Badges</h3>
+                            <span className="text-xs text-slate-400">{badges.length} / {allBadges.length > 0 ? allBadges.length : badges.length} Unlocked</span>
+                        </div>
+                        {(allBadges.length > 0 ? allBadges : badges).length > 0 ? (
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                                {badges.map((badge) => (
-                                    <div key={badge.id} className="flex flex-col items-center justify-center gap-3 p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 group hover:border-orange-600/30 transition-all">
-                                        <div className="size-16 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-white shadow-sm group-hover:scale-110 transition-transform relative overflow-hidden">
-                                            {badge.imageUrl ? (
-                                                <img src={badge.imageUrl} alt={badge.name} className="w-10 h-10 object-contain max-w-full" />
-                                            ) : (
-                                                <span className="material-symbols-outlined text-orange-500 text-[24px]">verified</span>
-                                            )}
+                                {(allBadges.length > 0 ? allBadges : badges).map((badge) => {
+                                    const earned = badges.some(b => b.id === badge.id)
+                                    return (
+                                        <div
+                                            key={badge.id}
+                                            className={`group/badge flex flex-col items-center justify-center gap-3 p-4 rounded-lg border transition-all
+                                                ${earned
+                                                    ? 'bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-700/50 hover:border-orange-600/30'
+                                                    : 'bg-slate-50/50 dark:bg-slate-900/30 border-slate-100 dark:border-slate-800 opacity-50'
+                                                }`}
+                                        >
+                                            {/* Badge image with optional lock overlay */}
+                                            <div className="relative size-16 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center shadow-sm group-hover/badge:scale-105 transition-transform overflow-hidden">
+                                                {badge.imageUrl ? (
+                                                    <img
+                                                        src={badge.imageUrl}
+                                                        alt={badge.name}
+                                                        className={`w-10 h-10 object-contain max-w-full ${!earned ? 'grayscale' : ''}`}
+                                                    />
+                                                ) : (
+                                                    <span className={`material-symbols-outlined text-[24px] ${earned ? 'text-orange-500' : 'text-slate-400'}`}>verified</span>
+                                                )}
+                                                {/* Lock overlay for unearned */}
+                                                {!earned && (
+                                                    <div className="absolute inset-0 bg-slate-900/40 dark:bg-slate-900/60 flex items-center justify-center rounded-full">
+                                                        <span className="material-symbols-outlined text-white text-[18px]">lock</span>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            <div className="text-center">
+                                                <span className={`block text-xs font-bold ${earned ? 'text-slate-700 dark:text-slate-300' : 'text-slate-400 dark:text-slate-600'}`}>
+                                                    {badge.name}
+                                                </span>
+                                                <span className="block text-[10px] text-slate-400 mt-1">
+                                                    {earned ? badge.description : 'Locked'}
+                                                </span>
+                                            </div>
                                         </div>
-                                        <div className="text-center">
-                                            <span className="block text-xs font-bold text-slate-700 dark:text-slate-300">{badge.name}</span>
-                                            <span className="block text-[10px] text-slate-400 mt-1">{badge.description}</span>
-                                        </div>
-                                    </div>
-                                ))}
+                                    )
+                                })}
                             </div>
                         ) : (
                             <div className="p-8 text-center text-slate-500">
                                 <span className="material-symbols-outlined text-4xl mb-2 text-slate-300 block">military_tech</span>
-                                <p>No badges earned yet. Complete quests to unlock them!</p>
+                                <p>No badges available yet.</p>
                             </div>
                         )}
                     </div>

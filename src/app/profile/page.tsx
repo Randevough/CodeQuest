@@ -21,6 +21,9 @@ export default async function ProfilePage() {
 
     if (!user) redirect('/login')
 
+    // Fetch all available badges (for the locked view)
+    const allBadges = await prisma.badge.findMany({ orderBy: { createdAt: 'asc' } })
+
     // Fetch all relevant snatches for the user
     const snatches = await prisma.snatch.findMany({
         where: {
@@ -58,6 +61,7 @@ export default async function ProfilePage() {
                             user={user}
                             // @ts-ignore: Prisma client field
                             badges={user.badges.map((ub: any) => ub.badge)}
+                            allBadges={allBadges}
                         />
                     </div>
                 </div>

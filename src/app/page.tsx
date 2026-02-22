@@ -193,83 +193,98 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
   const totalPages = Math.ceil(total / limit)
 
   return (
-    <div className="min-h-screen flex flex-col relative bg-[#F9FAFB] dark:bg-black text-[#171717] dark:text-white">
+    <div className="min-h-screen flex flex-col relative text-slate-800 dark:text-slate-100 overflow-x-hidden">
 
-      {/* Header */}
-      {/* Header */}
-      <Header activePage="explore" />
+      {/* Fixed dot-pattern + glow auras */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute inset-0 opacity-40" style={{
+          backgroundImage: 'radial-gradient(circle, #94a3b8 1px, transparent 1px)',
+          backgroundSize: '24px 24px',
+        }} />
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at top left, rgba(249,115,22,0.15), transparent 60%)' }} />
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at bottom right, rgba(100,116,139,0.15), transparent 60%)' }} />
+      </div>
 
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="relative z-10 flex flex-col min-h-screen">
+        <Header activePage="explore" />
 
-        <LoginToast />
+        <main className="flex-grow max-w-7xl mx-auto w-full px-6 py-8 space-y-12">
+          <LoginToast />
 
-        {/* MY ACTIVE QUESTS SECTION */}
-        {myActiveQuests.length > 0 && (
-          <div className="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-gray-800 rounded-xl p-6 mb-6">
-            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-2">
-              <span className="material-symbols-outlined text-[18px]">bolt</span>
-              Active Quests ({myActiveQuests.length})
-            </h2>
+          {/* ── ACTIVE MISSIONS ── */}
+          {myActiveQuests.length > 0 && (
+            <section className="relative">
+              <div className="crosshair absolute -top-1 -left-1" />
+              <div className="crosshair absolute -top-1 -right-1" />
+              <div className="crosshair absolute -bottom-1 -left-1" />
+              <div className="crosshair absolute -bottom-1 -right-1" />
 
-            <div className="flex overflow-x-auto gap-4 no-scrollbar items-stretch -mx-6 px-6 py-4">
-              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-              {myActiveQuests.map((quest: any) => (
-                <div key={quest.id} className="min-w-[320px] md:min-w-[350px] max-w-[400px] flex-none">
-                  <QuestCard
-                    quest={quest}
-                    isSnatched={true}
-                  />
+              {/* Outer glass wrapper */}
+              <div className="bg-white/40 dark:bg-slate-800/40 backdrop-blur-xl border border-white/60 dark:border-slate-700/60 rounded-xl p-1 shadow-sm">
+                {/* Inner panel */}
+                <div className="bg-white/50 dark:bg-slate-900/50 rounded-lg p-6 md:p-8 border border-slate-100 dark:border-slate-700/50">
+                  <div className="flex items-center gap-2 mb-6 text-slate-500 dark:text-slate-400">
+                    <span className="material-symbols-outlined text-[18px]">bolt</span>
+                    <span className="text-xs font-mono uppercase tracking-[0.2em] font-bold">
+                      Active Missions ({myActiveQuests.length})
+                    </span>
+                  </div>
+                  <div className="flex overflow-x-auto styled-scrollbar items-stretch -mx-6 px-6 pb-3 gap-4">
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    {myActiveQuests.map((quest: any) => (
+                      <div key={quest.id} className="min-w-[320px] md:min-w-[500px] max-w-[640px] flex-none">
+                        <QuestCard quest={quest} isSnatched={true} />
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              ))}
+              </div>
+            </section>
+          )}
+
+          {/* ── QUEST BOARD ── */}
+          <section>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+              <div>
+                <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">Quest Board</h1>
+                <p className="text-slate-500 dark:text-slate-400">Find new challenges to tackle and earn points for your team.</p>
+              </div>
             </div>
-          </div>
-        )}
 
-
-        {/* Filters & Header */}
-        <div className="flex flex-col gap-6 mb-6">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Quest Board</h1>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Find new challenges to tackle and earn points for your team.</p>
-          </div>
-
-          {/* Search and Filters Client Component */}
-          <QuestSearch />
-        </div>
-
-        {/* Quest Grid */}
-        {availableQuests.length === 0 ? (
-          <div className="text-center py-20 border border-dashed border-gray-200 dark:border-border-dark rounded-3xl">
-            <p className="text-zinc-500 mb-4">No quests found.</p>
-          </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-              {availableQuests.map((quest: any) => (
-                <QuestCard
-                  key={quest.id}
-                  quest={quest}
-                  isSnatched={false}
-                />
-              ))}
-            </div >
-
-            <div className="mt-6">
-              <Pagination totalPages={totalPages} />
+            <div className="mb-8">
+              <QuestSearch />
             </div>
-          </>
-        )}
 
-        {/* Developer / Seed Section */}
-        <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-800 flex justify-center">
-          <form action={seedQuests}>
-            <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full text-xs font-mono transition-colors text-gray-500 dark:bg-white/5 dark:hover:bg-white/10 dark:text-gray-400">
-              🌱 Seed Test Quests
-            </button>
-          </form>
-        </div>
-      </main>
+            {availableQuests.length === 0 ? (
+              <div className="text-center py-20 border border-dashed border-slate-200 dark:border-slate-700 rounded-3xl bg-white/40 dark:bg-white/5 backdrop-blur-sm">
+                <p className="text-slate-500">No quests found.</p>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                  {availableQuests.map((quest: any) => (
+                    <QuestCard key={quest.id} quest={quest} isSnatched={false} />
+                  ))}
+                </div>
+                <div className="mt-6">
+                  <Pagination totalPages={totalPages} />
+                </div>
+              </>
+            )}
+          </section>
+
+          {/* Seed button */}
+          <div className="pt-6 border-t border-slate-100 dark:border-slate-800 flex justify-center">
+            <form action={seedQuests}>
+              <button className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 rounded-full shadow-sm border border-slate-100 dark:border-slate-700 text-sm text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                <span className="material-symbols-outlined text-green-500 text-[18px]">eco</span>
+                Seed Test Quests
+              </button>
+            </form>
+          </div>
+        </main>
+      </div>
     </div>
   )
 }

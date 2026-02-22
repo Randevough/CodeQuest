@@ -19,3 +19,90 @@ body {
   background: var(--background);
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
+
+/* Architectural crosshair corner decorations */
+.crosshair {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+}
+
+.crosshair::before,
+.crosshair::after {
+  content: '';
+  position: absolute;
+  background-color: #cbd5e1;
+}
+
+.dark .crosshair::before,
+.dark .crosshair::after {
+  background-color: #475569;
+}
+
+.crosshair::before {
+  width: 1px;
+  height: 12px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.crosshair::after {
+  height: 1px;
+  width: 12px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.dark .glass-panel {
+  background: rgba(30, 41, 59, 0.6);
+}
+
+/* Scrollbar hide utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Styled scrollbar for Active Missions carousel */
+.styled-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #f97316 #f1f5f9;
+}
+
+.styled-scrollbar::-webkit-scrollbar {
+  height: 4px;
+}
+
+.styled-scrollbar::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 999px;
+}
+
+.styled-scrollbar::-webkit-scrollbar-thumb {
+  background: #f97316;
+  border-radius: 999px;
+}
+
+.styled-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #ea580c;
+}
+
+.dark .styled-scrollbar {
+  scrollbar-color: #f97316 #1e293b;
+}
+
+.dark .styled-scrollbar::-webkit-scrollbar-track {
+  background: #1e293b;
+}

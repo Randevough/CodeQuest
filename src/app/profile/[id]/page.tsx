@@ -25,6 +25,9 @@ export default async function PublicProfilePage(props: { params: Promise<{ id: s
         notFound()
     }
 
+    // Fetch all available badges (for the locked view)
+    const allBadges = await prisma.badge.findMany({ orderBy: { createdAt: 'asc' } })
+
     // Fetch all relevant snatches for the user
     // We can show same data as private profile, maybe filtering out some sensitive statuses if needed?
     // The original query included 'ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED', 'ARCHIVED'
@@ -66,6 +69,7 @@ export default async function PublicProfilePage(props: { params: Promise<{ id: s
                             user={user}
                             // @ts-ignore: Prisma client field
                             badges={user.badges.map((ub: any) => ub.badge)}
+                            allBadges={allBadges}
                         />
                     </div>
                 </div>
