@@ -96,7 +96,7 @@ body {
 }
 
 .styled-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #ea580c;
+  background: #fdba74;
 }
 
 .dark .styled-scrollbar {

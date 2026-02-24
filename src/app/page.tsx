@@ -230,7 +230,6 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
                     </span>
                   </div>
                   <div className="flex overflow-x-auto styled-scrollbar items-stretch -mx-6 px-6 pb-3 gap-4">
-                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     {myActiveQuests.map((quest: any) => (
                       <div key={quest.id} className="min-w-[320px] md:min-w-[500px] max-w-[640px] flex-none">
                         <QuestCard quest={quest} isSnatched={true} />
@@ -244,13 +243,11 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
 
           {/* ── QUEST BOARD ── */}
           <section>
-            <div className="flex flex-col items-center text-center gap-3 mb-8">
-              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-slate-200 dark:border-slate-700 bg-white/60 dark:bg-slate-800/60 text-xs font-mono uppercase tracking-[0.15em] font-bold text-slate-500 dark:text-slate-400">
-                <span className="w-2 h-2 rounded-full bg-orange-400 inline-block" />
-                Available Missions
-              </span>
-              <h1 className="text-4xl font-bold text-slate-900 dark:text-white tracking-tight">Quest Board</h1>
-              <p className="text-slate-500 dark:text-slate-400 max-w-md">Find new challenges to tackle, refine your architectural skills, and earn points for your team in our latest sprint cycle.</p>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+              <div>
+                <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">Quest Board</h1>
+                <p className="text-slate-500 dark:text-slate-400">Find new challenges to tackle and earn points for your team.</p>
+              </div>
             </div>
 
             <div className="mb-8">
