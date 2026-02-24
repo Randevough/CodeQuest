@@ -135,10 +135,10 @@ export function QuestSearch() {
     return (
         <form
             action={(formData) => handleSearch(formData)}
-            className="flex flex-col md:flex-row gap-4 p-1"
+            className="flex flex-col md:flex-row gap-4 p-1 justify-center"
         >
             {/* Search Input */}
-            <div className="relative flex items-center w-full max-w-md bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-gray-700 transition-all duration-200 ease-in-out focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-500/20 shadow-sm">
+            <div className="relative flex items-center flex-1 max-w-lg bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-gray-700 transition-all duration-200 ease-in-out focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-500/20 shadow-sm">
                 <span className="absolute left-4 material-symbols-outlined text-slate-400 text-[20px] pointer-events-none">search</span>
                 <input
                     name="q"
