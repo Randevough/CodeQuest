@@ -243,11 +243,9 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
 
           {/* ── QUEST BOARD ── */}
           <section>
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
-              <div>
-                <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">Quest Board</h1>
-                <p className="text-slate-500 dark:text-slate-400">Find new challenges to tackle and earn points for your team.</p>
-              </div>
+            <div className="flex flex-col items-center text-center gap-2 mb-8">
+              <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Quest Board</h1>
+              <p className="text-slate-500 dark:text-slate-400">Solve problems, build cool things, and earn points to climb the ranks. <br /> Your next challenge starts here!</p>
             </div>
 
             <div className="mb-8">
