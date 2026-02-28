@@ -14,6 +14,7 @@ type Quest = {
     difficulty?: string | null
     category?: string | null
     points?: number | null
+    deadline?: Date | string | null
     _count: { snatches: number }
 }
 
@@ -43,7 +44,16 @@ export function QuestCard({ quest, isSnatched }: { quest: Quest, isSnatched: boo
     }
 
     const isFull = quest._count.snatches >= quest.maxSnatchers
-    const daysLeft = 2
+
+    const getDeadlineLabel = () => {
+        if (!quest.deadline) return 'No Deadline'
+        const msLeft = new Date(quest.deadline).getTime() - Date.now()
+        if (msLeft <= 0) return 'Expired'
+        const hoursLeft = Math.floor(msLeft / (1000 * 60 * 60))
+        if (hoursLeft < 24) return `${hoursLeft}h left`
+        const daysLeft = Math.floor(hoursLeft / 24)
+        return `${daysLeft}d left`
+    }
 
 
     const getDifficultyStyle = (diff?: string | null) => {
@@ -103,7 +113,7 @@ export function QuestCard({ quest, isSnatched }: { quest: Quest, isSnatched: boo
                         &nbsp;Devs
                     </div>
                     <div className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600" />
-                    <span>{daysLeft}d left</span>
+                    <span>{getDeadlineLabel()}</span>
                 </div>
 
                 {isSnatched ? (
