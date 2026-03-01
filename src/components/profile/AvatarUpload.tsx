@@ -68,7 +68,7 @@ export function AvatarUpload({ currentAvatar, name, size = 128, editable = false
         : 'U'
 
     return (
-        <div className={`relative ${editable ? 'group cursor-pointer' : ''}`} onClick={editable ? handleClick : undefined}>
+        <div className={`relative flex-shrink-0 rounded-full transition-all hover:ring-2 hover:ring-orange-400 hover:ring-offset-1 ${editable ? 'group cursor-pointer' : ''}`} style={{ width: size, height: size }} onClick={editable ? handleClick : undefined}>
             <input
                 type="file"
                 ref={fileInputRef}
@@ -79,8 +79,7 @@ export function AvatarUpload({ currentAvatar, name, size = 128, editable = false
             />
 
             <div
-                className={`rounded-full overflow-hidden border-2 border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm relative transition-all ${editable ? 'group-hover:border-orange-500' : ''}`}
-                style={{ width: size, height: size }}
+                className={`w-full h-full rounded-full overflow-hidden border-2 border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm relative transition-all ${editable ? 'group-hover:border-orange-500' : ''}`}
             >
                 {currentAvatar ? (
                     <img

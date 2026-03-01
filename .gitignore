@@ -16,7 +16,6 @@
 # next.js
 /.next/
 /out/
-/design_context
 
 # production
 /build
@@ -24,7 +23,6 @@
 # misc
 .DS_Store
 *.pem
-.agent
 /scripts
 
 # debug
@@ -43,4 +41,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+
+# external
+/.implementation
+/qa-report.md
 /temp_app
+.agent
+/design_context

@@ -39,10 +39,10 @@ export function ProfileSidebar({ user, badges }: ProfileSidebarProps) {
                 {isOwnProfile && (
                     <button
                         onClick={() => setIsEditModalOpen(true)}
-                        className="absolute top-4 right-4 p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700 transition-colors z-10"
+                        className="absolute top-4 right-4 p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700 border border-transparent hover:border-orange-400 transition-all z-10 flex items-center justify-center"
                         title="Edit Profile"
                     >
-                        <span className="material-symbols-outlined text-[18px]">edit</span>
+                        <span className="material-symbols-outlined text-[18px] leading-none">edit</span>
                     </button>
                 )}
 
