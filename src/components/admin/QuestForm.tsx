@@ -29,6 +29,7 @@ const DIFFICULTY_OPTIONS: Option[] = [
     { label: 'Beginner', value: 'Beginner' },
     { label: 'Intermediate', value: 'Intermediate' },
     { label: 'Advanced', value: 'Advanced' },
+    { label: '✦ Exclusive', value: 'Exclusive' },
 ];
 
 const DEFAULT_CATEGORIES: Option[] = [
@@ -49,7 +50,11 @@ export function QuestForm({ initialData, isEditing = false }: QuestFormProps) {
     const [difficulty, setDifficulty] = useState(initialData?.difficulty || '');
     const [points, setPoints] = useState(initialData?.points || 100);
     const [maxSnatchers, setMaxSnatchers] = useState(initialData?.maxSnatchers || 1);
-    const [deadline, setDeadline] = useState(initialData?.deadline ? new Date(initialData.deadline).toISOString().split('T')[0] : '');
+    const [deadline, setDeadline] = useState(() => {
+        if (!initialData?.deadline) return '';
+        const d = new Date(initialData.deadline);
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    });
     const [description, setDescription] = useState(initialData?.description || '');
     const [resources, setResources] = useState(initialData?.resources || '');
 
@@ -155,7 +160,8 @@ export function QuestForm({ initialData, isEditing = false }: QuestFormProps) {
         setRequirements(requirements.filter((_, i) => i !== index));
     };
 
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
     return (
         <form action={handleSubmit} className="flex flex-col gap-8 pb-10">
@@ -259,8 +265,14 @@ export function QuestForm({ initialData, isEditing = false }: QuestFormProps) {
                         <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Deadline (Optional)</label>
                         <DatePicker
                             value={deadline}
-                            onChange={(date) => setDeadline(date ? date.toISOString().split('T')[0] : '')}
-                            minDate={new Date(today)}
+                            onChange={(date) => {
+                                if (!date) { setDeadline(''); return; }
+                                const y = date.getFullYear();
+                                const m = String(date.getMonth() + 1).padStart(2, '0');
+                                const d = String(date.getDate()).padStart(2, '0');
+                                setDeadline(`${y}-${m}-${d}`);
+                            }}
+                            minDate={today}
                         />
                     </div>
                 </div>

@@ -140,11 +140,13 @@ export default async function ManageQuestsPage({ searchParams }: ManageQuestsPag
 function DifficultyBadge({ difficulty }: { difficulty: string }) {
     const d = difficulty.toLowerCase();
     let displayClass = "";
-    if (d === 'beginner') {
+    if (d === 'exclusive') {
+        displayClass = "bg-gradient-to-br from-yellow-400 to-amber-500 text-white font-bold shadow-md shadow-amber-400/50 ring-1 ring-inset ring-yellow-200/40 border-0";
+    } else if (d === 'beginner') {
         displayClass = "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800/50";
     } else if (d === 'intermediate') {
         displayClass = "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50";
-    } else if (d === 'advanced' || d === 'advance') { // Handling potential typo in data
+    } else if (d === 'advanced' || d === 'advance') {
         displayClass = "bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-800/50";
     } else {
         displayClass = "bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700";

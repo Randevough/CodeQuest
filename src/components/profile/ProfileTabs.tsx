@@ -129,6 +129,7 @@ export function ProfileTabs({ activeSnatches, portfolioSnatches = [], user, badg
                                                 {(() => {
                                                     const d = (snatch.quest.difficulty || '').toLowerCase()
                                                     let diffColor = 'bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800/30'
+                                                    if (d === 'exclusive') diffColor = 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-800/30'
                                                     if (d === 'expert' || d === 'hard' || d === 'advanced') diffColor = 'bg-violet-50 text-violet-700 border-violet-100 dark:bg-violet-900/20 dark:text-violet-300 dark:border-violet-800/30'
                                                     if (d === 'intermediate') diffColor = 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800/30'
 
@@ -218,6 +219,7 @@ export function ProfileTabs({ activeSnatches, portfolioSnatches = [], user, badg
                                     <div key={snatch.id} className="p-5 flex items-start gap-4 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
                                         <div className={`p-3 rounded-lg ${(() => {
                                             const d = (snatch.quest.difficulty || '').toLowerCase()
+                                            if (d === 'exclusive') return 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400'
                                             if (d === 'expert' || d === 'hard' || d === 'advanced') return 'bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400'
                                             if (d === 'intermediate') return 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
                                             return 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400'
@@ -225,6 +227,7 @@ export function ProfileTabs({ activeSnatches, portfolioSnatches = [], user, badg
                                             <span className="material-symbols-outlined text-[24px]">
                                                 {(() => {
                                                     const d = (snatch.quest.difficulty || '').toLowerCase()
+                                                    if (d === 'exclusive') return 'star'
                                                     if (d === 'expert' || d === 'hard' || d === 'advanced') return 'psychology'
                                                     if (d === 'intermediate') return 'trending_up'
                                                     return 'school'
@@ -257,6 +260,7 @@ export function ProfileTabs({ activeSnatches, portfolioSnatches = [], user, badg
                                                     {(() => {
                                                         const d = (snatch.quest.difficulty || '').toLowerCase()
                                                         let diffColor = 'bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800/30'
+                                                        if (d === 'exclusive') diffColor = 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-800/30'
                                                         if (d === 'expert' || d === 'hard' || d === 'advanced') diffColor = 'bg-violet-50 text-violet-700 border-violet-100 dark:bg-violet-900/20 dark:text-violet-300 dark:border-violet-800/30'
                                                         if (d === 'intermediate') diffColor = 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800/30'
 

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { format, isValid, parseISO } from 'date-fns'
+import { format, isValid } from 'date-fns'
 import { DayPicker } from 'react-day-picker'
 import 'react-day-picker/style.css'
 
@@ -32,8 +32,17 @@ export function DatePicker({
         return () => document.removeEventListener("mousedown", handleClickOutside)
     }, [])
 
-    // Parse value to Date object for DayPicker
-    const selectedDate = typeof value === 'string' ? (value ? parseISO(value) : undefined) : value
+    // Parse a YYYY-MM-DD string as LOCAL midnight to avoid UTC timezone shift
+    const parseLocalDate = (str: string): Date | undefined => {
+        const parts = str.split('-');
+        if (parts.length !== 3) return undefined;
+        const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+        return isValid(d) ? d : undefined;
+    };
+
+    const selectedDate = typeof value === 'string'
+        ? (value ? parseLocalDate(value) : undefined)
+        : value
 
     const handleSelect = (date: Date | undefined) => {
         onChange(date)

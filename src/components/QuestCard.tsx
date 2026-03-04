@@ -58,6 +58,8 @@ export function QuestCard({ quest, isSnatched }: { quest: Quest, isSnatched: boo
 
     const getDifficultyStyle = (diff?: string | null) => {
         const d = diff?.toLowerCase() || ''
+        if (d === 'exclusive')
+            return 'bg-gradient-to-br from-yellow-400 to-amber-500 text-white font-bold shadow-md shadow-amber-400/50 ring-1 ring-inset ring-yellow-200/40'
         if (d === 'expert' || d === 'hard' || d === 'advanced')
             return 'bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-300'
         if (d === 'intermediate')

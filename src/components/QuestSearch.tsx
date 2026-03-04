@@ -123,6 +123,7 @@ export function QuestSearch() {
         { label: 'Beginner', value: 'Beginner' },
         { label: 'Intermediate', value: 'Intermediate' },
         { label: 'Advanced', value: 'Advanced' },
+        { label: '✦ Exclusive', value: 'Exclusive' },
     ]
 
     const sortOptions = [

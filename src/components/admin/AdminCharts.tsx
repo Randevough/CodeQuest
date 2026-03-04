@@ -25,11 +25,11 @@ interface DifficultyData {
 }
 
 // Difficulty colors mapping
-// Difficulty colors mapping
 const DIFFICULTY_COLORS: Record<string, string> = {
-    'Beginner': '#10b981', // emerald-500
+    'Beginner': '#10b981',    // emerald-500
     'Intermediate': '#3b82f6', // blue-500
-    'Advanced': '#8b5cf6', // violet-500
+    'Advanced': '#8b5cf6',    // violet-500
+    'Exclusive': '#f59e0b',   // amber-500 (gold)
 };
 const DEFAULT_COLOR = '#94a3b8'; // slate-400
 
