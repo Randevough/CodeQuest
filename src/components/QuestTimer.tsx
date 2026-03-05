@@ -30,8 +30,9 @@ export function QuestTimer({ deadline }: { deadline: Date | null }) {
 
     if (!deadline) {
         return (
-            <div className="p-6 text-center text-slate-500">
-                <span>No deadline set</span>
+            <div className="text-center py-2">
+                <p className="font-mono text-xl font-bold text-slate-300 dark:text-slate-600 tracking-widest">-- : -- : --</p>
+                <p className="text-xs text-slate-400 mt-1.5 tracking-wide">No deadline set</p>
             </div>
         );
     }

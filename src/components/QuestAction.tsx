@@ -115,7 +115,7 @@ export function QuestAction({
                                         <span className="material-symbols-outlined icon-filled text-[20px]">link</span>
                                     </span>
                                     <input
-                                        className="block w-full pl-10 pr-3 py-2.5 bg-white dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:ring-0 focus:border-orange-500 focus:outline-none transition-shadow disabled:opacity-60 disabled:cursor-not-allowed"
+                                        className="block w-full pl-10 pr-3 py-2.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-400 shadow-sm focus:ring-0 focus:border-orange-500 focus:outline-none transition-all disabled:opacity-60 disabled:cursor-not-allowed"
                                         id="repo-url"
                                         placeholder="https://your-project-link.com"
                                         type="url"
