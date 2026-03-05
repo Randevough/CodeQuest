@@ -59,12 +59,12 @@ export function QuestCard({ quest, isSnatched }: { quest: Quest, isSnatched: boo
     const getDifficultyStyle = (diff?: string | null) => {
         const d = diff?.toLowerCase() || ''
         if (d === 'exclusive')
-            return 'bg-gradient-to-br from-yellow-400 to-amber-500 text-white font-bold shadow-md shadow-amber-400/50 ring-1 ring-inset ring-yellow-200/40'
-        if (d === 'expert' || d === 'hard' || d === 'advanced')
-            return 'bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-300'
+            return 'bg-gradient-to-br from-yellow-400 to-amber-500 text-white font-bold shadow-md shadow-amber-400/50 ring-1 ring-inset ring-yellow-200/40 border-0'
+        if (d === 'advanced' || d === 'advance' || d === 'expert' || d === 'hard')
+            return 'bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-800/50'
         if (d === 'intermediate')
-            return 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300'
-        return 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400'
+            return 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50'
+        return 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800/50'
     }
 
     return (
@@ -79,10 +79,10 @@ export function QuestCard({ quest, isSnatched }: { quest: Quest, isSnatched: boo
             {/* Header: difficulty + category tags + points badge */}
             <div className="flex justify-between items-start mb-4">
                 <div className="flex gap-2 flex-wrap">
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold tracking-wide ${getDifficultyStyle(quest.difficulty)}`}>
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold capitalize ${getDifficultyStyle(quest.difficulty)}`}>
                         {quest.difficulty || 'Beginner'}
                     </span>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-bold tracking-wide bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                         {quest.category || 'Web'}
                     </span>
                 </div>
