@@ -5,7 +5,7 @@ import { WorkspaceHeader } from '@/components/workspace/WorkspaceHeader'
 
 export default function WorkspacePage() {
     return (
-        <div className="min-h-screen text-[#171717] dark:text-white flex flex-col antialiased relative overflow-x-hidden">
+        <div className="min-h-screen text-[#171717] dark:text-white flex flex-col antialiased relative [overflow-x:clip]">
 
             {/* Background: dot-matrix + dual mesh aura — copied from Explore Quests */}
             <div className="fixed inset-0 pointer-events-none z-0">

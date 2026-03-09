@@ -193,7 +193,7 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
   const totalPages = Math.ceil(total / limit)
 
   return (
-    <div className="min-h-screen flex flex-col relative text-slate-800 dark:text-slate-100 overflow-x-hidden">
+    <div className="min-h-screen flex flex-col relative text-slate-800 dark:text-slate-100 [overflow-x:clip]">
 
       {/* Fixed dot-pattern + glow auras */}
       <div className="fixed inset-0 pointer-events-none z-0">
