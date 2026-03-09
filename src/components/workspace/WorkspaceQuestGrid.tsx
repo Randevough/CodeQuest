@@ -22,7 +22,7 @@ export async function WorkspaceQuestGrid() {
 
             {/* Empty Slots */}
             {Array.from({ length: emptySlots }).map((_, i) => (
-                <article key={`empty-${i}`} className="flex flex-col items-center justify-center gap-4 h-[240px] border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-xl bg-gray-50/50 dark:bg-surface-dark/30 hover:bg-gray-50 dark:hover:bg-surface-dark/50 transition-colors">
+                <article key={`empty-${i}`} className="flex flex-col items-center justify-center gap-4 h-[240px] border-2 border-dashed border-slate-200 dark:border-gray-800 rounded-xl bg-gray-50/50 dark:bg-surface-dark/30 hover:bg-gray-50 dark:hover:bg-surface-dark/50 transition-colors">
                     <Link href="/" className="group/icon h-12 w-12 rounded-full bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-sm hover:border-orange-200 hover:shadow-md transition-all">
                         <span className="material-symbols-outlined text-gray-400 group-hover/icon:text-orange-500 transition-colors">add_circle</span>
                     </Link>

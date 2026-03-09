@@ -64,7 +64,7 @@ export function WorkspaceQuestCard({ snatch }: { snatch: SnatchWithQuest }) {
     }
 
     return (
-        <article className={`group bg-white dark:bg-surface-dark border rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden relative
+        <article className={`group bg-white dark:bg-surface-dark border rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 overflow-hidden relative
             border-slate-200 dark:border-slate-800
         `}>
             {/* Status Top Border Removed - Clean Look */}
@@ -125,7 +125,7 @@ export function WorkspaceQuestCard({ snatch }: { snatch: SnatchWithQuest }) {
 
                 {/* Feedback Section for Revision */}
                 {isRevision && snatch.feedback && (
-                    <div className="bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 p-4 rounded-lg flex gap-3">
+                    <div className="bg-red-50/80 dark:bg-red-900/10 backdrop-blur-md border border-red-100 dark:border-red-900/30 p-4 rounded-lg flex gap-3">
                         <div className="shrink-0 text-red-700 dark:text-red-400">
                             <span className="material-symbols-outlined">rate_review</span>
                         </div>
