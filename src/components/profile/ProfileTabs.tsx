@@ -36,11 +36,12 @@ interface ProfileTabsProps {
     activeSnatches: Snatch[]
     portfolioSnatches?: Snatch[]
     user: any
+    isOwner?: boolean
     badges?: Badge[]       // earned badges
     allBadges?: Badge[]   // every badge in the system
 }
 
-export function ProfileTabs({ activeSnatches, portfolioSnatches = [], user, badges = [], allBadges = [] }: ProfileTabsProps) {
+export function ProfileTabs({ activeSnatches, portfolioSnatches = [], user, isOwner = false, badges = [], allBadges = [] }: ProfileTabsProps) {
     const [activeTab, setActiveTab] = useState<'active' | 'portfolio' | 'badges'>('active')
 
     return (
@@ -167,31 +168,33 @@ export function ProfileTabs({ activeSnatches, portfolioSnatches = [], user, badg
                                             </div>
                                         </div>
 
-                                        {/* Right: Primary Action Button */}
-                                        <div className="w-full sm:w-auto">
-                                            {(() => {
-                                                const status = snatch.status
-                                                if (status === 'SUBMITTED') {
+                                        {/* Right: Primary Action Button — only shown to the profile owner */}
+                                        {isOwner && (
+                                            <div className="w-full sm:w-auto">
+                                                {(() => {
+                                                    const status = snatch.status
+                                                    if (status === 'SUBMITTED') {
+                                                        return (
+                                                            <Link href={`/quests/${snatch.quest.id}`} className="block w-full sm:w-auto bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold px-6 py-2.5 rounded-lg text-sm transition-all text-center">
+                                                                View Details
+                                                            </Link>
+                                                        )
+                                                    }
+                                                    if (status === 'REVISION_NEEDED') {
+                                                        return (
+                                                            <Link href={`/quests/${snatch.quest.id}`} className="block w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-2.5 rounded-lg text-sm transition-all shadow hover:shadow-md text-center">
+                                                                Update Submission
+                                                            </Link>
+                                                        )
+                                                    }
                                                     return (
-                                                        <Link href={`/quests/${snatch.quest.id}`} className="block w-full sm:w-auto bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold px-6 py-2.5 rounded-lg text-sm transition-all text-center">
-                                                            View Details
+                                                        <Link href={`/quests/${snatch.quest.id}`} className="block w-full sm:w-auto bg-orange-600 hover:bg-orange-700 text-white font-bold px-6 py-2.5 rounded-lg text-sm transition-all shadow hover:shadow-md text-center">
+                                                            Continue Quest
                                                         </Link>
                                                     )
-                                                }
-                                                if (status === 'REVISION_NEEDED') {
-                                                    return (
-                                                        <Link href={`/quests/${snatch.quest.id}`} className="block w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-2.5 rounded-lg text-sm transition-all shadow hover:shadow-md text-center">
-                                                            Update Submission
-                                                        </Link>
-                                                    )
-                                                }
-                                                return (
-                                                    <Link href={`/quests/${snatch.quest.id}`} className="block w-full sm:w-auto bg-orange-600 hover:bg-orange-700 text-white font-bold px-6 py-2.5 rounded-lg text-sm transition-all shadow hover:shadow-md text-center">
-                                                        Continue Quest
-                                                    </Link>
-                                                )
-                                            })()}
-                                        </div>
+                                                })()}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </article>

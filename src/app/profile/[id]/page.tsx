@@ -50,6 +50,7 @@ export default async function PublicProfilePage(props: { params: Promise<{ id: s
 
     // Calculate completed count from local filter
     const completedQuestsCount = portfolioSnatches.length
+    const isOwner = session?.user?.id === user.id
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-background-dark">
@@ -67,6 +68,7 @@ export default async function PublicProfilePage(props: { params: Promise<{ id: s
                             activeSnatches={activeSnatches}
                             portfolioSnatches={portfolioSnatches}
                             user={user}
+                            isOwner={isOwner}
                             // @ts-ignore: Prisma client field
                             badges={user.badges.map((ub: any) => ub.badge)}
                             allBadges={allBadges}

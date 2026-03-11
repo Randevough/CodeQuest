@@ -59,6 +59,7 @@ export default async function ProfilePage() {
                             activeSnatches={activeSnatches}
                             portfolioSnatches={portfolioSnatches}
                             user={user}
+                            isOwner={true}
                             // @ts-ignore: Prisma client field
                             badges={user.badges.map((ub: any) => ub.badge)}
                             allBadges={allBadges}
