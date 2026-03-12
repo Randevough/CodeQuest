@@ -1,9 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
-import { useSession } from 'next-auth/react'
+import { useSession, signOut } from 'next-auth/react'
+import { ThemeToggle } from './ThemeToggle'
 
 
 interface HeaderProps {
@@ -12,8 +13,21 @@ interface HeaderProps {
 
 export function Header({ activePage }: HeaderProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const [isProfileOpen, setIsProfileOpen] = useState(false)
+    const profileRef = useRef<HTMLDivElement>(null)
     const { data: session } = useSession()
     const isAdmin = session?.user?.role === 'Admin'
+
+    // Close profile dropdown on outside click
+    useEffect(() => {
+        function handleOutsideClick(e: MouseEvent) {
+            if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+                setIsProfileOpen(false)
+            }
+        }
+        document.addEventListener('mousedown', handleOutsideClick)
+        return () => document.removeEventListener('mousedown', handleOutsideClick)
+    }, [])
 
     const getLinkClass = (page: string, isMobile = false) => {
         const baseClass = isMobile
@@ -67,15 +81,62 @@ export function Header({ activePage }: HeaderProps) {
                             />
                             <span>{session?.user?.points || 0} pts</span>
                         </div>
-                        <Link href="/profile" className="hidden sm:flex items-center gap-2 group ml-1">
-                            <div className="size-8 rounded-full bg-gray-100 border border-gray-200 overflow-hidden group-hover:border-gray-300 transition-all flex items-center justify-center">
+                        <ThemeToggle />
+                        {/* Profile Dropdown */}
+                        <div ref={profileRef} className="relative hidden sm:block ml-1">
+                            <button
+                                onClick={() => setIsProfileOpen(prev => !prev)}
+                                aria-label="Open profile menu"
+                                className="flex items-center justify-center size-8 rounded-full bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 overflow-hidden hover:border-orange-400 dark:hover:border-orange-500 transition-all"
+                            >
                                 {session?.user?.avatar ? (
                                     <img src={session.user.avatar} alt="User" className="w-full h-full object-cover" />
                                 ) : (
-                                    <span className="material-symbols-outlined text-gray-400">person</span>
+                                    <span className="material-symbols-outlined text-gray-400 dark:text-slate-400 text-[20px]">person</span>
                                 )}
-                            </div>
-                        </Link>
+                            </button>
+
+                            {isProfileOpen && (
+                                <div className="absolute right-0 top-[calc(100%+8px)] w-52 bg-white dark:bg-surface-dark border border-gray-100 dark:border-border-dark rounded-xl shadow-lg overflow-hidden z-50 animate-fade-in-up">
+                                    {/* User info header */}
+                                    <div className="px-4 py-3 border-b border-gray-100 dark:border-border-dark">
+                                        <p className="text-xs font-bold text-slate-800 dark:text-white truncate">{session?.user?.name || 'User'}</p>
+                                        <p className="text-[11px] text-slate-400 truncate">{session?.user?.email || ''}</p>
+                                    </div>
+
+                                    {/* Menu items */}
+                                    <div className="py-1">
+                                        <Link
+                                            href="/profile"
+                                            onClick={() => setIsProfileOpen(false)}
+                                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
+                                        >
+                                            <span className="material-symbols-outlined text-[18px]">person</span>
+                                            Profile
+                                        </Link>
+                                        <Link
+                                            href="/about"
+                                            onClick={() => setIsProfileOpen(false)}
+                                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
+                                        >
+                                            <span className="material-symbols-outlined text-[18px]">info</span>
+                                            About
+                                        </Link>
+                                    </div>
+
+                                    {/* Divider + Log out */}
+                                    <div className="border-t border-gray-100 dark:border-border-dark py-1">
+                                        <button
+                                            onClick={() => { setIsProfileOpen(false); signOut({ callbackUrl: '/login' }) }}
+                                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 transition-colors"
+                                        >
+                                            <span className="material-symbols-outlined text-[18px]">logout</span>
+                                            Log out
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
 
                         {/* Mobile Menu Button */}
                         <button
