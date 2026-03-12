@@ -68,12 +68,12 @@ export function QuestCard({ quest, isSnatched }: { quest: Quest, isSnatched: boo
     }
 
     return (
-        <article className={`group bg-white dark:bg-slate-800 rounded-xl p-6 h-full flex flex-col transition-all duration-300 border
-            shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] dark:shadow-none
-            hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.1)] dark:hover:bg-slate-800
+        <article className={`group bg-white dark:bg-zinc-800 rounded-xl p-6 h-full flex flex-col transition-all duration-300 border
+            shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.5)]
+            hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.1)] dark:hover:bg-zinc-700/80 dark:hover:shadow-[0_8px_24px_rgba(0,0,0,0.6)]
             ${isSnatched
-                ? 'border-orange-200 dark:border-orange-800/40'
-                : 'border-transparent hover:border-orange-500/20'
+                ? 'border-orange-200 dark:border-orange-500/30'
+                : 'border-transparent dark:border-zinc-700/60 hover:border-orange-500/20 dark:hover:border-orange-500/30'
             }
         `}>
             {/* Header: difficulty + category tags + points badge */}
@@ -82,7 +82,7 @@ export function QuestCard({ quest, isSnatched }: { quest: Quest, isSnatched: boo
                     <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold capitalize ${getDifficultyStyle(quest.difficulty)}`}>
                         {quest.difficulty || 'Beginner'}
                     </span>
-                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-100 dark:bg-zinc-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-zinc-700">
                         {quest.category || 'Web'}
                     </span>
                 </div>
@@ -147,7 +147,7 @@ export function QuestCard({ quest, isSnatched }: { quest: Quest, isSnatched: boo
             {/* Drop Confirmation Modal */}
             {showDropConfirm && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={(e) => e.stopPropagation()}>
-                    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xl max-w-sm w-full p-6 border border-slate-100 dark:border-slate-700">
+                    <div className="bg-white dark:bg-zinc-800 rounded-xl shadow-xl max-w-sm w-full p-6 border border-slate-100 dark:border-zinc-700">
                         <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Drop this Quest?</h3>
                         <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">
                             Are you sure? You won't be able to join another quest for 2 days.
