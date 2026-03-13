@@ -197,7 +197,11 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
 
       {/* Fixed dot-pattern + glow auras */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute inset-0 opacity-40" style={{
+        <div className="absolute inset-0 opacity-50 dark:hidden" style={{
+          backgroundImage: 'radial-gradient(circle, #64748b 1.25px, transparent 1.25px)',
+          backgroundSize: '24px 24px',
+        }} />
+        <div className="absolute inset-0 opacity-40 hidden dark:block" style={{
           backgroundImage: 'radial-gradient(circle, #94a3b8 1px, transparent 1px)',
           backgroundSize: '24px 24px',
         }} />

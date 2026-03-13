@@ -88,7 +88,7 @@ export function QuestCard({ quest, isSnatched }: { quest: Quest, isSnatched: boo
                 </div>
 
                 {/* Points badge — consistent with navbar style */}
-                <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-yellow-50 border border-yellow-200 text-yellow-700 text-xs font-semibold shrink-0 ml-2">
+                <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-yellow-50 dark:bg-amber-900/30 border border-yellow-200 dark:border-amber-700/50 text-yellow-700 dark:text-amber-400 text-xs font-semibold shrink-0 ml-2">
                     <Image src="/icon.png" alt="pts" width={13} height={13} className="object-contain" />
                     {quest.points || 100} pts
                 </span>

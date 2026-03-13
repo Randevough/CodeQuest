@@ -52,8 +52,8 @@ export function PaginationControls({ page, pageSize, total }: PaginationControls
                     href={`/leaderboard?page=${page - 1}`}
                     className={`px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-700 rounded-lg transition-colors
                         ${!hasPrev
-                            ? 'bg-slate-50 dark:bg-white/5 opacity-50 cursor-not-allowed pointer-events-none'
-                            : 'hover:bg-slate-50 dark:hover:bg-white/5 text-slate-700 dark:text-slate-300'
+                            ? 'bg-slate-50 dark:bg-zinc-800 opacity-50 cursor-not-allowed pointer-events-none'
+                            : 'hover:bg-slate-50 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-slate-300'
                         }`}
                     aria-disabled={!hasPrev}
                 >
@@ -71,7 +71,7 @@ export function PaginationControls({ page, pageSize, total }: PaginationControls
                                 className={`min-w-[32px] h-[32px] flex items-center justify-center text-sm font-medium rounded-lg transition-colors
                                     ${Number(p) === page
                                         ? 'bg-orange-500 text-white shadow-md shadow-orange-500/20'
-                                        : 'bg-white dark:bg-surface-dark text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-white/5'
+                                        : 'bg-white dark:bg-zinc-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-zinc-700'
                                     }`}
                             >
                                 {p}
@@ -84,8 +84,8 @@ export function PaginationControls({ page, pageSize, total }: PaginationControls
                     href={`/leaderboard?page=${page + 1}`}
                     className={`px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-700 rounded-lg transition-colors
                         ${!hasNext
-                            ? 'bg-slate-50 dark:bg-white/5 opacity-50 cursor-not-allowed pointer-events-none'
-                            : 'hover:bg-slate-50 dark:hover:bg-white/5 text-slate-700 dark:text-slate-300'
+                            ? 'bg-slate-50 dark:bg-zinc-800 opacity-50 cursor-not-allowed pointer-events-none'
+                            : 'hover:bg-slate-50 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-slate-300'
                         }`}
                     aria-disabled={!hasNext}
                 >

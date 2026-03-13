@@ -94,8 +94,8 @@ export function Pagination({
                 page={currentPage - 1}
                 disabled={currentPage <= 1}
                 className={currentPage <= 1
-                    ? "px-3 py-1.5 text-sm font-medium text-gray-300 bg-gray-50 border border-gray-100 rounded-lg cursor-not-allowed dark:bg-white/5 dark:border-gray-800 dark:text-gray-600"
-                    : "px-3 py-1.5 text-sm font-medium text-gray-500 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 dark:bg-white/5 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-white/10 transition-colors"
+                    ? "px-3 py-1.5 text-sm font-medium text-gray-300 bg-gray-50 border border-gray-100 rounded-lg cursor-not-allowed dark:bg-zinc-800 dark:border-zinc-700 dark:text-gray-600"
+                    : "px-3 py-1.5 text-sm font-medium text-gray-500 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 dark:text-gray-400 dark:hover:bg-zinc-700 transition-colors"
                 }
             >
                 Previous
@@ -116,7 +116,7 @@ export function Pagination({
                                 ? "w-8 h-8 flex items-center justify-center text-gray-400"
                                 : `min-w-[32px] h-8 flex items-center justify-center text-sm font-medium rounded-lg transition-all ${isActive
                                     ? 'bg-orange-500 text-white shadow-md shadow-orange-500/30'
-                                    : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 dark:bg-white/5 dark:text-gray-400 dark:border-gray-800 dark:hover:bg-white/10'}`
+                                    : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 dark:bg-zinc-800 dark:text-gray-400 dark:border-zinc-700 dark:hover:bg-zinc-700'}`
                             }
                         >
                             {pageNumber === '...' ? '...' : pageNumber}
@@ -130,8 +130,8 @@ export function Pagination({
                 page={currentPage + 1}
                 disabled={currentPage >= totalPages}
                 className={currentPage >= totalPages
-                    ? "px-3 py-1.5 text-sm font-medium text-gray-300 bg-gray-50 border border-gray-100 rounded-lg cursor-not-allowed dark:bg-white/5 dark:border-gray-800 dark:text-gray-600"
-                    : "px-3 py-1.5 text-sm font-medium text-gray-500 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 dark:bg-white/5 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-white/10 transition-colors"
+                    ? "px-3 py-1.5 text-sm font-medium text-gray-300 bg-gray-50 border border-gray-100 rounded-lg cursor-not-allowed dark:bg-zinc-800 dark:border-zinc-700 dark:text-gray-600"
+                    : "px-3 py-1.5 text-sm font-medium text-gray-500 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 dark:text-gray-400 dark:hover:bg-zinc-700 transition-colors"
                 }
             >
                 Next

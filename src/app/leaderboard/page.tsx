@@ -17,13 +17,19 @@ export default async function LeaderboardPage(props: { searchParams: Promise<{ p
 
     return (
         <div
-            className="min-h-screen dark:bg-black text-[#171717] dark:text-white flex flex-col antialiased relative"
-            style={{
-                backgroundColor: '#fafafa',
-                backgroundImage: 'radial-gradient(#e2e8f0 1px, transparent 1px)',
-                backgroundSize: '24px 24px',
-            }}
+            className="min-h-screen bg-slate-50 dark:bg-black text-[#171717] dark:text-white flex flex-col antialiased relative"
         >
+            {/* Fixed dot-pattern */}
+            <div className="fixed inset-0 pointer-events-none z-0">
+                <div className="absolute inset-0 opacity-50 dark:hidden" style={{
+                    backgroundImage: 'radial-gradient(circle, #64748b 1.25px, transparent 1.25px)',
+                    backgroundSize: '24px 24px',
+                }} />
+                <div className="absolute inset-0 opacity-40 hidden dark:block" style={{
+                    backgroundImage: 'radial-gradient(circle, #94a3b8 1px, transparent 1px)',
+                    backgroundSize: '24px 24px',
+                }} />
+            </div>
             <Header activePage="leaderboard" />
 
             <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
