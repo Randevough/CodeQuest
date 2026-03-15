@@ -226,7 +226,7 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
               {/* Outer glass wrapper */}
               <div className="bg-white/40 dark:bg-slate-800/40 backdrop-blur-xl border border-white/60 dark:border-slate-700/60 rounded-xl p-1 shadow-sm">
                 {/* Inner panel */}
-                <div className="bg-white/50 dark:bg-slate-900/50 rounded-lg p-6 md:p-8 border border-slate-100 dark:border-slate-700/50">
+                <div className="bg-white/50 dark:bg-zinc-900/50 rounded-lg p-6 md:p-8 border border-slate-100 dark:border-slate-700/50">
                   <div className="flex items-center gap-2 mb-6 text-slate-500 dark:text-slate-400">
                     <span className="material-symbols-outlined text-[18px]">bolt</span>
                     <span className="text-xs font-mono uppercase tracking-[0.2em] font-bold">

@@ -38,7 +38,7 @@ function CustomSelect({
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                className={`flex items-center justify-between w-full px-4 py-2.5 bg-white dark:bg-surface-dark border border-slate-200 dark:border-gray-700 rounded-xl transition-all duration-200 ease-in-out text-sm font-medium text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-white/5
+                className={`flex items-center justify-between w-full px-4 py-2.5 bg-white dark:bg-zinc-800 border border-slate-200 dark:border-gray-700 rounded-xl transition-all duration-200 ease-in-out text-sm font-medium text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-white/5
                 ${isOpen ? 'ring-2 ring-orange-500/20 border-orange-500' : ''}`}
             >
                 <div className="flex items-center gap-2">
@@ -139,12 +139,12 @@ export function QuestSearch() {
             className="flex flex-col md:flex-row gap-4 p-1 justify-center"
         >
             {/* Search Input */}
-            <div className="relative flex items-center flex-1 max-w-lg bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-gray-700 transition-all duration-200 ease-in-out focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-500/20 shadow-sm">
+            <div className="relative flex items-center flex-1 max-w-lg bg-white dark:bg-zinc-800 rounded-xl border border-slate-200 dark:border-gray-700 transition-all duration-200 ease-in-out dark:focus-within:border-orange-500/30 focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-500/20 shadow-sm">
                 <span className="absolute left-4 material-symbols-outlined text-slate-400 text-[20px] pointer-events-none">search</span>
                 <input
                     name="q"
                     defaultValue={searchParams.get('q') || ''}
-                    className="w-full pl-12 pr-4 py-2.5 bg-transparent border-none outline-none appearance-none text-sm text-slate-700 dark:text-gray-200 placeholder-slate-400"
+                    className="w-full pl-12 pr-4 py-2.5 bg-transparent border-none outline-none appearance-none text-sm font-medium text-slate-700 dark:text-gray-200 placeholder-slate-400"
                     placeholder="Search quests..."
                     type="text"
                     autoComplete="off"
