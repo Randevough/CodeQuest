@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { updateUserRole, deactivateUser, manualReset } from '@/actions/admin'
+import { updateUserRole, deactivateUser, manualReset, deleteUser } from '@/actions/admin'
+import { toast } from 'sonner'
 
 type UserProp = {
     id: string
@@ -12,7 +13,8 @@ type UserProp = {
 
 export function MemberActionMenu({ user }: { user: UserProp }) {
     const [isOpen, setIsOpen] = useState(false)
-    const [modal, setModal] = useState<'none' | 'role' | 'deactivate'>('none')
+    const [modal, setModal] = useState<'none' | 'role' | 'deactivate' | 'delete'>('none')
+    const [confirmText, setConfirmText] = useState('')
     const [role, setRole] = useState(user.role || 'Member')
     const [position, setPosition] = useState({ top: 0, right: 0 })
     const buttonRef = useRef<HTMLButtonElement>(null)
@@ -72,6 +74,20 @@ export function MemberActionMenu({ user }: { user: UserProp }) {
         setIsOpen(false)
     }
 
+    const handleDelete = async () => {
+        if (confirmText !== 'CONFIRM') return;
+        
+        const result = await deleteUser(user.id)
+        if (result.success) {
+            toast.success(`${user.name || 'User'} permanently deleted.`)
+        } else {
+            toast.error(result.error || "Failed to delete user.")
+        }
+        
+        setModal('none')
+        setIsOpen(false)
+    }
+
     return (
         <>
             <button
@@ -110,10 +126,18 @@ export function MemberActionMenu({ user }: { user: UserProp }) {
 
                         <button
                             onClick={() => { setModal('deactivate'); setIsOpen(false); }}
-                            className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 flex items-center gap-2"
+                            className="w-full text-left px-4 py-2 text-sm text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/10 flex items-center gap-2"
                         >
                             <span className="material-symbols-outlined text-[18px]">block</span>
                             Deactivate Member
+                        </button>
+
+                        <button
+                            onClick={() => { setConfirmText(''); setModal('delete'); setIsOpen(false); }}
+                            className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 flex items-center gap-2 border-t border-slate-100 dark:border-slate-700/50"
+                        >
+                            <span className="material-symbols-outlined text-[18px]">delete_forever</span>
+                            Delete User
                         </button>
                     </div>
                 </div>
@@ -153,6 +177,39 @@ export function MemberActionMenu({ user }: { user: UserProp }) {
                         <div className="flex gap-3 justify-end">
                             <button onClick={() => setModal('none')} className="px-4 py-2 text-sm font-medium border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800">Cancel</button>
                             <button onClick={handleDeactivate} className="px-4 py-2 text-sm font-bold text-white bg-red-600 rounded-lg hover:bg-red-700 shadow-sm shadow-red-500/20">Confirm Deactivate</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {/* Delete Modal */}
+            {modal === 'delete' && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-md overflow-hidden p-6 animate-in zoom-in-95 border-t-4 border-red-600">
+                        <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Delete {user.name}?</h3>
+                        <p className="text-slate-600 dark:text-slate-300 mb-4 leading-relaxed">
+                            This action is <strong>permanent</strong> and cannot be undone. All of the user's data, including their completed quests and badges, will be permanently removed.
+                        </p>
+                        <div className="mb-6">
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                Please type <span className="font-bold select-none text-red-600 dark:text-red-400">CONFIRM</span> to confirm.
+                            </label>
+                            <input
+                                type="text"
+                                value={confirmText}
+                                onChange={(e) => setConfirmText(e.target.value)}
+                                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-shadow"
+                                placeholder="CONFIRM"
+                            />
+                        </div>
+                        <div className="flex gap-3 justify-end">
+                            <button onClick={() => setModal('none')} className="px-4 py-2 text-sm font-medium border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800">Cancel</button>
+                            <button 
+                                onClick={handleDelete} 
+                                disabled={confirmText !== 'CONFIRM'}
+                                className="px-4 py-2 text-sm font-bold text-white bg-red-600 rounded-lg hover:bg-red-700 shadow-sm shadow-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                            >
+                                Delete User
+                            </button>
                         </div>
                     </div>
                 </div>

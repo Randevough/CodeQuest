@@ -51,3 +51,20 @@ export async function deactivateUser(userId: string) {
     }
 }
 
+// Delete User
+export async function deleteUser(userId: string) {
+    try {
+        await prisma.$transaction([
+            prisma.snatch.deleteMany({ where: { userId } }),
+            prisma.penalty.deleteMany({ where: { userId } }),
+            prisma.userBadge.deleteMany({ where: { userId } }),
+            prisma.account.deleteMany({ where: { userId } }),
+            prisma.user.delete({ where: { id: userId } })
+        ])
+        revalidatePath('/admin/members')
+        return { success: true }
+    } catch (error) {
+        console.error("Failed to delete user:", error)
+        return { success: false, error: "Failed to delete user" }
+    }
+}
