@@ -560,7 +560,18 @@ export async function updateQuestStatus(questId: string, newStatus: string) {
 
 export async function deleteQuest(questId: string) {
     try {
-        await prisma.snatch.deleteMany({ where: { questId } }); // Clean up snatches first
+        const activeSnatchesCount = await prisma.snatch.count({
+            where: {
+                questId: questId,
+                status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED'] }
+            }
+        });
+
+        if (activeSnatchesCount > 0) {
+            return { success: false, error: "Cannot delete quest: Quest has active members." };
+        }
+
+        await prisma.snatch.deleteMany({ where: { questId } }); // Clean up DROPPED or ARCHIVED snatches
         await prisma.quest.delete({ where: { id: questId } });
 
         revalidatePath('/admin/manage-quests');

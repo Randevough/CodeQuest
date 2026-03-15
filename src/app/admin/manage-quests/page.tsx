@@ -111,7 +111,7 @@ export default async function ManageQuestsPage({ searchParams }: ManageQuestsPag
                                             </td>
                                             <td className="px-6 py-4 text-right">
                                                 <div className="flex justify-end">
-                                                    <QuestActions questId={quest.id} status={quest.status} />
+                                                    <QuestActions questId={quest.id} status={quest.status} activeSnatchesCount={quest._count.snatches} />
                                                 </div>
                                             </td>
                                         </tr>

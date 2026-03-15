@@ -10,9 +10,10 @@ import { DeleteQuestModal } from '@/components/admin/DeleteQuestModal';
 interface QuestActionsProps {
     questId: string;
     status: string;
+    activeSnatchesCount: number;
 }
 
-export function QuestActions({ questId, status }: QuestActionsProps) {
+export function QuestActions({ questId, status, activeSnatchesCount }: QuestActionsProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -122,7 +123,13 @@ export function QuestActions({ questId, status }: QuestActionsProps) {
                         {status === 'Active' ? (
                             <button
                                 onClick={() => handleStatusUpdate('Draft')}
-                                className="flex items-center px-4 py-2 text-sm text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 w-full text-left gap-2"
+                                disabled={activeSnatchesCount > 0}
+                                title={activeSnatchesCount > 0 ? "Cannot revert to draft with active members" : ""}
+                                className={`flex items-center px-4 py-2 text-sm w-full text-left gap-2 ${
+                                    activeSnatchesCount > 0 
+                                      ? 'text-slate-400 dark:text-slate-600 bg-slate-50 dark:bg-slate-800/50 cursor-not-allowed'
+                                      : 'text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20'
+                                }`}
                             >
                                 <span className="material-symbols-outlined text-[18px]">unpublished</span>
                                 Back to Draft
@@ -146,7 +153,13 @@ export function QuestActions({ questId, status }: QuestActionsProps) {
                         <div className="h-px bg-slate-200 dark:bg-slate-700 my-1 font-medium"></div>
                         <button
                             onClick={handleDelete}
-                            className="flex items-center px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 w-full text-left gap-2"
+                            disabled={activeSnatchesCount > 0}
+                            title={activeSnatchesCount > 0 ? "Cannot delete quest with active members" : ""}
+                            className={`flex items-center px-4 py-2 text-sm w-full text-left gap-2 ${
+                                activeSnatchesCount > 0 
+                                  ? 'text-slate-400 dark:text-slate-600 bg-slate-50 dark:bg-slate-800/50 cursor-not-allowed'
+                                  : 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20'
+                            }`}
                         >
                             <span className="material-symbols-outlined text-[18px]">delete</span>
                             Delete
