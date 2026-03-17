@@ -54,6 +54,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 token.role = user.role
                 token.points = user.points
                 token.avatar = user.avatar
+                token.name = user.name
+                token.email = user.email
             }
 
             // If we have a user ID, fetch the latest data from the database
@@ -62,32 +64,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     const freshUser = await prisma.user.findUnique({
                         where: { id: token.sub },
                         select: {
+                            name: true,
+                            email: true,
                             role: true,
                             points: true,
                             avatar: true,
-                            // @ts-ignore: Prisma client not generated yet
-                            image: true,
-                            // @ts-ignore: Prisma client not generated yet
-                            bio: true,
-                            // @ts-ignore: Prisma client not generated yet
-                            githubUrl: true,
-                            // @ts-ignore: Prisma client not generated yet
-                            linkedinUrl: true
                         }
                     });
 
                     if (freshUser) {
+                        token.name = freshUser.name;
+                        token.email = freshUser.email;
                         token.role = freshUser.role;
                         token.points = freshUser.points;
                         token.avatar = freshUser.avatar;
-                        // @ts-ignore: Prisma client not generated yet
-                        token.image = freshUser.image;
-                        // @ts-ignore: Prisma client not generated yet
-                        token.bio = freshUser.bio;
-                        // @ts-ignore: Prisma client not generated yet
-                        token.githubUrl = freshUser.githubUrl;
-                        // @ts-ignore: Prisma client not generated yet
-                        token.linkedinUrl = freshUser.linkedinUrl;
                     }
                 } catch (error) {
                     console.error("Error fetching fresh user data in JWT callback:", error);
@@ -99,13 +89,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         async session({ session, token }) {
             if (session.user) {
                 session.user.id = token.sub as string
+                session.user.name = token.name as string | null | undefined
+                session.user.email = token.email as string
                 session.user.role = token.role as string
                 session.user.points = token.points as number
                 session.user.avatar = token.avatar as string | null
-                session.user.image = (token.image as string | null) || (token.avatar as string | null)
-                session.user.bio = token.bio as string | null
-                session.user.githubUrl = token.githubUrl as string | null
-                session.user.linkedinUrl = token.linkedinUrl as string | null
+                session.user.image = token.avatar as string | null
             }
             return session
         }
