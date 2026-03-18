@@ -84,30 +84,26 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
     }
 
     return (
-        <div
-            className="min-h-screen dark:bg-black text-slate-800 dark:text-slate-200 relative"
-            style={{
-                backgroundColor: '#fafafa',
-                backgroundImage: 'radial-gradient(#e2e8f0 1px, transparent 1px)',
-                backgroundSize: '24px 24px',
-            }}
-        >
-            {/* Header */}
-            <Header activePage="explore" />
+        <div className="min-h-screen flex flex-col relative text-slate-800 dark:text-slate-100">
+            {/* Fixed dot-pattern + glow auras (standard background) */}
+            <div className="fixed inset-0 pointer-events-none z-0">
+                <div className="absolute inset-0 opacity-50 dark:hidden" style={{
+                    backgroundImage: 'radial-gradient(circle, #64748b 1.25px, transparent 1.25px)',
+                    backgroundSize: '24px 24px',
+                }} />
+                <div className="absolute inset-0 opacity-40 hidden dark:block" style={{
+                    backgroundImage: 'radial-gradient(circle, #94a3b8 1px, transparent 1px)',
+                    backgroundSize: '24px 24px',
+                }} />
+                <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at top left, rgba(249,115,22,0.15), transparent 60%)' }} />
+                <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at bottom right, rgba(100,116,139,0.15), transparent 60%)' }} />
+            </div>
 
-            <main className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 relative">
+            <div className="relative z-10 flex flex-col min-h-screen">
+                {/* Header */}
+                <Header activePage="explore" />
 
-                {/* Mesh Aura — Burnt Orange top-left */}
-                <div
-                    aria-hidden="true"
-                    className="pointer-events-none absolute -top-24 -left-24 w-[480px] h-[480px] rounded-full opacity-[0.06] blur-3xl"
-                    style={{ background: '#EA580C' }}
-                />
-                {/* Mesh Aura — Slate bottom-right */}
-                <div
-                    aria-hidden="true"
-                    className="pointer-events-none absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-slate-300/30 blur-3xl"
-                />
+                <main className="flex-grow max-w-[1280px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 lg:py-12 relative">
 
                 {/* Micro-deco corner plus markers */}
                 <div aria-hidden="true" className="pointer-events-none absolute top-4 left-4 text-slate-300 text-xl font-light select-none">+</div>
@@ -340,6 +336,7 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                     </aside>
                 </div>
             </main>
+            </div>
         </div>
     )
 }
