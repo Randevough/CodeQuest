@@ -125,50 +125,6 @@ async function getMyActiveQuests() {
   });
 }
 
-// Temporary seed action
-async function seedQuests() {
-  'use server'
-  await prisma.quest.create({
-    data: {
-      title: 'Fix the Login Bug',
-      description: 'The login button is misaligned by 2px. Critical priority.',
-      maxSnatchers: 1,
-      difficulty: 'Beginner',
-      points: 100,
-      category: 'Web'
-    }
-  })
-  await prisma.quest.create({
-    data: {
-      title: 'Implementation Plan Review',
-      description: 'Review the proposed changes for the new feature.',
-      maxSnatchers: 1,
-      difficulty: 'Advanced',
-      points: 50,
-      category: 'Design'
-    }
-  })
-  await prisma.quest.create({
-    data: {
-      title: 'Refactor Auth',
-      description: 'Move auth logic to a separate service. Needs 2 active devs.',
-      maxSnatchers: 2,
-      difficulty: 'Advanced',
-      points: 300,
-      category: 'AI'
-    }
-  })
-  await prisma.quest.create({
-    data: {
-      title: 'Mobile Push Notifications',
-      description: 'Implement push notifications for the mobile app.',
-      maxSnatchers: 3,
-      difficulty: 'Intermediate',
-      points: 200,
-      category: 'Mobile'
-    }
-  })
-}
 
 export default async function Home({ searchParams }: { searchParams: { q?: string, difficulty?: string, sort?: string } }) {
   const params = await searchParams; // Next 15+ await searchParams
@@ -275,15 +231,6 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
             )}
           </section>
 
-          {/* Seed button */}
-          <div className="pt-6 border-t border-slate-100 dark:border-slate-800 flex justify-center">
-            <form action={seedQuests}>
-              <button className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 rounded-full shadow-sm border border-slate-100 dark:border-slate-700 text-sm text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-                <span className="material-symbols-outlined text-green-500 text-[18px]">eco</span>
-                Seed Test Quests
-              </button>
-            </form>
-          </div>
         </main>
       </div>
     </div>
