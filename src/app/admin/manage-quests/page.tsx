@@ -31,9 +31,9 @@ export default async function ManageQuestsPage({ searchParams }: ManageQuestsPag
     const hasQuests = quests && quests.length > 0;
 
     return (
-        <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900 relative font-['Plus_Jakarta_Sans']">
+        <div className="flex flex-col h-full bg-slate-50 dark:bg-[#0a0a0a] relative font-['Plus_Jakarta_Sans']">
             {/* Header */}
-            <header className="h-16 flex-shrink-0 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 sm:px-8 bg-white dark:bg-slate-900 z-10">
+            <header className="h-16 flex-shrink-0 border-b border-slate-200 dark:border-border-dark flex items-center justify-between px-4 sm:px-8 bg-white dark:bg-surface-dark z-10">
                 <div className="flex items-center gap-4">
                     <MobileSidebarTrigger className="md:hidden" />
                     <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Manage Quests</h1>
@@ -56,10 +56,10 @@ export default async function ManageQuestsPage({ searchParams }: ManageQuestsPag
                     <QuestFilters />
 
                     {/* Table */}
-                    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm min-h-[400px]">
+                    <div className="bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark rounded-lg shadow-sm min-h-[400px]">
                         <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 text-xs uppercase text-slate-500 dark:text-slate-400 font-medium tracking-wider">
+                                <tr className="bg-slate-50 dark:bg-white/5 border-b border-slate-200 dark:border-border-dark text-xs uppercase text-slate-500 dark:text-slate-400 font-medium tracking-wider">
                                     <th className="px-6 py-3 w-[35%]">Quest</th>
                                     <th className="px-6 py-3">Category & Difficulty</th>
                                     <th className="px-6 py-3 text-center">Points</th>
@@ -68,7 +68,7 @@ export default async function ManageQuestsPage({ searchParams }: ManageQuestsPag
                                     <th className="px-6 py-3 text-right">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+                            <tbody className="divide-y divide-slate-200 dark:divide-border-dark">
                                 {!hasQuests ? (
                                     <tr>
                                         <td colSpan={6}>
@@ -77,7 +77,7 @@ export default async function ManageQuestsPage({ searchParams }: ManageQuestsPag
                                     </tr>
                                 ) : (
                                     quests.map((quest) => (
-                                        <tr key={quest.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/40 transition-colors group">
+                                        <tr key={quest.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
                                             <td className="px-6 py-4">
                                                 <div className="flex flex-col">
                                                     <span className="font-bold text-slate-900 dark:text-slate-100 text-sm line-clamp-1">{quest.title}</span>
@@ -86,7 +86,7 @@ export default async function ManageQuestsPage({ searchParams }: ManageQuestsPag
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex flex-col gap-1.5 items-start">
-                                                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                                                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-border-dark">
                                                         {quest.category}
                                                     </span>
                                                     <DifficultyBadge difficulty={quest.difficulty} />
@@ -122,7 +122,7 @@ export default async function ManageQuestsPage({ searchParams }: ManageQuestsPag
 
                         {/* Pagination Footer */}
                         {pagination && pagination.totalPages > 1 && (
-                            <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
+                            <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 dark:border-border-dark bg-slate-50/50 dark:bg-white/5">
                                 <span className="text-sm text-slate-500">Showing {Math.min(pagination.totalItems, (pagination.currentPage - 1) * 10 + 1)}-{Math.min(pagination.totalItems, pagination.currentPage * 10)} of {pagination.totalItems} quests</span>
                                 <Pagination
                                     currentPage={pagination.currentPage}
@@ -149,7 +149,7 @@ function DifficultyBadge({ difficulty }: { difficulty: string }) {
     } else if (d === 'advanced' || d === 'advance') {
         displayClass = "bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-800/50";
     } else {
-        displayClass = "bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700";
+        displayClass = "bg-slate-50 dark:bg-white/5 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-border-dark";
     }
 
     return (
@@ -193,7 +193,7 @@ function StatusBadge({ status }: { status: string }) {
 function EmptyState() {
     return (
         <div className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4">
+            <div className="w-16 h-16 bg-slate-100 dark:bg-white/10 rounded-full flex items-center justify-center mb-4">
                 <span className="material-symbols-outlined text-3xl text-slate-400">search_off</span>
             </div>
             <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100 mb-1">No quests found</h3>

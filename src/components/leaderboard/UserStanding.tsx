@@ -39,7 +39,7 @@ export async function UserStanding({ timeframe = 'all' }: { timeframe?: string }
                             {['st', 'nd', 'rd'][((standing.rank + 90) % 100 - 10) % 10 - 1] || 'th'}
                         </span>
                     </div>
-                    <div className="text-sm text-slate-500 font-medium">Leaderboard Rank</div>
+                    <div className="text-sm text-slate-500 dark:text-slate-300 font-medium">Leaderboard Rank</div>
                 </div>
                 <div className="space-y-4">
                     <div className="flex flex-col items-center justify-center p-4 bg-orange-50 dark:bg-orange-900/10 rounded-xl border border-orange-100 dark:border-orange-800/30">
@@ -67,7 +67,7 @@ export async function UserStanding({ timeframe = 'all' }: { timeframe?: string }
                                     <span className="material-symbols-outlined text-slate-400 text-xl mt-0.5">rocket_launch</span>
                                     <div>
                                         <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Keep climbing!</p>
-                                        <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                                        <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
                                             You need <span className="font-bold text-orange-600 dark:text-orange-400">{standing.pointsToNext.toLocaleString('en-US')} pts</span> to overtake the next rank.
                                         </p>
                                     </div>
