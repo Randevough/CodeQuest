@@ -49,3 +49,4 @@ next-env.d.ts
 /temp_app
 .agent
 /design_context
+prisma/dev.db
