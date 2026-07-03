@@ -40,5 +40,7 @@ declare module "next-auth/jwt" {
         bio: string | null
         githubUrl: string | null
         linkedinUrl: string | null
+        /** Timestamp (ms) of the last DB refresh — used to debounce re-fetching */
+        lastRefreshed?: number
     }
 }

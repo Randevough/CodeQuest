@@ -1,10 +1,13 @@
 'use server';
 
 import { prisma } from "@/lib/db";
-import { subDays, format, startOfDay, endOfDay } from 'date-fns';
+import { subDays, format } from 'date-fns';
+import { requireAdmin } from "@/lib/auth-guard";
 
 export async function getAdminDashboardStats() {
     try {
+        await requireAdmin()
+
         // 1. Basic Stats
         const [totalMembers, activeQuests, pendingReviews, acceptedSnatches] = await Promise.all([
             prisma.user.count({ where: { role: 'Member' } }),

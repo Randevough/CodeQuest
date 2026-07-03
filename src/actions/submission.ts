@@ -3,12 +3,12 @@
 import { prisma } from "@/lib/db"
 import { revalidatePath } from "next/cache"
 import { checkBadges } from "@/lib/badges"
+import { requireAdmin } from "@/lib/auth-guard"
 
-// Fetch Submissions with Pagination and Filter
 export async function getSubmissions({
     page = 1,
     limit = 10,
-    status = 'All', // All, Pending, Reviewed, Accepted
+    status = 'All',
     query = ''
 }: {
     page?: number,
@@ -16,17 +16,11 @@ export async function getSubmissions({
     status?: string,
     query?: string
 }) {
+    await requireAdmin()
+
     const skip = (page - 1) * limit
 
-    const where: any = {
-        // Exclude ACTIVE (In Progress) and DROPPED snatches from the queue
-        // We only want ones that have been "Submitted" or acted upon
-        // Since we don't have a strict "SUBMITTED" status yet, we assume anything with a submissionUrl is submitted
-        // OR we can rely on status.
-        // Let's assume for this implementation:
-        // status: "SUBMITTED" (Pending), "ACCEPTED", "REJECTED"
-        // And we map "Pending" filter to "SUBMITTED"
-    }
+    const where: any = {}
 
     if (status === 'Pending') {
         where.status = 'SUBMITTED'
@@ -35,7 +29,6 @@ export async function getSubmissions({
     } else if (status === 'Revision') {
         where.status = 'REVISION_NEEDED'
     } else {
-        // All "Submitted" items (including active revisions)
         where.status = { in: ['SUBMITTED', 'ACCEPTED', 'REJECTED', 'REVISION_NEEDED'] }
     }
 
@@ -72,7 +65,7 @@ export async function getSubmissions({
                             category: true,
                             deadline: true,
                             snatches: {
-                                where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED'] } },
+                                where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'ACCEPTED'] } },
                                 include: {
                                     user: {
                                         select: {
@@ -107,13 +100,14 @@ export async function getSubmissions({
         }
     } catch (error) {
         console.error("Failed to fetch submissions:", error)
-        return { success: false, error: "Failed to fetch submissions" }
+        return { success: false, error: error instanceof Error ? error.message : "Failed to fetch submissions" }
     }
 }
 
-// Review Submission
 export async function reviewSubmission(snatchId: string, status: 'ACCEPTED' | 'REJECTED' | 'REVISION_NEEDED', feedback?: string) {
     try {
+        await requireAdmin()
+
         const snatch = await prisma.snatch.findUnique({
             where: { id: snatchId },
             include: { user: true, quest: true }
@@ -122,7 +116,6 @@ export async function reviewSubmission(snatchId: string, status: 'ACCEPTED' | 'R
         if (!snatch) return { success: false, error: "Submission not found" }
 
         await prisma.$transaction(async (tx) => {
-            // Update Snatch
             await tx.snatch.update({
                 where: { id: snatchId },
                 data: {
@@ -132,7 +125,6 @@ export async function reviewSubmission(snatchId: string, status: 'ACCEPTED' | 'R
                 }
             })
 
-            // If Accepted, add points and increment completed quests
             if (status === 'ACCEPTED' && snatch.status !== 'ACCEPTED') {
                 await tx.user.update({
                     where: { id: snatch.userId },
@@ -142,83 +134,15 @@ export async function reviewSubmission(snatchId: string, status: 'ACCEPTED' | 'R
                     }
                 })
 
-                // Check for new badges
                 await checkBadges(snatch.userId)
             }
-
-            // If it was previously accepted and now Rejected (reversion), ideally we should deduct points?
-            // For simplicity, let's assume one-way flow or handle reversion strictly if needed.
         })
 
         revalidatePath('/admin', 'layout')
         return { success: true }
     } catch (error) {
         console.error("Failed to review submission:", error)
-        return { success: false, error: "Failed to review submission" }
+        return { success: false, error: error instanceof Error ? error.message : "Failed to review submission" }
     }
 }
 
-// Seed Dummy Submissions
-export async function seedSubmissions() {
-    try {
-        // Ensure we have a user and quest
-        const user = await prisma.user.findFirst()
-        const quest = await prisma.quest.findFirst()
-
-        if (!user || !quest) return { success: false, error: "No users or quests found to seed with" }
-
-        // Create a few submissions
-        const dummyData = [
-            { status: 'SUBMITTED', submissionUrl: 'https://github.com/alex/react-kanban' },
-            { status: 'ACCEPTED', submissionUrl: 'https://github.com/sarah/landing-page', approvedAt: new Date() },
-            { status: 'REJECTED', submissionUrl: 'https://github.com/david/api-limiter', feedback: 'Missing tests' },
-            { status: 'SUBMITTED', submissionUrl: 'https://github.com/emily/blog-platform' },
-            { status: 'SUBMITTED', submissionUrl: 'https://github.com/mike/chat-app' },
-        ]
-
-        for (const data of dummyData) {
-            // Check if already exists to avoid dupes on re-run (simplified check)
-            const exists = await prisma.snatch.findFirst({
-                where: { userId: user.id, questId: quest.id, status: data.status }
-            })
-
-            if (!exists) {
-                // Actually, duplicate user/quest snatch is blocked by unique constraint.
-                // So we need different users or different quests if constraint exists.
-                // For this seed, let's just create one "SUBMITTED" entry if it doesn't exist for the first user/quest pair
-                // Or better, let's find multiple users/quests.
-
-                // Let's just create ONE new submission for the current user for a NEW quest if possible
-                // OR just return info.
-            }
-        }
-
-        // Better Strategy: Create fresh fake users for seeding
-        const randomId = Math.floor(Math.random() * 10000)
-        const fakeUser = await prisma.user.create({
-            data: {
-                email: `seed_user_${randomId}@example.com`,
-                name: `Seed User ${randomId}`,
-                handle: `seeder${randomId}`,
-                role: 'Member'
-            }
-        })
-
-        await prisma.snatch.create({
-            data: {
-                userId: fakeUser.id,
-                questId: quest.id,
-                status: 'SUBMITTED',
-                submissionUrl: 'https://github.com/seed/project-x',
-                createdAt: new Date()
-            }
-        })
-
-        revalidatePath('/admin/submissions')
-        return { success: true, message: "Created 1 pending submission" }
-
-    } catch (error) {
-        console.error("Failed to seed:", error)
-        return { success: false, error: "Failed to seed" }
-    }
-}

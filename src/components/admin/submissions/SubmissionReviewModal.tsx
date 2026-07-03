@@ -206,7 +206,7 @@ export function SubmissionReviewModal({ isOpen, onClose, snatch }: SubmissionRev
                                             let requirements: string[] = [];
                                             try {
                                                 if (snatch.quest.requirements) {
-                                                    const parsed = JSON.parse(snatch.quest.requirements);
+                                                    const parsed = Array.isArray(snatch.quest.requirements) ? snatch.quest.requirements : [];
                                                     if (Array.isArray(parsed)) requirements = parsed;
                                                 }
                                             } catch (e) { console.error("Failed to parse requirements", e); }

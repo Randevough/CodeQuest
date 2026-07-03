@@ -30,17 +30,7 @@ export async function joinQuest(questId: string) {
 
     try {
         const result = await prisma.$transaction(async (tx) => {
-            // 1. Check if user has active penalty
-            // const activePenalty = await tx.penalty.findFirst({
-            //     where: {
-            //         userId: user.id,
-            //         expiresAt: { gt: new Date() }
-            //     }
-            // });
 
-            // if (activePenalty) {
-            //     throw new Error(`You are penalized until ${activePenalty.expiresAt.toLocaleString()}`);
-            // }
 
             // 2. Check if already snatched
             const existingSnatch = await tx.snatch.findUnique({
@@ -57,11 +47,11 @@ export async function joinQuest(questId: string) {
             }
 
             // 3. Check quest limits
-            // We need to count ACTIVE AND COMPLETED snatches to strictly enforce maxSnatchers
+            // We need to count ACTIVE AND ACCEPTED snatches to strictly enforce maxSnatchers
             const currentActiveSnatchers = await tx.snatch.count({
                 where: {
                     questId: questId,
-                    status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED', 'ARCHIVED'] }
+                    status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'ACCEPTED', 'ARCHIVED'] }
                 }
             });
             const quest = await tx.quest.findUniqueOrThrow({
@@ -128,7 +118,7 @@ export async function getAllUserQuestIds() {
             // Exclude DROPPED so they can be retaken? Or include everything?
             // Assuming if you drop it, you might want to try again. 
             // But if you completed/archived it, you shouldn't see it.
-            status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED', 'ARCHIVED'] }
+            status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'ACCEPTED', 'ARCHIVED'] }
         },
         select: {
             questId: true
@@ -147,7 +137,7 @@ export async function getWorkspaceQuests() {
             where: {
                 userId: user.id,
                 status: {
-                    in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED']
+                    in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'ACCEPTED']
                 }
             },
             include: {
@@ -190,7 +180,7 @@ export async function archiveQuest(questId: string) {
         if (!snatch) return { success: false, error: 'Quest not found in your list' };
 
         // Only allow archiving if completed/accepted
-        if (!['COMPLETED', 'ACCEPTED'].includes(snatch.status)) {
+        if (!['ACCEPTED'].includes(snatch.status)) {
             return { success: false, error: 'Only completed quests can be archived' };
         }
 
@@ -267,7 +257,7 @@ export async function submitQuest(questId: string, submissionUrl: string) {
 
             if (!activeSnatch) throw new Error("You have not joined this quest.");
 
-            if (['ACCEPTED', 'COMPLETED'].includes(activeSnatch.status)) {
+            if (['ACCEPTED'].includes(activeSnatch.status)) {
                 throw new Error("Mission already completed. No further submissions allowed.");
             }
 
@@ -275,7 +265,7 @@ export async function submitQuest(questId: string, submissionUrl: string) {
             const teamStatus = await tx.snatch.findFirst({
                 where: {
                     questId: questId,
-                    status: { in: ['SUBMITTED', 'ACCEPTED', 'COMPLETED'] },
+                    status: { in: ['SUBMITTED', 'ACCEPTED'] },
                     NOT: { id: activeSnatch.id } // exclude self if we are updating (though logic below sets self to submitted)
                 }
             });
@@ -333,19 +323,8 @@ export async function dropQuest(questId: string) {
                 data: { status: 'DROPPED' }
             });
 
-            // 3. Create Penalty (simulating 30 min cooldown)
-            // In a real app, you might check if they already have one, or stack them?
-            // Simple logic: Add a penalty for 30 minutes.
-            // const expiresAt = new Date(Date.now() + 30 * 60 * 1000); // 30 mins from now
-
-            // return await tx.penalty.create({
-            //     data: {
-            //         userId: user.id,
-            //         reason: `Dropped quest: ${questId}`,
-            //         expiresAt: expiresAt
-            //     }
-            // });
-            return { count: 0 }; // Return dummy result since penalty creation is skipped
+            // 3. (Penalty system removed)
+            return { count: 0 }; // dummy return
         });
 
         revalidatePath('/');
@@ -356,6 +335,7 @@ export async function dropQuest(questId: string) {
     }
 }
 import { z } from 'zod';
+import { requireAdmin } from '@/lib/auth-guard';
 
 const QuestSchema = z.object({
     title: z.string().min(3),
@@ -370,6 +350,10 @@ const QuestSchema = z.object({
 });
 
 export async function createQuest(prevState: any, formData: FormData) {
+    try { await requireAdmin() } catch (e) {
+        return { success: false, message: e instanceof Error ? e.message : 'Forbidden' }
+    }
+
     const validatedResult = QuestSchema.safeParse({
         title: formData.get('title'),
         description: formData.get('description'),
@@ -378,7 +362,7 @@ export async function createQuest(prevState: any, formData: FormData) {
         points: formData.get('points'),
         maxSnatchers: formData.get('maxSnatchers') || undefined,
         deadline: formData.get('deadline') || undefined,
-        requirements: JSON.parse(formData.get('requirements') as string || '[]'),
+        requirements: formData.get('requirements') ? JSON.parse(formData.get('requirements') as string) : [],
         resources: formData.get('resources'),
     });
 
@@ -434,8 +418,8 @@ export async function createQuest(prevState: any, formData: FormData) {
                 points: validatedFields.points,
                 maxSnatchers: validatedFields.maxSnatchers || 1, // Default to 1 if not provided, though schema defaults handled by db usually
                 deadline: validatedFields.deadline ? new Date(validatedFields.deadline) : null,
-                requirements: JSON.stringify(validatedFields.requirements),
-                resources: validatedFields.resources,
+                requirements: validatedFields.requirements || [],
+                resources: validatedFields.resources ? [validatedFields.resources] : [],
             },
         });
 
@@ -492,7 +476,7 @@ export async function getQuests({
                 _count: {
                     select: {
                         snatches: {
-                            where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED', 'ARCHIVED'] } }
+                            where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'ACCEPTED', 'ARCHIVED'] } }
                         }
                     }
                 }
@@ -532,11 +516,13 @@ export async function getQuests({
 
 export async function updateQuestStatus(questId: string, newStatus: string) {
     try {
+        await requireAdmin()
+
         if (newStatus === 'Draft') {
             const activeSnatchesCount = await prisma.snatch.count({
                 where: {
                     questId: questId,
-                    status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED'] }
+                    status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'ACCEPTED'] }
                 }
             });
 
@@ -560,10 +546,12 @@ export async function updateQuestStatus(questId: string, newStatus: string) {
 
 export async function deleteQuest(questId: string) {
     try {
+        await requireAdmin()
+
         const activeSnatchesCount = await prisma.snatch.count({
             where: {
                 questId: questId,
-                status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED'] }
+                status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'ACCEPTED'] }
             }
         });
 
@@ -584,6 +572,8 @@ export async function deleteQuest(questId: string) {
 
 export async function duplicateQuest(questId: string) {
     try {
+        await requireAdmin()
+
         const original = await prisma.quest.findUnique({ where: { id: questId } });
         if (!original) throw new Error("Quest not found");
 
@@ -641,17 +631,7 @@ export async function getQuestById(id: string) {
         });
         if (!quest) return { success: false, error: 'Quest not found' };
 
-        // Parse requirements if string
-        let requirements: string[] = [];
-        if (typeof quest.requirements === 'string') {
-            try {
-                requirements = JSON.parse(quest.requirements);
-            } catch (e) {
-                requirements = [];
-            }
-        }
-
-        return { success: true, data: { ...quest, requirements } };
+        return { success: true, data: quest };
     } catch (error) {
         console.error('Failed to get quest:', error);
         return { success: false, error: 'Failed to fetch quest' };
@@ -659,6 +639,10 @@ export async function getQuestById(id: string) {
 }
 
 export async function updateQuest(questId: string, prevState: any, formData: FormData) {
+    try { await requireAdmin() } catch (e) {
+        return { success: false, message: e instanceof Error ? e.message : 'Forbidden' }
+    }
+
     const validatedResult = QuestSchema.safeParse({
         title: formData.get('title'),
         description: formData.get('description'),
@@ -667,7 +651,7 @@ export async function updateQuest(questId: string, prevState: any, formData: For
         points: formData.get('points'),
         maxSnatchers: formData.get('maxSnatchers') || undefined,
         deadline: formData.get('deadline') || undefined,
-        requirements: JSON.parse(formData.get('requirements') as string || '[]'),
+        requirements: formData.get('requirements') ? JSON.parse(formData.get('requirements') as string) : [],
         resources: formData.get('resources'),
     });
 
@@ -691,8 +675,8 @@ export async function updateQuest(questId: string, prevState: any, formData: For
                 points: validatedFields.points,
                 maxSnatchers: validatedFields.maxSnatchers || 1,
                 deadline: validatedFields.deadline ? new Date(validatedFields.deadline) : null,
-                requirements: JSON.stringify(validatedFields.requirements),
-                resources: validatedFields.resources,
+                requirements: validatedFields.requirements || [],
+                resources: validatedFields.resources ? [validatedFields.resources] : [],
             },
         });
 

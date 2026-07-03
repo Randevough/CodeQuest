@@ -35,7 +35,7 @@ export default async function MemberDirectoryPage({
                     select: {
                         snatches: {
                             where: {
-                                status: { in: ['ACCEPTED', 'COMPLETED', 'ARCHIVED'] }
+                                status: { in: ['ACCEPTED', 'ARCHIVED'] }
                             }
                         }
                     }

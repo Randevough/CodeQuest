@@ -6,16 +6,35 @@ export const authConfig = {
     },
     callbacks: {
         authorized({ auth, request: { nextUrl } }) {
-            const isLoggedIn = !!auth?.user;
-            const isOnDashboard = nextUrl.pathname.startsWith('/dashboard'); // Example protected route
-            if (isOnDashboard) {
-                if (isLoggedIn) return true;
-                return false; // Redirect unauthenticated users to login page
+            const isLoggedIn = !!auth?.user
+            const isAdmin = auth?.user?.role === 'Admin'
+            const { pathname } = nextUrl
+
+            // Auth routes (/login, /signup) — redirect logged-in users to home
+            if (pathname.startsWith('/login') || pathname.startsWith('/signup')) {
+                if (isLoggedIn) return Response.redirect(new URL('/', nextUrl))
+                return true
             }
-            return true;
+
+            // Admin routes — Admin role required
+            if (pathname.startsWith('/admin')) {
+                if (isLoggedIn && isAdmin) return true
+                // Logged in but not admin → redirect to home
+                if (isLoggedIn && !isAdmin) return Response.redirect(new URL('/', nextUrl))
+                // Not logged in → redirect to login (handled by NextAuth internally)
+                return false
+            }
+
+            // Protected user routes — must be logged in
+            const protectedPrefixes = ['/workspace', '/profile']
+            const isProtected = protectedPrefixes.some(p => pathname.startsWith(p))
+            if (isProtected) {
+                return isLoggedIn
+            }
+
+            // All other routes are public
+            return true
         },
-        // We can keep basic JWT/Session logic here if it doesn't use Prisma
-        // Complex DB-dependent logic should stay in auth.ts or be handled carefully
     },
-    providers: [], // Providers are added in auth.ts to avoid Edge incompatibility with some adapters/providers
+    providers: [], // Providers added in auth.ts to avoid Edge incompatibility
 } satisfies NextAuthConfig

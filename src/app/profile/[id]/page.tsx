@@ -5,6 +5,26 @@ import { ProfileSidebar } from '@/components/profile/ProfileSidebar'
 import { ProfileTabs } from '@/components/profile/ProfileTabs'
 import { prisma } from '@/lib/db'
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
+
+export async function generateMetadata(props: { params: Promise<{ id: string }> }): Promise<Metadata> {
+    const params = await props.params
+    const user = await prisma.user.findUnique({
+        where: { id: params.id },
+        select: { name: true, handle: true }
+    })
+
+    if (!user) {
+        return {
+            title: 'Agent Not Found | CodeQuest',
+        }
+    }
+
+    return {
+        title: `${user.name} (${user.handle}) | CodeQuest Profile`,
+        description: `View ${user.name}'s badges, stats, and completed missions on CodeQuest.`,
+    }
+}
 
 export default async function PublicProfilePage(props: { params: Promise<{ id: string }> }) {
     const params = await props.params
@@ -37,7 +57,7 @@ export default async function PublicProfilePage(props: { params: Promise<{ id: s
     const snatches = await prisma.snatch.findMany({
         where: {
             userId: user.id,
-            status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED', 'ARCHIVED'] }
+            status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'ACCEPTED', 'ARCHIVED'] }
         },
         include: {
             quest: true
@@ -46,7 +66,7 @@ export default async function PublicProfilePage(props: { params: Promise<{ id: s
     })
 
     const activeSnatches = snatches.filter(s => ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED'].includes(s.status))
-    const portfolioSnatches = snatches.filter(s => ['COMPLETED', 'ACCEPTED', 'ARCHIVED'].includes(s.status))
+    const portfolioSnatches = snatches.filter(s => ['ACCEPTED', 'ARCHIVED'].includes(s.status))
 
     // Calculate completed count from local filter
     const completedQuestsCount = portfolioSnatches.length

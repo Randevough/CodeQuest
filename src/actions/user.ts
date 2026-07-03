@@ -2,6 +2,7 @@
 
 import { prisma } from '@/lib/db'
 import { revalidatePath } from 'next/cache'
+import { requireAdmin } from '@/lib/auth-guard'
 
 const ROLES = ['Master Coder', 'Bug Hunter', 'Algo Expert', 'Frontend Wizard', 'Backend Guru', 'Fullstack Hero']
 import { auth } from '@/auth'
@@ -13,6 +14,7 @@ const NAMES = [
 ]
 
 export async function seedUsers(formData?: FormData) {
+    await requireAdmin();
     // FORCE ADD 20 users regardless of existing count
     // const count = await prisma.user.count()
     // if (count >= 20) return { success: true, message: 'Users already seeded' }
@@ -97,7 +99,7 @@ export async function seedUsers(formData?: FormData) {
                 data: {
                     userId: createdUser.id,
                     questId: tempQuest.id,
-                    status: 'COMPLETED',
+                    status: 'ACCEPTED',
                     approvedAt: approvedAt,
                     updatedAt: approvedAt
                 }
@@ -131,7 +133,7 @@ export async function getLeaderboardUsers(page: number = 1, pageSize: number = 2
                 _count: {
                     select: {
                         snatches: {
-                            where: { status: { in: ['COMPLETED', 'ACCEPTED', 'ARCHIVED'] } }
+                            where: { status: { in: ['ACCEPTED', 'ARCHIVED'] } }
                         }
                     }
                 }

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { archiveQuest } from '@/actions/quest'
 import Image from 'next/image'
+import { toast } from 'sonner'
 import { useSession } from 'next-auth/react'
 
 type SnatchWithQuest = {
@@ -34,7 +35,7 @@ export function WorkspaceQuestCard({ snatch }: { snatch: SnatchWithQuest }) {
 
     // Status Logic
     const isRevision = snatch.status === 'REVISION_NEEDED'
-    const isCompleted = ['COMPLETED', 'ACCEPTED'].includes(snatch.status)
+    const isCompleted = ['ACCEPTED'].includes(snatch.status)
     const isPending = snatch.status === 'SUBMITTED'
     const isActive = snatch.status === 'ACTIVE'
 
@@ -43,11 +44,12 @@ export function WorkspaceQuestCard({ snatch }: { snatch: SnatchWithQuest }) {
         try {
             const result = await archiveQuest(snatch.quest.id)
             if (!result.success) {
-                // optionally handle error toast here
-                console.error(result.error)
+                toast.error(result.error as string || 'Failed to archive quest')
+            } else {
+                toast.success('Quest archived successfully')
             }
         } catch (e) {
-            console.error('Archive failed')
+            toast.error('Archive failed')
         } finally {
             setLoading(false)
             setShowArchiveConfirm(false)
@@ -132,7 +134,7 @@ export function WorkspaceQuestCard({ snatch }: { snatch: SnatchWithQuest }) {
                         <div>
                             <p className="text-xs font-bold text-red-700 dark:text-red-300 mb-1">Feedback from Admin</p>
                             <p className="text-sm text-red-700 dark:text-red-400 leading-relaxed">
-                                "{snatch.feedback}"
+                                &quot;{snatch.feedback}&quot;
                             </p>
                         </div>
                     </div>
@@ -147,7 +149,7 @@ export function WorkspaceQuestCard({ snatch }: { snatch: SnatchWithQuest }) {
                         <div>
                             <p className="text-xs font-bold text-emerald-700 dark:text-emerald-300 mb-1">Admin Feedback</p>
                             <p className="text-sm text-emerald-700 dark:text-emerald-400 leading-relaxed">
-                                "{snatch.feedback}"
+                                &quot;{snatch.feedback}&quot;
                             </p>
                         </div>
                     </div>
@@ -157,7 +159,7 @@ export function WorkspaceQuestCard({ snatch }: { snatch: SnatchWithQuest }) {
                     {/* Left: User Avatar + Relative Time */}
                     <div className="flex items-center gap-3 w-full sm:w-auto">
                         {session?.user?.avatar ? (
-                            <img src={session.user.avatar} alt={session.user.name || 'User'} className="size-8 rounded-full object-cover border border-slate-200 dark:border-slate-700" />
+                            <Image src={session.user.avatar} alt={session.user.name || 'User'} width={32} height={32} className="size-8 rounded-full object-cover border border-slate-200 dark:border-slate-700" />
                         ) : (
                             <div className="size-8 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-xs font-bold text-slate-500">
                                 {session?.user?.name?.[0]?.toUpperCase() || 'U'}

@@ -73,7 +73,7 @@ export function QuestAction({
 
     // derived state is now props
     // const isPending = userStatus?.status === 'SUBMITTED'
-    // const isCompleted = ['COMPLETED', 'ACCEPTED', 'ARCHIVED'].includes(userStatus?.status || '')
+    // const isCompleted = ['ACCEPTED', 'ARCHIVED'].includes(userStatus?.status || '')
 
     if (isCompleted) {
         return (

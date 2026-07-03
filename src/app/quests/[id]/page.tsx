@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/db'
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getUserActiveSnatches, getQuestUserStatus } from '@/actions/quest'
 import Link from 'next/link'
@@ -53,22 +54,15 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
     const isSnatched = activeStatuses.includes(userStatus?.status || '')
     // Check for Team Status
     const isTeamPending = quest.snatches.some(s => s.status === 'SUBMITTED');
-    const isTeamCompleted = quest.snatches.some(s => ['COMPLETED', 'ACCEPTED', 'ARCHIVED'].includes(s.status));
+    const isTeamCompleted = quest.snatches.some(s => ['ACCEPTED', 'ARCHIVED'].includes(s.status));
 
     const isPending = userStatus?.status === 'SUBMITTED' || isTeamPending;
-    const isCompleted = ['COMPLETED', 'ACCEPTED', 'ARCHIVED'].includes(userStatus?.status || '') || isTeamCompleted;
+    const isCompleted = ['ACCEPTED', 'ARCHIVED'].includes(userStatus?.status || '') || isTeamCompleted;
 
     // Parse Requirements (Checklist)
     let requirements: string[] = [];
-    try {
-        if (quest.requirements) {
-            const parsed = JSON.parse(quest.requirements);
-            if (Array.isArray(parsed)) {
-                requirements = parsed;
-            }
-        }
-    } catch (e) {
-        console.error("Failed to parse requirements", e);
+    if (Array.isArray(quest.requirements)) {
+        requirements = quest.requirements;
     }
 
     // Difficulty badge helper
@@ -115,7 +109,7 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                     {/* Main Content */}
                     <div className="lg:col-span-8 flex flex-col gap-6">
                         <article className="bg-white dark:bg-surface-dark rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-200 dark:border-slate-800 overflow-hidden">
-                            <div className="p-8 pb-6 border-b border-slate-100 dark:border-slate-800">
+                            <div className="p-4 sm:p-6 lg:p-8 lg:pb-6 border-b border-slate-100 dark:border-slate-800">
                                 <div className="flex flex-col gap-6">
                                     {/* Back Navigation */}
                                     <Link href="/" className="inline-flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-orange-600 transition-colors font-['Plus_Jakarta_Sans'] mb-[-10px]">
@@ -163,7 +157,7 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                                     </div>
                                 </div>
                             </div>
-                            <div className="p-8 pt-8 space-y-10">
+                            <div className="p-4 sm:p-6 lg:p-8 pt-6 lg:pt-8 space-y-10">
                                 <section>
                                     <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
                                         <span className="material-symbols-outlined text-[18px]">info</span> Mission Briefing
@@ -193,44 +187,42 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                                 )}
 
                                 {/* Resources Section */}
-                                {quest.resources && (
+                                {quest.resources && quest.resources.length > 0 && (
                                     <section>
                                         <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
                                             <span className="material-symbols-outlined text-[18px]">link</span> Resources
                                         </h3>
-                                        <div className="bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/30 rounded-lg p-4">
-                                            <div className="flex items-start gap-3">
-                                                <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 mt-0.5">description</span>
-                                                <div>
-                                                    <h5 className="font-semibold text-blue-900 dark:text-blue-100 text-sm mb-1">Provided Materials</h5>
-                                                    {(() => {
-                                                        const parts = quest.resources.split(/(\[.*?\]\(.*?\))/g);
-                                                        return (
-                                                            <div className="text-slate-600 dark:text-slate-300 text-sm whitespace-pre-wrap font-medium">
-                                                                {parts.map((part, i) => {
-                                                                    const match = part.match(/\[(.*?)\]\((.*?)\)/);
-                                                                    if (match) {
-                                                                        const [_, text, url] = match;
-                                                                        return (
-                                                                            <a
-                                                                                key={i}
-                                                                                href={url}
-                                                                                target="_blank"
-                                                                                rel="noopener noreferrer"
-                                                                                className="text-blue-600 dark:text-blue-400 underline hover:text-blue-800 dark:hover:text-blue-300 break-all"
-                                                                            >
-                                                                                {text}
-                                                                            </a>
-                                                                        );
-                                                                    }
-                                                                    return part;
-                                                                })}
-                                                            </div>
-                                                        );
-                                                    })()}
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <ul className="space-y-3">
+                                            {quest.resources.map((resource, index) => {
+                                                // Extract URL if markdown formatted [text](url)
+                                                let displayStr = resource;
+                                                let url = "";
+                                                const match = resource.match(/\[(.*?)\]\((.*?)\)/);
+                                                if (match) {
+                                                    displayStr = match[1];
+                                                    url = match[2];
+                                                } else if (resource.startsWith('http')) {
+                                                    url = resource;
+                                                }
+
+                                                return (
+                                                    <li key={index} className="flex items-start gap-3 bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/30 rounded-lg p-4">
+                                                        <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 mt-0.5">description</span>
+                                                        <div className="flex flex-col">
+                                                            {url ? (
+                                                                <a href={url} target="_blank" rel="noopener noreferrer" className="text-blue-700 dark:text-blue-300 font-semibold hover:underline break-all text-sm">
+                                                                    {displayStr}
+                                                                </a>
+                                                            ) : (
+                                                                <span className="text-blue-700 dark:text-blue-300 font-semibold text-sm">
+                                                                    {displayStr}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </li>
+                                                );
+                                            })}
+                                        </ul>
                                     </section>
                                 )}
 

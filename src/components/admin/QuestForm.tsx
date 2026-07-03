@@ -17,7 +17,7 @@ interface QuestData {
     maxSnatchers: number;
     deadline?: Date | string | null;
     requirements: string[];
-    resources?: string | null;
+    resources?: string[] | string | null;
 }
 
 interface QuestFormProps {
@@ -56,7 +56,11 @@ export function QuestForm({ initialData, isEditing = false }: QuestFormProps) {
         return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     });
     const [description, setDescription] = useState(initialData?.description || '');
-    const [resources, setResources] = useState(initialData?.resources || '');
+    const [resources, setResources] = useState(
+        Array.isArray(initialData?.resources) 
+            ? initialData.resources.join('\n') 
+            : (initialData?.resources || '')
+    );
 
     const [requirements, setRequirements] = useState<string[]>(
         initialData?.requirements || []
@@ -78,7 +82,7 @@ export function QuestForm({ initialData, isEditing = false }: QuestFormProps) {
 
     // If we have a category that is NOT known, we should probably add it to the list dynamically OR switch to custom mode?
     // Let's just add it dynamically to the options if it exists and is valid.
-    let categoryOptions = [...DEFAULT_CATEGORIES];
+    const categoryOptions = [...DEFAULT_CATEGORIES];
     if (category && !isKnownCategory) {
         // It's a custom category from DB
         categoryOptions.push({ label: category, value: category });

@@ -28,7 +28,7 @@ export default async function ProfilePage() {
     const snatches = await prisma.snatch.findMany({
         where: {
             userId: user.id,
-            status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED', 'ARCHIVED'] }
+            status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'ACCEPTED', 'ARCHIVED'] }
         },
         include: {
             quest: true
@@ -37,7 +37,7 @@ export default async function ProfilePage() {
     })
 
     const activeSnatches = snatches.filter(s => ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED'].includes(s.status))
-    const portfolioSnatches = snatches.filter(s => ['COMPLETED', 'ACCEPTED', 'ARCHIVED'].includes(s.status))
+    const portfolioSnatches = snatches.filter(s => ['ACCEPTED', 'ARCHIVED'].includes(s.status))
     const activeQuests = activeSnatches.map(s => s.quest)
 
     // Calculate completed count from local filter

@@ -1,24 +1,20 @@
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 
-const rateLimitMap = new Map<string, { count: number; lastReset: number }>();
+// Create a new ratelimiter, that allows 10 requests per 10 seconds
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+});
 
-export function rateLimit(key: string, limit: number = 5, windowMs: number = 60000): boolean {
-    const now = Date.now();
-    const record = rateLimitMap.get(key);
+export async function rateLimit(key: string, limit: number = 5, windowMs: number = 60000): Promise<boolean> {
+    const windowSeconds = Math.max(1, Math.floor(windowMs / 1000));
+    const ratelimit = new Ratelimit({
+        redis: redis,
+        limiter: Ratelimit.slidingWindow(limit, `${windowSeconds} s`),
+        analytics: true,
+    });
 
-    if (!record) {
-        rateLimitMap.set(key, { count: 1, lastReset: now });
-        return true;
-    }
-
-    if (now - record.lastReset > windowMs) {
-        rateLimitMap.set(key, { count: 1, lastReset: now });
-        return true;
-    }
-
-    if (record.count >= limit) {
-        return false;
-    }
-
-    record.count += 1;
-    return true;
+    const { success } = await ratelimit.limit(key);
+    return success;
 }

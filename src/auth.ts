@@ -48,7 +48,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }),
     ],
     callbacks: {
-        async jwt({ token, user, trigger, session }) {
+        async jwt({ token, user, trigger }) {
+            // Initial sign-in: populate token from the user object returned by authorize()
             if (user) {
                 token.sub = user.id
                 token.role = user.role
@@ -56,10 +57,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 token.avatar = user.avatar
                 token.name = user.name
                 token.email = user.email
+                token.lastRefreshed = Date.now()
+                return token
             }
 
-            // If we have a user ID, fetch the latest data from the database
-            if (token.sub) {
+            // Only re-fetch from DB when explicitly triggered (e.g., after profile update)
+            // or when the cached data is older than 5 minutes
+            const FIVE_MINUTES_MS = 5 * 60 * 1000
+            const isStale = !token.lastRefreshed ||
+                (Date.now() - (token.lastRefreshed as number)) > FIVE_MINUTES_MS
+
+            if ((trigger === 'update' || isStale) && token.sub) {
                 try {
                     const freshUser = await prisma.user.findUnique({
                         where: { id: token.sub },
@@ -70,22 +78,24 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                             points: true,
                             avatar: true,
                         }
-                    });
+                    })
 
                     if (freshUser) {
-                        token.name = freshUser.name;
-                        token.email = freshUser.email;
-                        token.role = freshUser.role;
-                        token.points = freshUser.points;
-                        token.avatar = freshUser.avatar;
+                        token.name = freshUser.name
+                        token.email = freshUser.email
+                        token.role = freshUser.role
+                        token.points = freshUser.points
+                        token.avatar = freshUser.avatar
+                        token.lastRefreshed = Date.now()
                     }
                 } catch (error) {
-                    console.error("Error fetching fresh user data in JWT callback:", error);
+                    console.error("Error refreshing user data in JWT callback:", error)
                 }
             }
 
             return token
         },
+
         async session({ session, token }) {
             if (session.user) {
                 session.user.id = token.sub as string

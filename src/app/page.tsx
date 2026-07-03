@@ -57,7 +57,7 @@ async function getQuests(searchParams: { q?: string, difficulty?: string, sort?:
   whereClause = Prisma.sql`${whereClause} AND "status" = 'Active' AND (
     SELECT COUNT(*) FROM "Snatch" 
     WHERE "Snatch"."questId" = "Quest"."id" 
-    AND "Snatch"."status" IN ('ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED', 'ARCHIVED')
+    AND "Snatch"."status" IN ('ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'ACCEPTED', 'ARCHIVED')
   ) < "maxSnatchers"`
 
   // Sorting
@@ -94,16 +94,16 @@ async function getQuests(searchParams: { q?: string, difficulty?: string, sort?:
     },
     include: {
       _count: {
-        select: { snatches: { where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED'] } } } }
+        select: { snatches: { where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'ACCEPTED'] } } } }
       }
     }
   })
 
   // Re-sort results in JS to match ID order (since 'IN' query might scramble order)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const questsMap = new Map(quests.map(q => [q.id, q]))
   const sortedQuests = validIds
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     .map(id => questsMap.get(id))
     .filter(q => q !== undefined)
 
@@ -120,55 +120,11 @@ async function getMyActiveQuests() {
       id: { in: activeIds }
     },
     include: {
-      _count: { select: { snatches: { where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED'] } } } } }
+      _count: { select: { snatches: { where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'ACCEPTED'] } } } } }
     }
   });
 }
 
-// Temporary seed action
-async function seedQuests() {
-  'use server'
-  await prisma.quest.create({
-    data: {
-      title: 'Fix the Login Bug',
-      description: 'The login button is misaligned by 2px. Critical priority.',
-      maxSnatchers: 1,
-      difficulty: 'Beginner',
-      points: 100,
-      category: 'Web'
-    }
-  })
-  await prisma.quest.create({
-    data: {
-      title: 'Implementation Plan Review',
-      description: 'Review the proposed changes for the new feature.',
-      maxSnatchers: 1,
-      difficulty: 'Advanced',
-      points: 50,
-      category: 'Design'
-    }
-  })
-  await prisma.quest.create({
-    data: {
-      title: 'Refactor Auth',
-      description: 'Move auth logic to a separate service. Needs 2 active devs.',
-      maxSnatchers: 2,
-      difficulty: 'Advanced',
-      points: 300,
-      category: 'AI'
-    }
-  })
-  await prisma.quest.create({
-    data: {
-      title: 'Mobile Push Notifications',
-      description: 'Implement push notifications for the mobile app.',
-      maxSnatchers: 3,
-      difficulty: 'Intermediate',
-      points: 200,
-      category: 'Mobile'
-    }
-  })
-}
 
 export default async function Home({ searchParams }: { searchParams: { q?: string, difficulty?: string, sort?: string } }) {
   const params = await searchParams; // Next 15+ await searchParams
@@ -181,7 +137,7 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
 
   // 1. Get my active quests first (needed for exclusion)
   const myActiveQuests = await getMyActiveQuests();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
 
   // 2. Get ALL interacted IDs for exclusion from board (Active + Completed + Archived)
   const allExcludedIds = await getAllUserQuestIds();
@@ -275,15 +231,7 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
             )}
           </section>
 
-          {/* Seed button */}
-          <div className="pt-6 border-t border-slate-100 dark:border-slate-800 flex justify-center">
-            <form action={seedQuests}>
-              <button className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 rounded-full shadow-sm border border-slate-100 dark:border-slate-700 text-sm text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-                <span className="material-symbols-outlined text-green-500 text-[18px]">eco</span>
-                Seed Test Quests
-              </button>
-            </form>
-          </div>
+
         </main>
       </div>
     </div>

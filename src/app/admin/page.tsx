@@ -3,6 +3,8 @@ import { getAdminDashboardStats } from '@/actions/admin-dashboard';
 import { StatsGrid, LeaderboardPreview } from '@/components/admin/AdminStats';
 import { ActivityTrendChart, DifficultyDistributionChart } from '@/components/admin/AdminCharts';
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminOverviewPage() {
     const statsResult = await getAdminDashboardStats();
 

@@ -10,7 +10,7 @@ import { headers } from 'next/headers';
 
 export async function authenticate(prevState: string | undefined, formData: FormData) {
     const ip = (await headers()).get('x-forwarded-for') || 'unknown';
-    if (!rateLimit(`login:${ip}`, 5, 60000)) {
+    if (!(await rateLimit(`login:${ip}`, 5, 60000))) {
         return 'Too many login attempts. Please try again later.';
     }
     const email = formData.get('email') as string;
@@ -38,7 +38,7 @@ export async function authenticate(prevState: string | undefined, formData: Form
 
 export async function signup(prevState: string | undefined, formData: FormData) {
     const ip = (await headers()).get('x-forwarded-for') || 'unknown';
-    if (!rateLimit(`signup:${ip}`, 3, 3600000)) { // 3 signups per hour per IP to prevent spam
+    if (!(await rateLimit(`signup:${ip}`, 3, 3600000))) { // 3 signups per hour per IP to prevent spam
         return 'Too many signup attempts. Please try again later.';
     }
     const email = formData.get('email') as string;

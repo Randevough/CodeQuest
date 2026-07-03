@@ -6,8 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -46,8 +47,8 @@ model Quest {
   status      String   @default("Draft") // Active, Draft, Closed
   
   deadline    DateTime?
-  requirements String? // Stored as JSON or text
-  resources   String?  // Stored as JSON or text
+  requirements String[]
+  resources    String[]
   
   snatches    Snatch[]
 
@@ -59,7 +60,7 @@ model Snatch {
   id        String   @id @default(cuid())
   userId    String
   questId   String
-  status    String   @default("ACTIVE") // ACTIVE, COMPLETED, DROPPED
+  status    String   @default("ACTIVE") // ACTIVE, SUBMITTED, REVISION_NEEDED, ACCEPTED, REJECTED, ARCHIVED, DROPPED
   
   user      User     @relation(fields: [userId], references: [id])
   quest     Quest    @relation(fields: [questId], references: [id])

@@ -6,7 +6,7 @@ export async function checkBadges(userId: string) {
         where: { id: userId },
         include: {
             snatches: {
-                where: { status: 'COMPLETED' },
+                where: { status: 'ACCEPTED' },
                 include: { quest: true }
             },
             badges: {
