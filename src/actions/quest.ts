@@ -6,6 +6,7 @@ import { revalidatePath } from 'next/cache'
 import { auth } from '@/auth'
 import { redirect } from 'next/navigation'
 import { Prisma } from '@prisma/client'
+import { hasActivePenalty } from '@/lib/penalty'
 
 export type ActionState = {
     success?: boolean;
@@ -36,20 +37,12 @@ export async function joinQuest(questId: string) {
     if (!user) redirect('/login');
 
     try {
+        const isPenalized = await hasActivePenalty(user.id);
+        if (isPenalized) {
+            return { success: false, error: "You are currently penalized and cannot snatch quests." };
+        }
+
         const result = await prisma.$transaction(async (tx) => {
-            // 1.5 Check for active penalty
-            const activePenalty = await tx.penalty.findFirst({
-                where: {
-                    userId: user.id,
-                    expiresAt: { gt: new Date() }
-                }
-            });
-
-            if (activePenalty) {
-                throw new Error("You have an active penalty and cannot join new quests.");
-            }
-
-
             // 2. Check if already snatched
             const existingSnatch = await tx.snatch.findUnique({
                 where: {

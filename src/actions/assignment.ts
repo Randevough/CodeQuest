@@ -5,6 +5,7 @@ import { requireAdmin } from '@/lib/auth-guard'
 import { createNotification } from '@/actions/notification'
 import { revalidatePath } from 'next/cache'
 import { auth } from '@/auth'
+import { hasActivePenalty } from '@/lib/penalty'
 
 export async function getActiveQuestsForAssignment() {
     await requireAdmin()
@@ -46,14 +47,9 @@ export async function assignQuest(userId: string, questId: string, force: boolea
         }
 
         // 2.5 Check for active penalty
-        const activePenalty = await prisma.penalty.findFirst({
-            where: {
-                userId: user.id,
-                expiresAt: { gt: new Date() }
-            }
-        });
+        const isPenalized = await hasActivePenalty(user.id);
 
-        if (activePenalty) {
+        if (isPenalized) {
             return { success: false, error: "User has an active penalty and cannot be assigned quests." }
         }
 
