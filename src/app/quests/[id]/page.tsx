@@ -7,6 +7,7 @@ import { QuestAction } from '@/components/QuestAction'
 import { Header } from '@/components/Header'
 import { QuestTimer } from '@/components/QuestTimer'
 import Image from 'next/image'
+import { SquadAction, SquadJoinButton, SquadLeaveButton } from '@/components/SquadAction'
 
 // Force dynamic since we use user specific data and params
 export const dynamic = 'force-dynamic'
@@ -17,6 +18,17 @@ async function getQuest(id: string) {
         include: {
             _count: {
                 select: { snatches: { where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED'] } } } }
+            },
+            squads: {
+                include: {
+                    createdBy: {
+                        select: { id: true, name: true, avatar: true, handle: true }
+                    },
+                    snatches: {
+                        where: { status: { notIn: ['DROPPED', 'REJECTED'] } },
+                        include: { user: { select: { id: true, name: true, avatar: true, handle: true } } }
+                    }
+                }
             },
             snatches: {
                 where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED'] } },
@@ -242,6 +254,18 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                                         isCompleted={isCompleted}
                                     />
 
+                                    {!isSnatched && quest.maxSnatchers > 1 && (
+                                        <div className="mt-4 border-t border-slate-100 dark:border-slate-800 pt-4">
+                                            <p className="text-center text-sm text-slate-500 mb-2">Or collaborate with others</p>
+                                            <SquadAction questId={quest.id} maxSnatchers={quest.maxSnatchers} />
+                                        </div>
+                                    )}
+
+                                    {isSnatched && userStatus?.squadId && (
+                                        <div className="mt-4 text-center">
+                                            <SquadLeaveButton squadId={userStatus.squadId} />
+                                        </div>
+                                    )}
                                 </section>
                             </div>
                         </article>
@@ -263,47 +287,110 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                             <div className="flex justify-between items-center mb-4">
                                 <div className="flex items-center gap-2">
                                     <span className="material-symbols-outlined text-primary text-[20px]">groups</span>
-                                    <h4 className="text-sm font-bold text-slate-900 dark:text-white">Squad Members</h4>
+                                    <h4 className="text-sm font-bold text-slate-900 dark:text-white">
+                                        {quest.maxSnatchers > 1 ? (userStatus?.squadId ? 'Your Squad' : 'Open Squads') : 'Active Questers'}
+                                    </h4>
                                 </div>
                                 <span className={`text-xs font-mono font-bold px-2 py-1 rounded ${quest.snatches.length >= quest.maxSnatchers ? 'bg-red-100 text-red-700' : 'bg-primary/10 text-primary'}`}>
                                     {quest.snatches.length}/{quest.maxSnatchers}
                                 </span>
                             </div>
                             <div className="space-y-4">
-                                {quest.snatches.map((snatch) => (
-                                    <Link href={`/profile/${snatch.user.id}`} key={snatch.user.id} className="flex items-center gap-3 p-2 -mx-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
-                                        {snatch.user.avatar ? (
-                                            <img src={snatch.user.avatar} alt={snatch.user.name || 'User'} className="size-10 rounded-full object-cover group-hover:scale-105 transition-transform" />
-                                        ) : (
-                                            <div className="size-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-slate-500 group-hover:scale-105 transition-transform">
-                                                {(snatch.user.name || snatch.user.handle || '?')[0].toUpperCase()}
+                                {quest.maxSnatchers === 1 && (
+                                    <>
+                                        {quest.snatches.map((snatch) => (
+                                            <Link href={`/profile/${snatch.user.id}`} key={snatch.user.id} className="flex items-center gap-3 p-2 -mx-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                                                {snatch.user.avatar ? (
+                                                    <Image src={snatch.user.avatar as string} alt={snatch.user.name || 'User'} width={40} height={40} className="size-10 rounded-full object-cover group-hover:scale-105 transition-transform" />
+                                                ) : (
+                                                    <div className="size-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-slate-500 group-hover:scale-105 transition-transform">
+                                                        {(snatch.user.name || snatch.user.handle || '?')[0].toUpperCase()}
+                                                    </div>
+                                                )}
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="text-sm font-semibold text-slate-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                                                        {snatch.user.name || snatch.user.handle || 'Anonymous'}
+                                                    </p>
+                                                </div>
+                                            </Link>
+                                        ))}
+                                        {quest.snatches.length === 0 && (
+                                            <div className="text-center py-4 text-sm text-slate-500 italic">No brave souls yet. Be the first!</div>
+                                        )}
+                                        {quest.snatches.length < quest.maxSnatchers && (
+                                            <div className="flex items-center gap-3 opacity-60">
+                                                <div className="size-10 rounded-full bg-slate-50 dark:bg-slate-800 border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center text-slate-400">
+                                                    <span className="material-symbols-outlined text-[18px]">add</span>
+                                                </div>
+                                                <div className="flex-1"><p className="text-sm text-slate-500 italic">Spot Open</p></div>
                                             </div>
                                         )}
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-semibold text-slate-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                                                {snatch.user.name || snatch.user.handle || 'Anonymous'}
-                                            </p>
-                                        </div>
-                                    </Link>
-                                ))}
-
-                                {/* Empty Slots or "No Members" */}
-                                {quest.snatches.length === 0 && (
-                                    <div className="text-center py-4 text-sm text-slate-500 italic">
-                                        No brave souls yet. Be the first!
-                                    </div>
+                                    </>
                                 )}
 
-                                {/* Show Open Slot indicator if there is space */}
-                                {quest.snatches.length < quest.maxSnatchers && (
-                                    <div className="flex items-center gap-3 opacity-60">
-                                        <div className="size-10 rounded-full bg-slate-50 dark:bg-slate-800 border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center text-slate-400">
-                                            <span className="material-symbols-outlined text-[18px]">add</span>
-                                        </div>
-                                        <div className="flex-1">
-                                            <p className="text-sm text-slate-500 italic">Spot Open</p>
-                                        </div>
-                                    </div>
+                                {quest.maxSnatchers > 1 && userStatus?.squadId && (() => {
+                                    const mySquad = quest.squads.find(s => s.id === userStatus.squadId);
+                                    if (!mySquad) return null;
+                                    return (
+                                        <>
+                                            <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-3">{mySquad.name}</p>
+                                            {mySquad.snatches.map((snatch) => (
+                                                <Link href={`/profile/${snatch.user.id}`} key={snatch.user.id} className="flex items-center gap-3 p-2 -mx-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                                                    {snatch.user.avatar ? (
+                                                        <Image src={snatch.user.avatar as string} alt={snatch.user.name || 'User'} width={40} height={40} className="size-10 rounded-full object-cover group-hover:scale-105 transition-transform" />
+                                                    ) : (
+                                                        <div className="size-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-slate-500 group-hover:scale-105 transition-transform">
+                                                            {(snatch.user.name || snatch.user.handle || '?')[0].toUpperCase()}
+                                                        </div>
+                                                    )}
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="text-sm font-semibold text-slate-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                                                            {snatch.user.name || snatch.user.handle || 'Anonymous'}
+                                                        </p>
+                                                    </div>
+                                                </Link>
+                                            ))}
+                                            {Array.from({ length: quest.maxSnatchers - mySquad.snatches.length }).map((_, i) => (
+                                                <div key={i} className="flex items-center gap-3 opacity-60">
+                                                    <div className="size-10 rounded-full bg-slate-50 dark:bg-slate-800 border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center text-slate-400">
+                                                        <span className="material-symbols-outlined text-[18px]">add</span>
+                                                    </div>
+                                                    <div className="flex-1"><p className="text-sm text-slate-500 italic">Spot Open</p></div>
+                                                </div>
+                                            ))}
+                                        </>
+                                    )
+                                })()}
+
+                                {quest.maxSnatchers > 1 && !userStatus?.squadId && (
+                                    <>
+                                        {quest.squads.length === 0 ? (
+                                            <div className="text-center py-4 text-sm text-slate-500 italic">No open squads. Create one!</div>
+                                        ) : (
+                                            quest.squads.map(squad => (
+                                                <div key={squad.id} className="p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 rounded-lg mb-2">
+                                                    <div className="flex justify-between items-center mb-2">
+                                                        <p className="text-sm font-bold text-slate-900 dark:text-white">{squad.name}</p>
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="text-xs font-mono text-slate-500">{squad.snatches.length}/{quest.maxSnatchers}</span>
+                                                            <SquadJoinButton squadId={squad.id} disabled={squad.snatches.length >= quest.maxSnatchers} />
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex -space-x-2">
+                                                        {squad.snatches.map(s => (
+                                                            s.user.avatar ? (
+                                                                <Image key={s.user.id} src={s.user.avatar as string} width={32} height={32} className="size-8 rounded-full border-2 border-white dark:border-surface-dark object-cover" alt="" />
+                                                            ) : (
+                                                                <div key={s.user.id} className="size-8 rounded-full border-2 border-white dark:border-surface-dark bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-slate-500 text-xs">
+                                                                    {(s.user.name || '?')[0].toUpperCase()}
+                                                                </div>
+                                                            )
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ))
+                                        )}
+                                    </>
                                 )}
                             </div>
                         </div>

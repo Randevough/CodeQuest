@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { MobileSidebarTrigger } from '@/components/admin/MobileSidebarTrigger';
 import { Pagination } from '@/components/Pagination';
 import { QuestFilters } from '@/components/admin/QuestFilters';
@@ -95,7 +96,7 @@ export default async function ManageQuestsPage({ searchParams }: ManageQuestsPag
                                             <td className="px-6 py-4 text-center">
                                                 <div className="inline-flex items-center justify-center gap-1.5 font-bold text-slate-700 dark:text-slate-300">
                                                     <span>{quest.points}</span>
-                                                    <img src="/icon.png" alt="XP" className="w-5 h-5 object-contain" />
+                                                    <Image src="/icon.png" alt="XP" width={20} height={20} className="object-contain" />
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4 text-center">

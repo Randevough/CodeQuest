@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 
 import { formatDistanceToNow } from 'date-fns'
+import Image from 'next/image'
 
 // Quick interfaces for props
 interface Quest {
@@ -35,7 +36,12 @@ interface Badge {
 interface ProfileTabsProps {
     activeSnatches: Snatch[]
     portfolioSnatches?: Snatch[]
-    user: any
+    user: {
+        id?: string
+        name?: string | null
+        avatar?: string | null
+        email?: string | null
+    } | null
     isOwner?: boolean
     badges?: Badge[]       // earned badges
     allBadges?: Badge[]   // every badge in the system
@@ -92,7 +98,7 @@ export function ProfileTabs({ activeSnatches, portfolioSnatches = [], user, isOw
                                 <div className="p-6 flex flex-col gap-4 relative">
                                     {/* Points Badge moved to Top Right (Absolute) */}
                                     <div className="absolute top-6 right-6 flex items-center gap-1.5 bg-yellow-50 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400 px-2.5 py-1 rounded-full border border-yellow-100 dark:border-yellow-800/50">
-                                        <img src="/icon.png" alt="Points" className="w-3.5 h-3.5 object-contain" />
+                                        <Image src="/icon.png" alt="Points" width={14} height={14} className="object-contain" />
                                         <span className="text-xs font-bold">{snatch.quest.points} pts</span>
                                     </div>
                                     <div className="flex justify-between items-start">
@@ -152,7 +158,7 @@ export function ProfileTabs({ activeSnatches, portfolioSnatches = [], user, isOw
                                         {/* Left: User Avatar + Relative Time */}
                                         <div className="flex items-center gap-3 w-full sm:w-auto">
                                             {user?.avatar ? (
-                                                <img src={user.avatar} alt={user.name || 'User'} className="size-8 rounded-full object-cover border border-slate-200 dark:border-slate-700" />
+                                                <Image src={user.avatar as string} alt={user.name || 'User'} width={32} height={32} className="size-8 rounded-full object-cover border border-slate-200 dark:border-slate-700" />
                                             ) : (
                                                 <div className="size-8 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-xs font-bold text-slate-500">
                                                     {user?.name?.[0]?.toUpperCase() || 'U'}
@@ -278,7 +284,7 @@ export function ProfileTabs({ activeSnatches, portfolioSnatches = [], user, isOw
                                                     </span>
                                                 </div>
                                                 <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-orange-100 bg-orange-50 dark:bg-orange-900/10 dark:border-orange-500/20 text-orange-600 dark:text-orange-400">
-                                                    <img src="/icon.png" alt="Points" className="w-3 h-3 object-contain" />
+                                                    <Image src="/icon.png" alt="Points" width={12} height={12} className="object-contain" />
                                                     <span className="text-[10px] font-bold">{snatch.quest.points} pts</span>
                                                 </div>
                                             </div>

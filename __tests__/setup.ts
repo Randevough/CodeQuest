@@ -1,0 +1,44 @@
+import { beforeAll, beforeEach, afterAll } from 'vitest'
+import { PrismaClient } from '@prisma/client'
+import { execSync } from 'child_process'
+
+// We will use a separate Prisma client for tests pointing to the test DB
+const prisma = new PrismaClient({
+  datasources: {
+    db: {
+      url: process.env.DATABASE_URL_TEST
+    }
+  }
+})
+
+beforeAll(async () => {
+  // Push the schema to the test database
+  if (process.env.DATABASE_URL_TEST) {
+    execSync('npx prisma db push --skip-generate', { env: { ...process.env, DATABASE_URL: process.env.DATABASE_URL_TEST } })
+  }
+})
+
+beforeEach(async () => {
+  if (!process.env.DATABASE_URL_TEST) return
+  
+  // Truncate all tables before each test
+  const tableNames = await prisma.$queryRaw<
+    Array<{ tablename: string }>
+  >`SELECT tablename FROM pg_tables WHERE schemaname='public'`
+
+  const tables = tableNames
+    .map(({ tablename }) => tablename)
+    .filter((name) => name !== '_prisma_migrations')
+    .map((name) => `"public"."${name}"`)
+    .join(', ')
+
+  if (tables !== '') {
+    await prisma.$executeRawUnsafe(`TRUNCATE TABLE ${tables} CASCADE;`)
+  }
+})
+
+afterAll(async () => {
+  await prisma.$disconnect()
+})
+
+export { prisma as testPrisma }

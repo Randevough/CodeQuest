@@ -6,6 +6,7 @@ import { archiveQuest } from '@/actions/quest'
 import Image from 'next/image'
 import { toast } from 'sonner'
 import { useSession } from 'next-auth/react'
+import { formatDistanceToNow } from 'date-fns'
 
 type SnatchWithQuest = {
     id: string
@@ -24,9 +25,10 @@ type SnatchWithQuest = {
         deadline?: Date | null
         _count: { snatches: number }
     }
+    squad?: {
+        name: string | null
+    } | null
 }
-
-import { formatDistanceToNow } from 'date-fns'
 
 export function WorkspaceQuestCard({ snatch }: { snatch: SnatchWithQuest }) {
     const [loading, setLoading] = useState(false)
@@ -112,7 +114,7 @@ export function WorkspaceQuestCard({ snatch }: { snatch: SnatchWithQuest }) {
                         <h3 className="text-lg font-bold text-gray-900 dark:text-white leading-tight">{snatch.quest.title}</h3>
 
                         {/* Badges moved below title */}
-                        <div className="flex items-center text-xs font-semibold tracking-wide pt-1 gap-2">
+                        <div className="flex items-center text-xs font-semibold tracking-wide pt-1 gap-2 flex-wrap">
                             {/* Difficulty Badge - Colorful (Swapped to First) */}
                             <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border capitalize ${getDifficultyColor(snatch.quest.difficulty)}`}>
                                 {snatch.quest.difficulty}
@@ -121,6 +123,13 @@ export function WorkspaceQuestCard({ snatch }: { snatch: SnatchWithQuest }) {
                             <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 capitalize">
                                 {snatch.quest.category}
                             </span>
+                            {/* Squad Badge */}
+                            {snatch.squad && (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-orange-50 text-orange-600 border border-orange-200 dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-800/30">
+                                    <span className="material-symbols-outlined text-[14px]">groups</span>
+                                    {snatch.squad.name}
+                                </span>
+                            )}
                         </div>
                     </div>
                 </div>

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { updateUserRole, deactivateUser, manualReset, deleteUser } from '@/actions/admin'
+import { assignQuest, getActiveQuestsForAssignment } from '@/actions/assignment'
 import { toast } from 'sonner'
 
 type UserProp = {
@@ -13,12 +14,21 @@ type UserProp = {
 
 export function MemberActionMenu({ user }: { user: UserProp }) {
     const [isOpen, setIsOpen] = useState(false)
-    const [modal, setModal] = useState<'none' | 'role' | 'deactivate' | 'delete'>('none')
+    const [modal, setModal] = useState<'none' | 'role' | 'deactivate' | 'delete' | 'assign-quest'>('none')
     const [confirmText, setConfirmText] = useState('')
     const [role, setRole] = useState(user.role || 'Member')
     const [position, setPosition] = useState({ top: 0, right: 0 })
+    const [quests, setQuests] = useState<Array<{ id: string, title: string, maxSnatchers: number }>>([])
+    const [selectedQuestId, setSelectedQuestId] = useState<string>('')
+    const [isAssigning, setIsAssigning] = useState(false)
     const buttonRef = useRef<HTMLButtonElement>(null)
     const dropdownRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        if (modal === 'assign-quest') {
+            getActiveQuestsForAssignment().then(setQuests).catch(console.error)
+        }
+    }, [modal])
 
     // Close on click outside
     useEffect(() => {
@@ -88,6 +98,28 @@ export function MemberActionMenu({ user }: { user: UserProp }) {
         setIsOpen(false)
     }
 
+    const handleAssignQuest = async (force: boolean = false) => {
+        if (!selectedQuestId) return
+        setIsAssigning(true)
+        
+        const res = await assignQuest(user.id, selectedQuestId, force)
+        
+        setIsAssigning(false)
+
+        if (res.success) {
+            toast.success(`Quest assigned to ${user.name || 'User'}!`)
+            setModal('none')
+            setIsOpen(false)
+        } else if (res.error === 'CAPACITY_EXCEEDED') {
+            const confirmForce = window.confirm(`${res.message}\n\nDo you want to override the capacity and assign anyway?`)
+            if (confirmForce) {
+                handleAssignQuest(true)
+            }
+        } else {
+            toast.error(res.error || "Failed to assign quest.")
+        }
+    }
+
     return (
         <>
             <button
@@ -112,6 +144,14 @@ export function MemberActionMenu({ user }: { user: UserProp }) {
                         >
                             <span className="material-symbols-outlined text-[18px] text-slate-400">admin_panel_settings</span>
                             Edit Role
+                        </button>
+
+                        <button
+                            onClick={() => { setModal('assign-quest'); setIsOpen(false); }}
+                            className="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center gap-2"
+                        >
+                            <span className="material-symbols-outlined text-[18px] text-slate-400">assignment_add</span>
+                            Assign Quest
                         </button>
 
                         {user.status === 'On Cooldown' && (
@@ -209,6 +249,44 @@ export function MemberActionMenu({ user }: { user: UserProp }) {
                                 className="px-4 py-2 text-sm font-bold text-white bg-red-600 rounded-lg hover:bg-red-700 shadow-sm shadow-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                             >
                                 Delete User
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Assign Quest Modal */}
+            {modal === 'assign-quest' && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-md overflow-hidden p-6 animate-in zoom-in-95">
+                        <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Assign Quest to {user.name}</h3>
+                        <p className="text-slate-600 dark:text-slate-300 mb-4 leading-relaxed text-sm">
+                            Manually assign an active quest to this user. This bypasses the max 3 active quests rule.
+                        </p>
+                        <div className="mb-6 space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Select Quest</label>
+                                <select 
+                                    className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                                    value={selectedQuestId}
+                                    onChange={(e) => setSelectedQuestId(e.target.value)}
+                                    disabled={isAssigning}
+                                >
+                                    <option value="" disabled>-- Select a quest --</option>
+                                    {quests.map(q => (
+                                        <option key={q.id} value={q.id}>[{q.id}] {q.title} (Max: {q.maxSnatchers})</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                        <div className="flex gap-3 justify-end">
+                            <button onClick={() => setModal('none')} className="px-4 py-2 text-sm font-medium border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800" disabled={isAssigning}>Cancel</button>
+                            <button 
+                                onClick={() => handleAssignQuest(false)} 
+                                disabled={!selectedQuestId || isAssigning}
+                                className="px-4 py-2 text-sm font-bold text-white bg-orange-600 rounded-lg hover:bg-orange-700 shadow-sm shadow-orange-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                            >
+                                {isAssigning ? 'Assigning...' : 'Assign Quest'}
                             </button>
                         </div>
                     </div>

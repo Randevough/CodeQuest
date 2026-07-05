@@ -5,10 +5,17 @@ import { getUserActiveSnatches, getAllUserQuestIds } from '@/actions/quest'
 import Link from 'next/link'
 import { LoginToast } from '@/components/LoginToast'
 import { Header } from '@/components/Header'
-
+import { ActivityFeed } from '@/components/ActivityFeed'
 import { Pagination } from '@/components/Pagination'
+import { Prisma } from '@prisma/client'
 
-
+type QuestWithCount = Prisma.QuestGetPayload<{
+  include: {
+    _count: {
+      select: { snatches: true }
+    }
+  }
+}>
 export const dynamic = 'force-dynamic'
 
 // Helper to get active user quest IDs (exclude these from board)
@@ -190,7 +197,7 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
                     </span>
                   </div>
                   <div className="flex overflow-x-auto styled-scrollbar items-stretch -mx-6 px-6 pb-3 gap-4">
-                    {myActiveQuests.map((quest: any) => (
+                    {myActiveQuests.map((quest: QuestWithCount) => (
                       <div key={quest.id} className="min-w-[320px] md:min-w-[500px] max-w-[640px] flex-none">
                         <QuestCard quest={quest} isSnatched={true} />
                       </div>
@@ -201,35 +208,40 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
             </section>
           )}
 
-          {/* ── QUEST BOARD ── */}
-          <section>
-            <div className="flex flex-col items-center text-center gap-2 mb-8">
-              <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Quest Board</h1>
-              <p className="text-slate-500 dark:text-slate-400">Solve problems, build cool things, and earn points to climb the ranks. <br /> Your next challenge starts here!</p>
-            </div>
-
-            <div className="mb-8">
-              <QuestSearch />
-            </div>
-
-            {availableQuests.length === 0 ? (
-              <div className="text-center py-20 border border-dashed border-slate-200 dark:border-slate-700 rounded-3xl bg-white/40 dark:bg-white/5 backdrop-blur-sm">
-                <p className="text-slate-500">No quests found.</p>
+          {/* ── QUEST BOARD + ACTIVITY FEED ── */}
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 items-start">
+            <section>
+              <div className="flex flex-col items-center text-center gap-2 mb-8">
+                <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Quest Board</h1>
+                <p className="text-slate-500 dark:text-slate-400">Solve problems, build cool things, and earn points to climb the ranks. <br /> Your next challenge starts here!</p>
               </div>
-            ) : (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                  {availableQuests.map((quest: any) => (
-                    <QuestCard key={quest.id} quest={quest} isSnatched={false} />
-                  ))}
+
+              <div className="mb-8">
+                <QuestSearch />
+              </div>
+
+              {availableQuests.length === 0 ? (
+                <div className="text-center py-20 border border-dashed border-slate-200 dark:border-slate-700 rounded-3xl bg-white/40 dark:bg-white/5 backdrop-blur-sm">
+                  <p className="text-slate-500">No quests found.</p>
                 </div>
-                <div className="mt-6">
-                  <Pagination totalPages={totalPages} />
-                </div>
-              </>
-            )}
-          </section>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    {availableQuests.map((quest: QuestWithCount) => (
+                      <QuestCard key={quest.id} quest={quest} isSnatched={false} />
+                    ))}
+                  </div>
+                  <div className="mt-6">
+                    <Pagination totalPages={totalPages} />
+                  </div>
+                </>
+              )}
+            </section>
+
+            {/* ── ACTIVITY FEED SIDEBAR ── */}
+            <ActivityFeed />
+          </div>
 
 
         </main>

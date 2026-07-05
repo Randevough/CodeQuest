@@ -27,7 +27,7 @@ export async function UserStanding({ timeframe = 'all' }: { timeframe?: string }
                 <div className="flex flex-col items-center mb-6">
                     <div className="size-16 rounded-full border-2 border-slate-100 dark:border-slate-700 p-0.5 mb-3 bg-white dark:bg-gray-800 flex items-center justify-center overflow-hidden">
                         {standing.avatar ? (
-                            <img className="w-full h-full object-cover rounded-full" src={standing.avatar} alt="Your Avatar" />
+                            <Image width={64} height={64} className="w-full h-full object-cover rounded-full" src={standing.avatar} alt="Your Avatar" />
                         ) : (
                             <div className="w-full h-full bg-slate-100 dark:bg-gray-700 flex items-center justify-center text-slate-500 font-bold">
                                 {standing.name?.[0] || 'U'}

@@ -26,10 +26,12 @@ model User {
   points    Int      @default(0)
   completedQuests Int @default(0)
   
-  snatches  Snatch[]
-  penalties Penalty[]
-  accounts  Account[]
-  badges    UserBadge[]
+  snatches      Snatch[]
+  penalties     Penalty[]
+  accounts      Account[]
+  badges        UserBadge[]
+  notifications Notification[]
+  squadsCreated Squad[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -51,9 +53,23 @@ model Quest {
   resources    String[]
   
   snatches    Snatch[]
+  squads      Squad[]
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Squad {
+  id          String   @id @default(cuid())
+  questId     String
+  name        String?
+  createdById String
+  quest       Quest    @relation(fields: [questId], references: [id], onDelete: Cascade)
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  snatches    Snatch[]
+  createdAt   DateTime @default(now())
+
+  @@index([questId])
 }
 
 model Snatch {
@@ -70,6 +86,9 @@ model Snatch {
   approvedAt DateTime?
   submissionUrl String?
   feedback String? // Admin feedback on rejection/approval
+  assignedById String?
+  squadId      String?
+  squad        Squad?   @relation(fields: [squadId], references: [id])
 
   @@unique([userId, questId]) // User can only snatch a quest once (until dropped/completed logic handled?)
   // Actually, if they drop it, can they snatch it again? 
@@ -132,4 +151,20 @@ model UserBadge {
   earnedAt    DateTime @default(now())
 
   @@unique([userId, badgeId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String   // SUBMISSION_ACCEPTED | SUBMISSION_REVISION | SUBMISSION_REJECTED | BADGE_EARNED | QUEST_ASSIGNED
+  message   String
+  read      Boolean  @default(false)
+  link      String?
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, read])
+  @@index([userId, createdAt])
 }

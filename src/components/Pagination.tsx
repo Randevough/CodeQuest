@@ -56,8 +56,15 @@ export function Pagination({
 
     if (totalPages <= 1) return null
 
-    // Helper to render Link or Button
-    const PageControl = ({ page, isActive, children, className, disabled }: any) => {
+    interface PageControlProps {
+        page: number | string;
+        isActive?: boolean;
+        children: React.ReactNode;
+        className?: string;
+        disabled?: boolean;
+    }
+
+    const PageControl = ({ page, isActive, children, className, disabled }: PageControlProps) => {
         const isEllipsis = page === '...';
 
         if (isEllipsis) {

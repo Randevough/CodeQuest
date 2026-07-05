@@ -1,6 +1,30 @@
 import Link from 'next/link'
 import { getWorkspaceQuests } from '@/actions/quest'
 import { WorkspaceQuestCard } from './WorkspaceQuestCard'
+import { Prisma } from '@prisma/client'
+
+type WorkspaceSnatch = Prisma.SnatchGetPayload<{
+    include: { 
+        quest: {
+            select: {
+                id: true;
+                title: true;
+                description: true;
+                points: true;
+                maxSnatchers: true;
+                category: true;
+                difficulty: true;
+                deadline: true;
+                _count: {
+                    select: { snatches: true };
+                };
+            };
+        };
+        squad: {
+            select: { name: true };
+        };
+    }
+}>;
 
 export async function WorkspaceQuestGrid() {
     const { success, data: snatches } = await getWorkspaceQuests();
@@ -16,7 +40,7 @@ export async function WorkspaceQuestGrid() {
     return (
         <div className="lg:col-span-8 space-y-6">
             {/* Active Quests */}
-            {snatches.map((snatch: any) => (
+            {snatches.map((snatch: WorkspaceSnatch) => (
                 <WorkspaceQuestCard key={snatch.id} snatch={snatch} />
             ))}
 

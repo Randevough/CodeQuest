@@ -34,6 +34,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+.env.test
 
 # vercel
 .vercel
@@ -48,4 +49,6 @@ next-env.d.ts
 /qa-report.md
 /temp_app
 .agent
-/design_context
+/design_contextprisma/dev.db 
+*.md
+/claude-skills

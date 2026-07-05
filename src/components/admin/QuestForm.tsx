@@ -138,9 +138,9 @@ export function QuestForm({ initialData, isEditing = false }: QuestFormProps) {
         startTransition(async () => {
             let res;
             if (isEditing && initialData?.id) {
-                res = await updateQuest(initialData.id, null, finalFormData);
+                res = await updateQuest(initialData.id, undefined, finalFormData);
             } else {
-                res = await createQuest(null, finalFormData);
+                res = await createQuest(undefined, finalFormData);
             }
 
             if (res.success) {

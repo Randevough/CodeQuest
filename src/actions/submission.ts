@@ -2,8 +2,10 @@
 
 import { prisma } from "@/lib/db"
 import { revalidatePath } from "next/cache"
+import { Prisma } from '@prisma/client'
 import { checkBadges } from "@/lib/badges"
 import { requireAdmin } from "@/lib/auth-guard"
+import { createNotification } from "@/actions/notification"
 
 export async function getSubmissions({
     page = 1,
@@ -20,7 +22,7 @@ export async function getSubmissions({
 
     const skip = (page - 1) * limit
 
-    const where: any = {}
+    const where: Prisma.SnatchWhereInput = {}
 
     if (status === 'Pending') {
         where.status = 'SUBMITTED'
@@ -52,6 +54,23 @@ export async function getSubmissions({
                             email: true,
                             avatar: true,
                             handle: true
+                        }
+                    },
+                    squad: {
+                        include: {
+                            snatches: {
+                                where: { status: { notIn: ['DROPPED', 'REJECTED'] } },
+                                include: {
+                                    user: {
+                                        select: {
+                                            id: true,
+                                            name: true,
+                                            avatar: true,
+                                            handle: true
+                                        }
+                                    }
+                                }
+                            }
                         }
                     },
                     quest: {
@@ -108,16 +127,27 @@ export async function reviewSubmission(snatchId: string, status: 'ACCEPTED' | 'R
     try {
         await requireAdmin()
 
-        const snatch = await prisma.snatch.findUnique({
+        const originalSnatch = await prisma.snatch.findUnique({
             where: { id: snatchId },
             include: { user: true, quest: true }
         })
 
-        if (!snatch) return { success: false, error: "Submission not found" }
+        if (!originalSnatch) return { success: false, error: "Submission not found" }
+
+        // Find all snatches that should be updated
+        let targetSnatches = [originalSnatch]
+        if (originalSnatch.squadId) {
+            targetSnatches = await prisma.snatch.findMany({
+                // Only update snatches that share the exact same status we are reviewing
+                where: { squadId: originalSnatch.squadId, status: originalSnatch.status },
+                include: { user: true, quest: true }
+            })
+        }
 
         await prisma.$transaction(async (tx) => {
-            await tx.snatch.update({
-                where: { id: snatchId },
+            const snatchIds = targetSnatches.map(s => s.id)
+            await tx.snatch.updateMany({
+                where: { id: { in: snatchIds } },
                 data: {
                     status,
                     feedback,
@@ -125,18 +155,71 @@ export async function reviewSubmission(snatchId: string, status: 'ACCEPTED' | 'R
                 }
             })
 
-            if (status === 'ACCEPTED' && snatch.status !== 'ACCEPTED') {
-                await tx.user.update({
-                    where: { id: snatch.userId },
-                    data: {
-                        points: { increment: snatch.quest.points },
-                        completedQuests: { increment: 1 }
-                    }
-                })
-
-                await checkBadges(snatch.userId)
+            if (status === 'ACCEPTED' && originalSnatch.status !== 'ACCEPTED') {
+                for (const s of targetSnatches) {
+                    await tx.user.update({
+                        where: { id: s.userId },
+                        data: {
+                            points: { increment: s.quest.points },
+                            completedQuests: { increment: 1 }
+                        }
+                    })
+                }
             }
         })
+
+        // Badge check AFTER transaction commits (Safeguard #1)
+        const badgesEarnedByUserId: Record<string, string[]> = {}
+        if (status === 'ACCEPTED' && originalSnatch.status !== 'ACCEPTED') {
+            for (const s of targetSnatches) {
+                badgesEarnedByUserId[s.userId] = (await checkBadges(s.userId)) || []
+            }
+        }
+
+        // Emit notifications — best-effort, failure-isolated (Safeguard #2)
+        for (const s of targetSnatches) {
+            try {
+                if (status === 'ACCEPTED') {
+                    await createNotification({
+                        userId: s.userId,
+                        type: 'SUBMISSION_ACCEPTED',
+                        message: `Your submission for "${s.quest.title}" has been accepted! +${s.quest.points} XP`,
+                        link: '/workspace',
+                    })
+                } else if (status === 'REVISION_NEEDED') {
+                    await createNotification({
+                        userId: s.userId,
+                        type: 'SUBMISSION_REVISION',
+                        message: `Your submission for "${s.quest.title}" needs revision. Check admin feedback.`,
+                        link: '/workspace',
+                    })
+                } else if (status === 'REJECTED') {
+                    await createNotification({
+                        userId: s.userId,
+                        type: 'SUBMISSION_REJECTED',
+                        message: `Your submission for "${s.quest.title}" was not accepted.`,
+                        link: '/workspace',
+                    })
+                }
+            } catch (notifError) {
+                console.error('Failed to create submission notification:', notifError)
+            }
+
+            // Emit badge notifications — best-effort (Safeguard #2)
+            const newBadges = badgesEarnedByUserId[s.userId] || []
+            for (const badgeName of newBadges) {
+                try {
+                    await createNotification({
+                        userId: s.userId,
+                        type: 'BADGE_EARNED',
+                        message: `You earned the "${badgeName}" badge!`,
+                        link: '/profile',
+                    })
+                } catch (badgeNotifError) {
+                    console.error('Failed to create badge notification:', badgeNotifError)
+                }
+            }
+        }
 
         revalidatePath('/admin', 'layout')
         return { success: true }

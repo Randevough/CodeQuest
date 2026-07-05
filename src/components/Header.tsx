@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 import { useSession, signOut } from 'next-auth/react'
 import { ThemeToggle } from './ThemeToggle'
+import { getUnreadNotificationCount } from '@/actions/notification'
 
 
 interface HeaderProps {
@@ -17,6 +18,13 @@ export function Header({ activePage }: HeaderProps) {
     const profileRef = useRef<HTMLDivElement>(null)
     const { data: session } = useSession()
     const isAdmin = session?.user?.role === 'Admin'
+    const [unreadCount, setUnreadCount] = useState(0)
+
+    useEffect(() => {
+        if (session?.user?.id) {
+            getUnreadNotificationCount().then(setUnreadCount).catch(console.error)
+        }
+    }, [session?.user?.id])
 
     // Close profile dropdown on outside click
     useEffect(() => {
@@ -81,6 +89,21 @@ export function Header({ activePage }: HeaderProps) {
                             />
                             <span>{session?.user?.points || 0} pts</span>
                         </div>
+                        
+                        {/* Notifications Bell */}
+                        {session?.user && (
+                            <Link 
+                                href="/workspace"
+                                className="relative flex items-center justify-center size-8 rounded-full text-slate-500 hover:text-orange-600 hover:bg-orange-50 dark:text-slate-400 dark:hover:bg-orange-500/10 dark:hover:text-orange-400 transition-colors ml-1"
+                                aria-label="Notifications"
+                            >
+                                <span className="material-symbols-outlined text-[22px]">notifications</span>
+                                {unreadCount > 0 && (
+                                    <span className="absolute top-1 right-1 size-2.5 bg-orange-500 border-2 border-white dark:border-surface-dark rounded-full"></span>
+                                )}
+                            </Link>
+                        )}
+
                         <ThemeToggle />
                         {/* Profile Dropdown */}
                         <div ref={profileRef} className="relative hidden sm:block ml-1">
@@ -90,7 +113,7 @@ export function Header({ activePage }: HeaderProps) {
                                 className="flex items-center justify-center size-8 rounded-full bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 overflow-hidden hover:border-orange-400 dark:hover:border-orange-500 transition-all"
                             >
                                 {session?.user?.avatar ? (
-                                    <img src={session.user.avatar} alt="User" className="w-full h-full object-cover" />
+                                    <Image src={session.user.avatar} alt="User" width={40} height={40} className="w-full h-full object-cover" />
                                 ) : (
                                     <span className="material-symbols-outlined text-gray-400 dark:text-slate-400 text-[20px]">person</span>
                                 )}
@@ -190,7 +213,7 @@ export function Header({ activePage }: HeaderProps) {
                             <div className="flex items-center px-3 gap-3">
                                 <div className="size-8 rounded-full bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center">
                                     {session?.user?.avatar ? (
-                                        <img src={session.user.avatar} alt="User" className="w-full h-full object-cover" />
+                                        <Image src={session.user.avatar} alt="User" width={40} height={40} className="w-full h-full object-cover" />
                                     ) : (
                                         <span className="material-symbols-outlined text-gray-400">person</span>
                                     )}

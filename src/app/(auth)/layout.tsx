@@ -1,6 +1,7 @@
 import '../globals.css';
 import '../custom-auth.css'; // We will create this for custom styles from the HTML
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function AuthLayout({
     children,
@@ -13,7 +14,7 @@ export default function AuthLayout({
             <div className="flex w-full flex-col bg-white p-8 lg:w-1/2 lg:p-16 relative overflow-y-auto">
                 <div className="flex items-center mb-8">
                     <Link href="/" className="flex items-center gap-2 group">
-                        <img src="/icon-big.png" alt="CodeQuest Logo" className="w-8 h-8 group-hover:scale-110 transition-transform duration-200" />
+                        <Image src="/icon-big.png" alt="CodeQuest Logo" width={32} height={32} className="group-hover:scale-110 transition-transform duration-200" />
                         <span className="text-xl font-bold tracking-tight text-gray-900 font-[Fira_Sans]">
                             CodeQuest
                         </span>

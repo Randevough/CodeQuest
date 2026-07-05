@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { createPortal } from 'react-dom'
 import { updateProfile, updateFeaturedBadges } from '@/actions/profile'
 import { toast } from 'sonner'
@@ -82,7 +83,7 @@ export function EditProfileModal({ isOpen, onClose, user, badges = [] }: EditPro
             if (!profileResult.success) {
                 toast.error(profileResult.error as string)
             } else if (badges.length > 0 && !badgesResult.success) {
-                toast.error((badgesResult as any).error || 'Failed to update badges')
+                toast.error((badgesResult as { error?: string }).error || 'Failed to update badges')
             } else {
                 toast.success('Profile updated successfully')
                 onClose()
@@ -219,7 +220,7 @@ export function EditProfileModal({ isOpen, onClose, user, badges = [] }: EditPro
                                                 {/* Badge image */}
                                                 <div className="w-10 h-10 flex items-center justify-center">
                                                     {badge.imageUrl ? (
-                                                        <img src={badge.imageUrl} alt={badge.name} className="w-10 h-10 object-contain" />
+                                                        <Image src={badge.imageUrl} alt={badge.name} width={40} height={40} className="object-contain" />
                                                     ) : (
                                                         <span className="material-symbols-outlined text-orange-500 text-[28px]">verified</span>
                                                     )}

@@ -5,6 +5,13 @@ import { revalidatePath } from 'next/cache'
 
 import { auth } from '@/auth'
 import { redirect } from 'next/navigation'
+import { Prisma } from '@prisma/client'
+
+export type ActionState = {
+    success?: boolean;
+    message?: string;
+    errors?: Record<string, string[]>;
+}
 
 // Authentication helper
 async function getCurrentUser() {
@@ -30,6 +37,17 @@ export async function joinQuest(questId: string) {
 
     try {
         const result = await prisma.$transaction(async (tx) => {
+            // 1.5 Check for active penalty
+            const activePenalty = await tx.penalty.findFirst({
+                where: {
+                    userId: user.id,
+                    expiresAt: { gt: new Date() }
+                }
+            });
+
+            if (activePenalty) {
+                throw new Error("You have an active penalty and cannot join new quests.");
+            }
 
 
             // 2. Check if already snatched
@@ -141,6 +159,14 @@ export async function getWorkspaceQuests() {
                 }
             },
             include: {
+                squad: {
+                    include: {
+                        snatches: {
+                            where: { status: { notIn: ['DROPPED', 'REJECTED'] } },
+                            include: { user: true }
+                        }
+                    }
+                },
                 quest: {
                     include: {
                         _count: {
@@ -211,7 +237,8 @@ export async function getQuestUserStatus(questId: string) {
         select: {
             status: true,
             submissionUrl: true,
-            feedback: true
+            feedback: true,
+            squadId: true
         }
     });
 
@@ -224,7 +251,7 @@ export async function submitQuest(questId: string, submissionUrl: string) {
     if (!user) return { success: false, error: "Unauthorized" };
 
     // Strict URL Validation
-    const urlSchema = z.string().url().max(255); // Prevent DB overflow
+    const urlSchema = z.string().url().max(255).refine(val => val.startsWith('https:'), { message: 'URL must use HTTPS' }); // Prevent DB overflow
     const urlCheck = urlSchema.safeParse(submissionUrl);
     if (!urlCheck.success) {
         return { success: false, error: "Please provide a valid URL (max 255 chars)" };
@@ -261,28 +288,26 @@ export async function submitQuest(questId: string, submissionUrl: string) {
                 throw new Error("Mission already completed. No further submissions allowed.");
             }
 
-            // Check if ANYONE in the squad has submitted (Team Submission)
-            const teamStatus = await tx.snatch.findFirst({
-                where: {
-                    questId: questId,
-                    status: { in: ['SUBMITTED', 'ACCEPTED'] },
-                    NOT: { id: activeSnatch.id } // exclude self if we are updating (though logic below sets self to submitted)
-                }
-            });
-
-            if (teamStatus) {
-                throw new Error("A squad member has already submitted this quest. Please wait for review.");
-            }
-
             // 4. Update
-            await tx.snatch.update({
-                where: { id: activeSnatch.id },
-                data: {
-                    status: 'SUBMITTED',
-                    submissionUrl: submissionUrl,
-                    updatedAt: new Date() // Explicitly mark update time
-                }
-            });
+            if (activeSnatch.squadId) {
+                await tx.snatch.updateMany({
+                    where: { squadId: activeSnatch.squadId, status: { notIn: ['DROPPED', 'REJECTED', 'ACCEPTED'] } },
+                    data: {
+                        status: 'SUBMITTED',
+                        submissionUrl: submissionUrl,
+                        updatedAt: new Date() // Explicitly mark update time
+                    }
+                });
+            } else {
+                await tx.snatch.update({
+                    where: { id: activeSnatch.id },
+                    data: {
+                        status: 'SUBMITTED',
+                        submissionUrl: submissionUrl,
+                        updatedAt: new Date() // Explicitly mark update time
+                    }
+                });
+            }
 
             return { success: true };
         });
@@ -349,7 +374,7 @@ const QuestSchema = z.object({
     resources: z.string().optional(),
 });
 
-export async function createQuest(prevState: any, formData: FormData) {
+export async function createQuest(prevState: ActionState | undefined, formData: FormData) {
     try { await requireAdmin() } catch (e) {
         return { success: false, message: e instanceof Error ? e.message : 'Forbidden' }
     }
@@ -451,7 +476,7 @@ export async function getQuests({
     try {
         const offset = (page - 1) * limit;
 
-        const where: any = {};
+        const where: Prisma.QuestWhereInput = {};
 
         // Status Filter
         if (status && status !== 'All') {
@@ -638,7 +663,7 @@ export async function getQuestById(id: string) {
     }
 }
 
-export async function updateQuest(questId: string, prevState: any, formData: FormData) {
+export async function updateQuest(questId: string, prevState: ActionState | undefined, formData: FormData) {
     try { await requireAdmin() } catch (e) {
         return { success: false, message: e instanceof Error ? e.message : 'Forbidden' }
     }

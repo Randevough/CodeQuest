@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CodeQuest - Member Profile</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#5048e5",
+                        "background-light": "#f9fafa",
+                        "background-dark": "#191a1f",
+                        "card-light": "#ffffff",
+                        "card-dark": "#232429",
+                        "border-light": "#e5e7eb",
+                        "border-dark": "#2e2f36",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+                    boxShadow: {
+                        "soft": "0px 4px 12px rgba(0, 0, 0, 0.04)",
+                        "hover": "0px 8px 24px rgba(0, 0, 0, 0.08)",
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for cleaner look */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display antialiased min-h-screen flex flex-col transition-colors duration-200">
+<!-- Top Navigation -->
+<header class="sticky top-0 z-50 bg-white/80 dark:bg-[#191a1f]/90 backdrop-blur-md border-b border-border-light dark:border-border-dark px-6 py-4">
+<div class="max-w-7xl mx-auto flex items-center justify-between">
+<div class="flex items-center gap-12">
+<a class="flex items-center gap-3 text-slate-900 dark:text-white group" href="#">
+<div class="size-8 text-primary transition-transform group-hover:scale-110">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 4H6V17.3333V30.6667H24V44H42V30.6667V17.3333H24V4Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-xl font-bold tracking-tight">CodeQuest</h2>
+</a>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-slate-600 dark:text-slate-400 text-sm font-medium hover:text-primary dark:hover:text-primary transition-colors" href="#">Projects</a>
+<a class="text-slate-600 dark:text-slate-400 text-sm font-medium hover:text-primary dark:hover:text-primary transition-colors" href="#">Members</a>
+<a class="text-slate-600 dark:text-slate-400 text-sm font-medium hover:text-primary dark:hover:text-primary transition-colors" href="#">Leaderboard</a>
+<a class="text-slate-600 dark:text-slate-400 text-sm font-medium hover:text-primary dark:hover:text-primary transition-colors" href="#">Resources</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden sm:block group">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 group-focus-within:text-primary">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</span>
+<input class="w-64 bg-slate-100 dark:bg-white/5 border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/20 text-slate-900 dark:text-white placeholder:text-slate-400 transition-all" placeholder="Search quests..." type="text"/>
+</div>
+<button class="relative rounded-full size-10 overflow-hidden ring-2 ring-transparent hover:ring-primary/20 transition-all">
+<img alt="User avatar profile picture" class="object-cover w-full h-full" data-alt="User avatar profile picture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtKv7vtSidyzr8UBrwOUSDDLLIwsLdayLm6N_hVJ8TH0deH073ZTXwVoAA0wKUCPQzqTeXg0UBEVDOkhnbP6y4LBMHFLx4Fgs005AI2INEYOFVcJ574uSowRvOiwcybAYVMWXOjzOqD_Ko77pMJSRdDZFshwPoNUUySwabKvKGgDCRjD-Obq91GOTL6ykwWGg2w9aO_vQZqYrFcVIjZSyQRnfFjNsi1OCALn5_39LbAmhUJ_3-SOZQZYDa1i4VauZf_lCeu6Ld__jB"/>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow px-4 sm:px-6 py-8 md:py-12">
+<div class="max-w-7xl mx-auto">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Left Column: Identity Sidebar -->
+<aside class="lg:col-span-4 xl:col-span-3 flex flex-col gap-6 sticky top-28">
+<!-- Profile Card -->
+<div class="bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-xl p-6 shadow-soft flex flex-col items-center text-center relative overflow-hidden group">
+<!-- Decorative background accent -->
+<div class="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none"></div>
+<div class="relative mb-4 mt-2">
+<div class="size-32 rounded-full p-1 border-2 border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
+<img alt="Alex Chen profile picture" class="w-full h-full object-cover rounded-full" data-alt="Alex Chen profile picture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYvL9dweXurb7ANc_Z7cA1q0xEdeQv_W7jNovtRfXajTfAl4Kzd6IBoIY3z-ojqMd_t-Vh3AA9yiHRRWNZkYT1-GVmbwp85rXK9HWJqb7LNeFQ29u7lLOzVVhKJm-ILrNcFEhq2i17eq99Q_MLuhbwKY_pU0qAzc01tY34MPA5wByraxDiBGToZhWz2er2wUv1m8z-GRN98P_DnYsTTuV1yDb3vwqoShxL9Xqd6i9neFA95c3zmwrCoh2li_xZOAlr6yG_XwCqoLNI"/>
+</div>
+<div class="absolute bottom-1 right-1 bg-green-500 size-4 rounded-full border-2 border-white dark:border-slate-800" title="Online"></div>
+</div>
+<h1 class="text-2xl font-bold text-slate-900 dark:text-white mb-1">Alex Chen</h1>
+<div class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary mb-4">
+                            Senior Developer
+                        </div>
+<p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-6 px-2">
+                            CS Junior passionate about React and distributed systems. Looking for open source partners.
+                        </p>
+<!-- Social Actions -->
+<div class="flex gap-3 w-full justify-center">
+<a class="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg border border-border-light dark:border-border-dark text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:border-slate-300 dark:hover:border-slate-600 transition-all text-sm font-medium" href="#">
+<span class="material-symbols-outlined text-[18px]">code</span>
+                                GitHub
+                            </a>
+<a class="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg border border-border-light dark:border-border-dark text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:border-slate-300 dark:hover:border-slate-600 transition-all text-sm font-medium" href="#">
+<span class="material-symbols-outlined text-[18px]">work</span>
+                                LinkedIn
+                            </a>
+</div>
+</div>
+<!-- Stats Card -->
+<div class="bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-xl p-6 shadow-soft">
+<h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">Current Season Stats</h3>
+<div class="grid grid-cols-2 gap-4">
+<div class="flex flex-col">
+<span class="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">1,240</span>
+<span class="text-sm text-slate-500 dark:text-slate-400 font-medium">Total XP</span>
+</div>
+<div class="flex flex-col border-l border-border-light dark:border-border-dark pl-4">
+<span class="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">14</span>
+<span class="text-sm text-slate-500 dark:text-slate-400 font-medium">Quests Done</span>
+</div>
+</div>
+</div>
+<!-- Contact/Action Primary -->
+<button class="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 px-4 rounded-xl shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[20px]">mail</span>
+                        Contact Alex
+                    </button>
+</aside>
+<!-- Right Column: Content Area -->
+<div class="lg:col-span-8 xl:col-span-9 flex flex-col gap-6">
+<!-- Tab Navigation -->
+<div class="bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-xl px-1 shadow-sm sticky top-[88px] z-40 backdrop-blur-xl bg-opacity-95">
+<nav aria-label="Tabs" class="flex space-x-1">
+<a class="relative group flex items-center gap-2 px-6 py-4 text-sm font-medium text-primary border-b-2 border-primary" href="#">
+<span class="material-symbols-outlined filled text-[20px]">assignment</span>
+                                Active Quests
+                                <span class="ml-2 bg-primary/10 text-primary py-0.5 px-2 rounded-full text-xs">2</span>
+</a>
+<a class="relative group flex items-center gap-2 px-6 py-4 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 border-b-2 border-transparent hover:border-slate-300 dark:hover:border-slate-700 transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">folder_open</span>
+                                Portfolio History
+                            </a>
+<a class="relative group flex items-center gap-2 px-6 py-4 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 border-b-2 border-transparent hover:border-slate-300 dark:hover:border-slate-700 transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">military_tech</span>
+                                Badges
+                            </a>
+</nav>
+</div>
+<!-- Active Tab Content: Active Quests -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+<!-- Quest Card 1 -->
+<div class="group bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-xl p-6 shadow-sm hover:shadow-hover hover:-translate-y-1 hover:border-primary/50 transition-all duration-300 cursor-pointer flex flex-col h-full">
+<div class="flex justify-between items-start mb-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+                                    Advanced
+                                </span>
+<span class="text-xs font-medium text-slate-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+                                    2 days left
+                                </span>
+</div>
+<h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 group-hover:text-primary transition-colors">Refactor Login API</h3>
+<p class="text-slate-500 dark:text-slate-400 text-sm mb-6 flex-grow">
+                                Migrate the legacy authentication endpoints to use the new OAuth2 provider service while maintaining backward compatibility.
+                            </p>
+<div class="flex items-center justify-between pt-4 border-t border-border-light dark:border-border-dark mt-auto">
+<div class="flex -space-x-2">
+<img alt="Alex" class="w-8 h-8 rounded-full border-2 border-white dark:border-slate-800" data-alt="Alex avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUPqzkADFZ8VTbgLxVMiiqZ3qw-fOk3qx2SwRzNvKHqNxkLZc6jvgwBSzJ90z3L4jT7t8YmmdmkCYzIKkIs5hdH8rsKpdWGdE7FSnNItFQF2scf61WBd_joKr7uBwe8218UD0xNmHyi-JuJDBIqD7oCj8vK4CoNPBobAu7hBF9jf3cVHxrgxww0HnqNLzjqZuMr_WRZyhI65hy7G_N2JbQ78fAAh_mpAwSIrjpJIVLywEivrtZWgfJylqzi_zpkZ1xsxk5mgkALEjy"/>
+<img alt="Collaborator" class="w-8 h-8 rounded-full border-2 border-white dark:border-slate-800" data-alt="Collaborator avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdR8KLdLTqz0o-a48bJTWXU65Kc7KSrqNLLxkL6TKF9MERjeYTtsAKcPSbmaf9N22Ek_sF-By7vvsSyA7GanD1t2Bz5p74SznS4xDziIPfW5LXgfjyMOJkH65oHAe1bapy2k53nY_fYCVU3NsmbmW6b9858xVGJ9hTdzbd_zDi9rTvY6ic940qmDyi-B8yzkLg3qCJ_vXvAhooNB6KPabZ6_NmHohmClkDSLsWZ19lvJ-Trm6oPtfItFac5BEDKdvT-AmxBz9nZHjk"/>
+</div>
+<div class="flex items-center gap-1 text-xs font-medium text-primary group-hover:underline">
+                                    View Details
+                                    <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</div>
+</div>
+</div>
+<!-- Quest Card 2 -->
+<div class="group bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-xl p-6 shadow-sm hover:shadow-hover hover:-translate-y-1 hover:border-primary/50 transition-all duration-300 cursor-pointer flex flex-col h-full">
+<div class="flex justify-between items-start mb-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                                    Beginner
+                                </span>
+<span class="text-xs font-medium text-slate-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+                                    5 days left
+                                </span>
+</div>
+<h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 group-hover:text-primary transition-colors">Update Documentation</h3>
+<p class="text-slate-500 dark:text-slate-400 text-sm mb-6 flex-grow">
+                                Review and update the README files for the core services to reflect recent changes in the deployment pipeline.
+                            </p>
+<div class="flex items-center justify-between pt-4 border-t border-border-light dark:border-border-dark mt-auto">
+<div class="flex -space-x-2">
+<img alt="Alex" class="w-8 h-8 rounded-full border-2 border-white dark:border-slate-800" data-alt="Alex avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTF4qHXL0vm2MbUWF-0HOhtN_MGrxMjlOTOox2T2s6As8DwFl8-M6M34sqWONNB5PYThB30oYr-rfmPawL0PZ8kpZLKg6Yz_CdHtJL1eQIqfqDcOe-XOELcxdYgeCZPTg2xjPwzkb87gfzpDbZZgy7FFJTyBsglLwilPzsjmW2UvoHsclB3jMmWVBZIoIIb7RxYQRLrOfxu7tz3BuvYDOqYRC_GimlH7oWm8KIHwIpDljvGY-1eVRIG3kBFl8nScEwot9YceYimdeW"/>
+</div>
+<div class="flex items-center gap-1 text-xs font-medium text-primary group-hover:underline">
+                                    View Details
+                                    <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Example of Portfolio Section (Visually distinct but part of the flow for demo) -->
+<div class="mt-8">
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-lg font-bold text-slate-900 dark:text-white">Recent Highlights</h2>
+<a class="text-sm text-primary font-medium hover:underline" href="#">View all history</a>
+</div>
+<div class="bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-xl overflow-hidden shadow-sm">
+<div class="divide-y divide-border-light dark:divide-border-dark">
+<!-- History Item 1 -->
+<div class="p-5 flex items-start gap-4 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
+<div class="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 p-3 rounded-lg">
+<span class="material-symbols-outlined text-[24px]">rocket_launch</span>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="text-base font-semibold text-slate-900 dark:text-white group-hover:text-primary transition-colors">Campus Event Scheduler</h4>
+<p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Built with Next.js and Supabase. A full-stack application for managing university club events.</p>
+</div>
+<a aria-label="View Code" class="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">open_in_new</span>
+</a>
+</div>
+<div class="flex items-center gap-4 mt-3">
+<span class="text-xs text-slate-400 font-medium">Completed Oct 24, 2023</span>
+<div class="flex gap-2">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400">Next.js</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400">React</span>
+</div>
+</div>
+</div>
+</div>
+<!-- History Item 2 -->
+<div class="p-5 flex items-start gap-4 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
+<div class="bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 p-3 rounded-lg">
+<span class="material-symbols-outlined text-[24px]">terminal</span>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="text-base font-semibold text-slate-900 dark:text-white group-hover:text-primary transition-colors">Algorithm Visualizer</h4>
+<p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Python script to visualize sorting algorithms using PyGame.</p>
+</div>
+<a aria-label="View Code" class="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">open_in_new</span>
+</a>
+</div>
+<div class="flex items-center gap-4 mt-3">
+<span class="text-xs text-slate-400 font-medium">Completed Sep 12, 2023</span>
+<div class="flex gap-2">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400">Python</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Badges Section Preview -->
+<div class="mt-4">
+<div class="bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-xl p-6 shadow-sm">
+<h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-6">Earned Badges</h3>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+<!-- Badge 1 -->
+<div class="flex flex-col items-center justify-center gap-3 p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 group hover:border-primary/30 transition-all">
+<div class="size-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[24px]">commit</span>
+</div>
+<span class="text-xs font-semibold text-slate-700 dark:text-slate-300 text-center">First Commit</span>
+</div>
+<!-- Badge 2 -->
+<div class="flex flex-col items-center justify-center gap-3 p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 group hover:border-primary/30 transition-all">
+<div class="size-12 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[24px]">pest_control</span>
+</div>
+<span class="text-xs font-semibold text-slate-700 dark:text-slate-300 text-center">Bug Smasher</span>
+</div>
+<!-- Badge 3 -->
+<div class="flex flex-col items-center justify-center gap-3 p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 group hover:border-primary/30 transition-all">
+<div class="size-12 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[24px]">group</span>
+</div>
+<span class="text-xs font-semibold text-slate-700 dark:text-slate-300 text-center">Team Player</span>
+</div>
+<!-- Badge 4 (Locked example) -->
+<div class="flex flex-col items-center justify-center gap-3 p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-dashed border-slate-200 dark:border-slate-700 opacity-60">
+<div class="size-12 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500">
+<span class="material-symbols-outlined text-[24px]">lock</span>
+</div>
+<span class="text-xs font-semibold text-slate-400 dark:text-slate-500 text-center">Code Ninja</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

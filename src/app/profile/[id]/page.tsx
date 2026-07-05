@@ -4,6 +4,7 @@ import { Header } from '@/components/Header'
 import { ProfileSidebar } from '@/components/profile/ProfileSidebar'
 import { ProfileTabs } from '@/components/profile/ProfileTabs'
 import { prisma } from '@/lib/db'
+import { Prisma } from '@prisma/client'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 
@@ -82,7 +83,7 @@ export default async function PublicProfilePage(props: { params: Promise<{ id: s
                         <ProfileSidebar
                             user={{ ...user, completedQuests: completedQuestsCount }}
                             // @ts-ignore: Prisma client field
-                            badges={user.badges.map((ub: any) => ({ ...ub.badge, isFeatured: ub.isFeatured }))}
+                            badges={user.badges.map((ub: Prisma.UserBadgeGetPayload<{ include: { badge: true } }>) => ({ ...ub.badge, isFeatured: ub.isFeatured }))}
                         />
                         <ProfileTabs
                             activeSnatches={activeSnatches}
@@ -90,7 +91,7 @@ export default async function PublicProfilePage(props: { params: Promise<{ id: s
                             user={user}
                             isOwner={isOwner}
                             // @ts-ignore: Prisma client field
-                            badges={user.badges.map((ub: any) => ub.badge)}
+                            badges={user.badges.map((ub: Prisma.UserBadgeGetPayload<{ include: { badge: true } }>) => ub.badge)}
                             allBadges={allBadges}
                         />
                     </div>

@@ -51,6 +51,8 @@ export async function uploadProfileImage(formData: FormData) {
     }
 }
 
+import { z } from 'zod'
+
 interface UpdateProfileData {
     name?: string
     bio?: string
@@ -58,23 +60,32 @@ interface UpdateProfileData {
     linkedinUrl?: string
 }
 
+const profileSchema = z.object({
+    name: z.string().optional(),
+    bio: z.string().max(160).optional(),
+    githubUrl: z.string().url().refine(val => val.startsWith('https:'), { message: 'URL must use HTTPS' }).optional().or(z.literal('')),
+    linkedinUrl: z.string().url().refine(val => val.startsWith('https:'), { message: 'URL must use HTTPS' }).optional().or(z.literal(''))
+})
+
 export async function updateProfile(data: UpdateProfileData) {
     const session = await auth()
     if (!session?.user?.id) {
         return { success: false, error: 'Unauthorized' }
     }
 
+    const validated = profileSchema.safeParse(data);
+    if (!validated.success) {
+        return { success: false, error: validated.error.issues[0].message }
+    }
+
     try {
         await prisma.user.update({
             where: { id: session.user.id },
             data: {
-                name: data.name,
-                // @ts-ignore: Prisma client not generated yet
-                bio: data.bio,
-                // @ts-ignore: Prisma client not generated yet
-                githubUrl: data.githubUrl,
-                // @ts-ignore: Prisma client not generated yet
-                linkedinUrl: data.linkedinUrl
+                name: validated.data.name,
+                bio: validated.data.bio,
+                githubUrl: validated.data.githubUrl,
+                linkedinUrl: validated.data.linkedinUrl
             }
         })
 

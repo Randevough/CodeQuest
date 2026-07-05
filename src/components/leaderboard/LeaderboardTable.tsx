@@ -66,7 +66,7 @@ export function LeaderboardTable({ users, page, pageSize }: LeaderboardTableProp
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <Link href={`/profile/${user.id}`} className="flex items-center group/user hover:opacity-80 transition-opacity">
                                         <div className={`flex-shrink-0 ${rank <= 3 ? 'size-10 ring-2' : 'size-9'} rounded-full overflow-hidden ${rank === 1 ? 'ring-amber-400' : rank === 2 ? 'ring-slate-300 dark:ring-slate-500' : rank === 3 ? 'ring-orange-300 dark:ring-orange-600' : 'bg-slate-100'}`}>
-                                            <img alt="Member Avatar" className="h-full w-full object-cover" src={user.avatar || "https://api.dicebear.com/9.x/avataaars/svg?seed=fallback"} />
+                                            <Image alt="Member Avatar" width={40} height={40} className="h-full w-full object-cover" src={user.avatar || "https://api.dicebear.com/9.x/avataaars/svg?seed=fallback"} />
                                         </div>
                                         <div className="ml-4">
                                             <div className={`text-sm ${rank <= 3 ? 'font-bold' : 'font-medium'} text-slate-900 dark:text-white group-hover/user:text-orange-600 dark:group-hover/user:text-orange-400 transition-colors`}>

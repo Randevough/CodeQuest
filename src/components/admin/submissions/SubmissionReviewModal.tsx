@@ -3,10 +3,28 @@ import Image from 'next/image';
 import { reviewSubmission } from '@/actions/submission';
 import { toast } from 'sonner';
 
+import { Prisma } from '@prisma/client';
+
+type SnatchWithRelations = Prisma.SnatchGetPayload<{
+    include: {
+        user: true;
+        quest: true;
+        squad: {
+            include: {
+                snatches: {
+                    include: {
+                        user: true;
+                    }
+                }
+            }
+        }
+    }
+}>;
+
 interface SubmissionReviewModalProps {
     isOpen: boolean;
     onClose: () => void;
-    snatch?: any; // Using any to avoid complex type imports, ideally SnatchWithRelations
+    snatch?: SnatchWithRelations;
 }
 
 export function SubmissionReviewModal({ isOpen, onClose, snatch }: SubmissionReviewModalProps) {
@@ -79,11 +97,11 @@ export function SubmissionReviewModal({ isOpen, onClose, snatch }: SubmissionRev
                                         <div className="flex items-center gap-3 mb-5">
                                             {snatch.user.avatar ? (
                                                 <Image
-                                                    alt={snatch.user.name}
+                                                    alt={snatch.user.name || 'User'}
                                                     width={40}
                                                     height={40}
                                                     className="rounded-full ring-1 ring-slate-200 dark:ring-slate-700 object-cover"
-                                                    src={snatch.user.avatar}
+                                                    src={snatch.user.avatar as string}
                                                 />
                                             ) : (
                                                 <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-500">
@@ -97,19 +115,19 @@ export function SubmissionReviewModal({ isOpen, onClose, snatch }: SubmissionRev
                                         </div>
 
                                         {/* Squad Members */}
-                                        {snatch.quest.snatches && snatch.quest.snatches.length > 0 && (
+                                        {snatch.squad && snatch.squad.snatches && snatch.squad.snatches.length > 0 && (
                                             <div className="mb-5 border-t border-b border-slate-100 dark:border-slate-800 py-4">
                                                 <h5 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5">
                                                     <span className="material-symbols-outlined text-[14px]">groups</span>
                                                     Squad Members
                                                 </h5>
                                                 <div className="flex flex-col gap-2">
-                                                    {snatch.quest.snatches.map((s: any) => (
+                                                    {snatch.squad.snatches.map((s) => (
                                                         <div key={s.user.id} className="flex items-center gap-2.5">
                                                             {s.user.avatar ? (
                                                                 <Image
-                                                                    src={s.user.avatar}
-                                                                    alt={s.user.name}
+                                                                    src={s.user.avatar as string}
+                                                                    alt={s.user.name || 'User'}
                                                                     width={24}
                                                                     height={24}
                                                                     className="rounded-full object-cover w-6 h-6 min-w-6 shrink-0"

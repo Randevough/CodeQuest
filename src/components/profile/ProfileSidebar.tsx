@@ -3,6 +3,7 @@
 import { User } from 'next-auth'
 import { AvatarUpload } from './AvatarUpload'
 import { useState } from 'react'
+import Image from 'next/image'
 import { useSession } from 'next-auth/react'
 import { EditProfileModal } from './EditProfileModal'
 
@@ -107,7 +108,7 @@ export function ProfileSidebar({ user, badges }: ProfileSidebarProps) {
                                     title={badge.description}
                                 >
                                     {badge.imageUrl ? (
-                                        <img src={badge.imageUrl} alt={badge.name} className="w-8 h-8 object-contain" />
+                                        <Image src={badge.imageUrl} alt={badge.name} width={32} height={32} className="object-contain" />
                                     ) : (
                                         <span className="material-symbols-outlined text-orange-500 text-[24px]">verified</span>
                                     )}
@@ -129,7 +130,7 @@ export function ProfileSidebar({ user, badges }: ProfileSidebarProps) {
                 <div className="grid grid-cols-2 gap-4">
                     <div className="flex flex-col">
                         <div className="flex items-center gap-2">
-                            <img src="/icon.png" alt="Points" className="w-6 h-6 object-contain" />
+                            <Image src="/icon.png" alt="Points" width={24} height={24} className="object-contain" />
                             <span className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">{user.points?.toLocaleString('en-US') || 0}</span>
                         </div>
                         <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">Total Points</span>
