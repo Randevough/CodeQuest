@@ -9,7 +9,7 @@ vi.mock('@/lib/auth-guard', () => ({
 describe('reviewSubmission', () => {
     beforeEach(async () => {
         if (!process.env.DATABASE_URL_TEST) return
-        
+
         await testPrisma.user.create({
             data: { id: 'admin-user', name: 'Admin User', email: 'admin@example.com', role: 'ADMIN' }
         })

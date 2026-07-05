@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useTransition, useState, useEffect } from 'react';
+import { useTransition, useState, useEffect, useCallback } from 'react';
 
 
 export function QuestFilters() {
@@ -15,17 +15,7 @@ export function QuestFilters() {
     const [status, setStatus] = useState(initialStatus);
     const [search, setSearch] = useState(initialSearch);
 
-    // Debounce search
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            if (search !== initialSearch) {
-                updateParams({ q: search, page: '1' }); // Reset to page 1 on search
-            }
-        }, 500);
-        return () => clearTimeout(timer);
-    }, [search]);
-
-    const updateParams = (updates: Record<string, string>) => {
+    const updateParams = useCallback((updates: Record<string, string>) => {
         const params = new URLSearchParams(searchParams);
         Object.entries(updates).forEach(([key, value]) => {
             if (value) {
@@ -37,7 +27,17 @@ export function QuestFilters() {
         startTransition(() => {
             router.replace(`?${params.toString()}`, { scroll: false });
         });
-    };
+    }, [searchParams, router]);
+
+    // Debounce search
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (search !== initialSearch) {
+                updateParams({ q: search, page: '1' }); // Reset to page 1 on search
+            }
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [search, initialSearch, updateParams]);
 
     const handleStatusChange = (newStatus: string) => {
         setStatus(newStatus);

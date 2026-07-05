@@ -5,7 +5,6 @@ import { requireAdmin } from '@/lib/auth-guard'
 import { createNotification } from '@/actions/notification'
 import { revalidatePath } from 'next/cache'
 import { auth } from '@/auth'
-import { hasActivePenalty } from '@/lib/penalty'
 
 export async function getActiveQuestsForAssignment() {
     await requireAdmin()
@@ -21,7 +20,7 @@ export async function assignQuest(userId: string, questId: string, force: boolea
         await requireAdmin()
         const session = await auth()
         if (!session?.user?.id) throw new Error("Unauthorized")
-        
+
         const adminId = session.user.id
 
         // 1. Validate quest exists and is Active
@@ -47,9 +46,14 @@ export async function assignQuest(userId: string, questId: string, force: boolea
         }
 
         // 2.5 Check for active penalty
-        const isPenalized = await hasActivePenalty(user.id);
+        const activePenalty = await prisma.penalty.findFirst({
+            where: {
+                userId: user.id,
+                expiresAt: { gt: new Date() }
+            }
+        });
 
-        if (isPenalized) {
+        if (activePenalty) {
             return { success: false, error: "User has an active penalty and cannot be assigned quests." }
         }
 
@@ -63,10 +67,10 @@ export async function assignQuest(userId: string, questId: string, force: boolea
             })
 
             if (activeSnatcherCount >= quest.maxSnatchers && !force) {
-                return { 
-                    success: false, 
-                    error: "CAPACITY_EXCEEDED", 
-                    message: "Assigning this quest would exceed its maximum capacity." 
+                return {
+                    success: false,
+                    error: "CAPACITY_EXCEEDED",
+                    message: "Assigning this quest would exceed its maximum capacity."
                 }
             }
         }

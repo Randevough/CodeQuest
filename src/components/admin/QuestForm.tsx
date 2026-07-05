@@ -57,8 +57,8 @@ export function QuestForm({ initialData, isEditing = false }: QuestFormProps) {
     });
     const [description, setDescription] = useState(initialData?.description || '');
     const [resources, setResources] = useState(
-        Array.isArray(initialData?.resources) 
-            ? initialData.resources.join('\n') 
+        Array.isArray(initialData?.resources)
+            ? initialData.resources.join('\n')
             : (initialData?.resources || '')
     );
 

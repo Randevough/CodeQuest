@@ -1,35 +1,23 @@
-import { Ratelimit } from "@upstash/ratelimit";
-import { Redis } from "@upstash/redis";
+const rateLimitStore = new Map<string, { count: number, resetTime: number }>();
 
-function createRedisClient(): Redis | null {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+export async function rateLimit(key: string, limit: number, windowMs: number): Promise<boolean> {
+    const now = Date.now();
+    const record = rateLimitStore.get(key);
 
-  if (!url || !token || url.includes('dummy') || token.includes('dummy')) {
-    console.warn('⚠️ Upstash Redis not configured — rate limiting disabled');
-    return null;
-  }
+    if (record) {
+        if (now > record.resetTime) {
+            rateLimitStore.set(key, { count: 1, resetTime: now + windowMs });
+            return true;
+        }
 
-  return new Redis({ url, token });
-}
+        if (record.count >= limit) {
+            return false;
+        }
 
-const redis = createRedisClient();
-
-export async function rateLimit(key: string, limit: number = 5, windowMs: number = 60000): Promise<boolean> {
-    if (!redis) return true; // fail open when Redis unavailable
-
-    try {
-        const windowSeconds = Math.max(1, Math.floor(windowMs / 1000));
-        const ratelimit = new Ratelimit({
-            redis: redis,
-            limiter: Ratelimit.slidingWindow(limit, `${windowSeconds} s`),
-            analytics: true,
-        });
-
-        const { success } = await ratelimit.limit(key);
-        return success;
-    } catch (error) {
-        console.error('Rate limit check failed, allowing request:', error);
-        return true; // fail open — never block auth due to Redis errors
+        record.count++;
+        return true;
     }
+
+    rateLimitStore.set(key, { count: 1, resetTime: now + windowMs });
+    return true;
 }

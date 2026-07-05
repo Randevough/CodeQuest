@@ -86,14 +86,14 @@ export function MemberActionMenu({ user }: { user: UserProp }) {
 
     const handleDelete = async () => {
         if (confirmText !== 'CONFIRM') return;
-        
+
         const result = await deleteUser(user.id)
         if (result.success) {
             toast.success(`${user.name || 'User'} permanently deleted.`)
         } else {
             toast.error(result.error || "Failed to delete user.")
         }
-        
+
         setModal('none')
         setIsOpen(false)
     }
@@ -101,9 +101,9 @@ export function MemberActionMenu({ user }: { user: UserProp }) {
     const handleAssignQuest = async (force: boolean = false) => {
         if (!selectedQuestId) return
         setIsAssigning(true)
-        
+
         const res = await assignQuest(user.id, selectedQuestId, force)
-        
+
         setIsAssigning(false)
 
         if (res.success) {
@@ -243,8 +243,8 @@ export function MemberActionMenu({ user }: { user: UserProp }) {
                         </div>
                         <div className="flex gap-3 justify-end">
                             <button onClick={() => setModal('none')} className="px-4 py-2 text-sm font-medium border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800">Cancel</button>
-                            <button 
-                                onClick={handleDelete} 
+                            <button
+                                onClick={handleDelete}
                                 disabled={confirmText !== 'CONFIRM'}
                                 className="px-4 py-2 text-sm font-bold text-white bg-red-600 rounded-lg hover:bg-red-700 shadow-sm shadow-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                             >
@@ -266,7 +266,7 @@ export function MemberActionMenu({ user }: { user: UserProp }) {
                         <div className="mb-6 space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Select Quest</label>
-                                <select 
+                                <select
                                     className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                                     value={selectedQuestId}
                                     onChange={(e) => setSelectedQuestId(e.target.value)}
@@ -281,8 +281,8 @@ export function MemberActionMenu({ user }: { user: UserProp }) {
                         </div>
                         <div className="flex gap-3 justify-end">
                             <button onClick={() => setModal('none')} className="px-4 py-2 text-sm font-medium border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800" disabled={isAssigning}>Cancel</button>
-                            <button 
-                                onClick={() => handleAssignQuest(false)} 
+                            <button
+                                onClick={() => handleAssignQuest(false)}
                                 disabled={!selectedQuestId || isAssigning}
                                 className="px-4 py-2 text-sm font-bold text-white bg-orange-600 rounded-lg hover:bg-orange-700 shadow-sm shadow-orange-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                             >

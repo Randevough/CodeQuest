@@ -81,9 +81,9 @@ describe('Penalty Enforcement', () => {
         })
 
         const result = await joinQuest(quest.id)
-        
+
         expect(result.success).toBe(false)
-        expect(result.error).toContain("currently penalized")
+        expect(result.error).toContain("You have an active penalty")
     })
 
     it('allows joining a quest if penalty is expired', async () => {
@@ -102,7 +102,7 @@ describe('Penalty Enforcement', () => {
         })
 
         const result = await joinQuest(quest.id)
-        
+
         expect(result.success).toBe(true)
     })
 
@@ -127,7 +127,7 @@ describe('Penalty Enforcement', () => {
         })
 
         const result = await assignQuest(user.id, quest.id)
-        
+
         expect(result.success).toBe(false)
         expect(result.error).toContain("active penalty")
     })

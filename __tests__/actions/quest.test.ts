@@ -10,7 +10,7 @@ vi.mock('@/lib/auth-guard', () => ({
 describe('Quest Actions', () => {
     beforeEach(async () => {
         if (!process.env.DATABASE_URL_TEST) return
-        
+
         await testPrisma.user.create({
             data: { id: 'test-user', name: 'Test User', email: 'test@example.com' }
         })
@@ -23,8 +23,8 @@ describe('Quest Actions', () => {
             const quest = await testPrisma.quest.create({
                 data: { id: 'q-new', title: 'Q', description: 'Q', points: 10, difficulty: 'Easy', category: 'Frontend', maxSnatchers: 1 }
             })
-            
-            for(let i=0; i<3; i++) {
+
+            for (let i = 0; i < 3; i++) {
                 const q = await testPrisma.quest.create({
                     data: { id: `q-${i}`, title: 'Q', description: 'Q', points: 10, difficulty: 'Easy', category: 'Frontend', maxSnatchers: 1 }
                 })
@@ -36,12 +36,12 @@ describe('Quest Actions', () => {
             const res = await joinQuest(quest.id)
             expect(res.error).toBe('You can only have up to 3 active quests at a time.')
         })
-        
+
         it('should block if maxSnatchers is reached', async () => {
-             // to be implemented with DB operations
+            // to be implemented with DB operations
         })
     })
-    
+
     describe('submitQuest', () => {
         it('should update status to SUBMITTED', async () => {
             // to be implemented

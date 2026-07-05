@@ -8,7 +8,7 @@ describe('checkBadges', () => {
 
     beforeEach(async () => {
         if (!process.env.DATABASE_URL_TEST) return
-        
+
         user = await testPrisma.user.create({
             data: {
                 name: 'Test User',
@@ -46,10 +46,10 @@ describe('checkBadges', () => {
         const newBadges = await checkBadges(user.id)
         expect(newBadges?.some(b => b === 'First Blood')).toBe(true)
     })
-    
+
     it('grants difficulty badge for Hard quests', async () => {
         if (!process.env.DATABASE_URL_TEST) return
-        
+
         const quest = await testPrisma.quest.create({
             data: {
                 id: 'dummy-quest-hard',
@@ -73,4 +73,44 @@ describe('checkBadges', () => {
         const newBadges = await checkBadges(user.id)
         expect(newBadges?.some(b => b === 'Hardened Veteran')).toBe(true)
     })
+
+it('does not grant badge if user is just below threshold (off-by-one)', async () => {
+    if (!process.env.DATABASE_URL_TEST) return
+
+    await testPrisma.user.update({
+        where: { id: user.id },
+        data: { points: 99, completedQuests: 0 }
+    })
+
+    const newBadges = await checkBadges(user.id)
+    expect(newBadges?.length).toBe(0)
+})
+
+it('does not grant a badge the user already owns (no duplicate)', async () => {
+    if (!process.env.DATABASE_URL_TEST) return
+
+    const badge = await testPrisma.badge.findUnique({ where: { slug: 'point-collector' } })
+    if (badge) {
+        await testPrisma.userBadge.create({
+            data: { userId: user.id, badgeId: badge.id }
+        })
+    }
+
+    await testPrisma.user.update({
+        where: { id: user.id },
+        data: { points: 150 } // Above threshold
+    })
+
+    const newBadges = await checkBadges(user.id)
+    // Should not contain Centurion because they already have it
+    expect(newBadges?.some(b => b === 'Centurion')).toBe(false)
+})
+
+it('returns empty array with no error for user with no activity', async () => {
+    if (!process.env.DATABASE_URL_TEST) return
+
+    const newBadges = await checkBadges(user.id)
+    expect(newBadges).toBeDefined()
+    expect(newBadges?.length).toBe(0)
+})
 })

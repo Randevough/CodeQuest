@@ -21,9 +21,6 @@ interface ProfileSidebarProps {
         points: number
         completedQuests: number
         image?: string | null
-        bio?: string | null
-        githubUrl?: string | null
-        linkedinUrl?: string | null
     }
     badges: Badge[]
 }

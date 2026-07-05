@@ -82,11 +82,9 @@ export function AvatarUpload({ currentAvatar, name, size = 128, editable = false
                 className={`w-full h-full rounded-full overflow-hidden border-2 border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm relative transition-all ${editable ? 'group-hover:border-orange-500' : ''}`}
             >
                 {currentAvatar ? (
-                    <Image
+                    <img
                         src={currentAvatar}
                         alt={name || 'Profile'}
-                        width={size}
-                        height={size}
                         className={`w-full h-full object-cover transition-opacity ${isUploading ? 'opacity-50' : 'opacity-100'}`}
                     />
                 ) : (

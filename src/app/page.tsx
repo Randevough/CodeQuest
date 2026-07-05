@@ -107,10 +107,10 @@ async function getQuests(searchParams: { q?: string, difficulty?: string, sort?:
   })
 
   // Re-sort results in JS to match ID order (since 'IN' query might scramble order)
-   
+
   const questsMap = new Map(quests.map(q => [q.id, q]))
   const sortedQuests = validIds
-     
+
     .map(id => questsMap.get(id))
     .filter(q => q !== undefined)
 
@@ -144,7 +144,7 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
 
   // 1. Get my active quests first (needed for exclusion)
   const myActiveQuests = await getMyActiveQuests();
-   
+
 
   // 2. Get ALL interacted IDs for exclusion from board (Active + Completed + Archived)
   const allExcludedIds = await getAllUserQuestIds();
@@ -227,7 +227,7 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
               ) : (
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    { }
                     {availableQuests.map((quest: QuestWithCount) => (
                       <QuestCard key={quest.id} quest={quest} isSnatched={false} />
                     ))}

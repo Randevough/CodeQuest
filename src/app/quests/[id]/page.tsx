@@ -111,230 +111,194 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
 
                 <main className="flex-grow max-w-[1280px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 lg:py-12 relative">
 
-                {/* Micro-deco corner plus markers */}
-                <div aria-hidden="true" className="pointer-events-none absolute top-4 left-4 text-slate-300 text-xl font-light select-none">+</div>
-                <div aria-hidden="true" className="pointer-events-none absolute top-4 right-4 text-slate-300 text-xl font-light select-none">+</div>
-                <div aria-hidden="true" className="pointer-events-none absolute bottom-4 left-4 text-slate-300 text-xl font-light select-none">+</div>
-                <div aria-hidden="true" className="pointer-events-none absolute bottom-4 right-4 text-slate-300 text-xl font-light select-none">+</div>
+                    {/* Micro-deco corner plus markers */}
+                    <div aria-hidden="true" className="pointer-events-none absolute top-4 left-4 text-slate-300 text-xl font-light select-none">+</div>
+                    <div aria-hidden="true" className="pointer-events-none absolute top-4 right-4 text-slate-300 text-xl font-light select-none">+</div>
+                    <div aria-hidden="true" className="pointer-events-none absolute bottom-4 left-4 text-slate-300 text-xl font-light select-none">+</div>
+                    <div aria-hidden="true" className="pointer-events-none absolute bottom-4 right-4 text-slate-300 text-xl font-light select-none">+</div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start relative">
-                    {/* Main Content */}
-                    <div className="lg:col-span-8 flex flex-col gap-6">
-                        <article className="bg-white dark:bg-surface-dark rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-200 dark:border-slate-800 overflow-hidden">
-                            <div className="p-4 sm:p-6 lg:p-8 lg:pb-6 border-b border-slate-100 dark:border-slate-800">
-                                <div className="flex flex-col gap-6">
-                                    {/* Back Navigation */}
-                                    <Link href="/" className="inline-flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-orange-600 transition-colors font-['Plus_Jakarta_Sans'] mb-[-10px]">
-                                        <span className="material-symbols-outlined text-[20px]">chevron_left</span>
-                                        Back to Quests
-                                    </Link>
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start relative">
+                        {/* Main Content */}
+                        <div className="lg:col-span-8 flex flex-col gap-6">
+                            <article className="bg-white dark:bg-surface-dark rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-200 dark:border-slate-800 overflow-hidden">
+                                <div className="p-4 sm:p-6 lg:p-8 lg:pb-6 border-b border-slate-100 dark:border-slate-800">
+                                    <div className="flex flex-col gap-6">
+                                        {/* Back Navigation */}
+                                        <Link href="/" className="inline-flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-orange-600 transition-colors font-['Plus_Jakarta_Sans'] mb-[-10px]">
+                                            <span className="material-symbols-outlined text-[20px]">chevron_left</span>
+                                            Back to Quests
+                                        </Link>
 
-                                    <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
-                                        <span>Quest ID: #{quest.id}</span>
-                                        <span className="text-slate-300 dark:text-slate-700">•</span>
-                                        <span className={`px-2 py-0.5 rounded ${isCompleted ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' :
-                                            isPending ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' :
-                                                isSnatched ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
-                                                    'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
-                                            }`}>
-                                            {isCompleted ? 'Completed' : isPending ? 'Pending Review' : isSnatched ? 'Active' : 'Available'}
-                                        </span>
-                                    </div>
-
-                                    {/* Title with fading architectural line */}
-                                    <div className="flex items-center gap-4">
-                                        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight shrink-0">
-                                            {quest.title}
-                                        </h1>
-                                        <div className="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent dark:from-slate-700 hidden sm:block" />
-                                    </div>
-
-                                    {/* Badges */}
-                                    <div className="flex flex-wrap gap-2 items-center">
-                                        {/* Difficulty Badge */}
-                                        <span className={`inline-flex items-center px-2.5 py-1 rounded text-[11px] font-bold capitalize ${getDifficultyBadge(quest.difficulty)}`}>
-                                            {quest.difficulty || 'Beginner'}
-                                        </span>
-
-                                        {/* Points Badge */}
-                                        <div className="inline-flex items-center px-2.5 py-1 rounded border bg-orange-50 border-orange-100 text-orange-700 dark:text-orange-400">
-                                            <Image src="/icon.png" alt="Points" width={13} height={13} className="mr-1.5 object-contain" />
-                                            <span className="text-[11px] font-bold uppercase tracking-wide">{quest.points || 500} pts</span>
+                                        <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
+                                            <span>Quest ID: #{quest.id}</span>
+                                            <span className="text-slate-300 dark:text-slate-700">•</span>
+                                            <span className={`px-2 py-0.5 rounded ${isCompleted ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' :
+                                                isPending ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' :
+                                                    isSnatched ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
+                                                        'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                                                }`}>
+                                                {isCompleted ? 'Completed' : isPending ? 'Pending Review' : isSnatched ? 'Active' : 'Available'}
+                                            </span>
                                         </div>
 
-                                        {/* Category Badge */}
-                                        <span className="inline-flex items-center px-2.5 py-1 rounded text-[11px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 capitalize">
-                                            {quest.category}
-                                        </span>
+                                        {/* Title with fading architectural line */}
+                                        <div className="flex items-center gap-4">
+                                            <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight shrink-0">
+                                                {quest.title}
+                                            </h1>
+                                            <div className="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent dark:from-slate-700 hidden sm:block" />
+                                        </div>
+
+                                        {/* Badges */}
+                                        <div className="flex flex-wrap gap-2 items-center">
+                                            {/* Difficulty Badge */}
+                                            <span className={`inline-flex items-center px-2.5 py-1 rounded text-[11px] font-bold capitalize ${getDifficultyBadge(quest.difficulty)}`}>
+                                                {quest.difficulty || 'Beginner'}
+                                            </span>
+
+                                            {/* Points Badge */}
+                                            <div className="inline-flex items-center px-2.5 py-1 rounded border bg-orange-50 border-orange-100 text-orange-700 dark:text-orange-400">
+                                                <Image src="/icon.png" alt="Points" width={13} height={13} className="mr-1.5 object-contain" />
+                                                <span className="text-[11px] font-bold uppercase tracking-wide">{quest.points || 500} pts</span>
+                                            </div>
+
+                                            {/* Category Badge */}
+                                            <span className="inline-flex items-center px-2.5 py-1 rounded text-[11px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 capitalize">
+                                                {quest.category}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="p-4 sm:p-6 lg:p-8 pt-6 lg:pt-8 space-y-10">
-                                <section>
-                                    <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
-                                        <span className="material-symbols-outlined text-[18px]">info</span> Mission Briefing
-                                    </h3>
-                                    <div className="prose prose-slate dark:prose-invert max-w-none text-slate-600 dark:text-slate-300 leading-relaxed text-lg">
-                                        <p>{quest.description}</p>
-                                    </div>
-                                </section>
-
-                                {/* Checklist Section */}
-                                {requirements.length > 0 && (
+                                <div className="p-4 sm:p-6 lg:p-8 pt-6 lg:pt-8 space-y-10">
                                     <section>
                                         <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
-                                            <span className="material-symbols-outlined text-[18px]">checklist</span> Completion Requirements
+                                            <span className="material-symbols-outlined text-[18px]">info</span> Mission Briefing
                                         </h3>
-                                        <ul className="space-y-3">
-                                            {requirements.map((req, index) => (
-                                                <li key={index} className="flex items-center gap-3 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-lg border border-slate-100 dark:border-slate-800">
-                                                    <div className="flex items-center justify-center min-w-[20px] h-5">
-                                                        <span className="material-symbols-outlined text-slate-400 dark:text-slate-500 text-[20px]">radio_button_unchecked</span>
-                                                    </div>
-                                                    <span className="text-slate-700 dark:text-slate-300 text-sm font-medium">{req}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
+                                        <div className="prose prose-slate dark:prose-invert max-w-none text-slate-600 dark:text-slate-300 leading-relaxed text-lg">
+                                            <p>{quest.description}</p>
+                                        </div>
                                     </section>
-                                )}
 
-                                {/* Resources Section */}
-                                {quest.resources && quest.resources.length > 0 && (
-                                    <section>
-                                        <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
-                                            <span className="material-symbols-outlined text-[18px]">link</span> Resources
-                                        </h3>
-                                        <ul className="space-y-3">
-                                            {quest.resources.map((resource, index) => {
-                                                // Extract URL if markdown formatted [text](url)
-                                                let displayStr = resource;
-                                                let url = "";
-                                                const match = resource.match(/\[(.*?)\]\((.*?)\)/);
-                                                if (match) {
-                                                    displayStr = match[1];
-                                                    url = match[2];
-                                                } else if (resource.startsWith('http')) {
-                                                    url = resource;
-                                                }
-
-                                                return (
-                                                    <li key={index} className="flex items-start gap-3 bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/30 rounded-lg p-4">
-                                                        <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 mt-0.5">description</span>
-                                                        <div className="flex flex-col">
-                                                            {url ? (
-                                                                <a href={url} target="_blank" rel="noopener noreferrer" className="text-blue-700 dark:text-blue-300 font-semibold hover:underline break-all text-sm">
-                                                                    {displayStr}
-                                                                </a>
-                                                            ) : (
-                                                                <span className="text-blue-700 dark:text-blue-300 font-semibold text-sm">
-                                                                    {displayStr}
-                                                                </span>
-                                                            )}
+                                    {/* Checklist Section */}
+                                    {requirements.length > 0 && (
+                                        <section>
+                                            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
+                                                <span className="material-symbols-outlined text-[18px]">checklist</span> Completion Requirements
+                                            </h3>
+                                            <ul className="space-y-3">
+                                                {requirements.map((req, index) => (
+                                                    <li key={index} className="flex items-center gap-3 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-lg border border-slate-100 dark:border-slate-800">
+                                                        <div className="flex items-center justify-center min-w-[20px] h-5">
+                                                            <span className="material-symbols-outlined text-slate-400 dark:text-slate-500 text-[20px]">radio_button_unchecked</span>
                                                         </div>
+                                                        <span className="text-slate-700 dark:text-slate-300 text-sm font-medium">{req}</span>
                                                     </li>
-                                                );
-                                            })}
-                                        </ul>
-                                    </section>
-                                )}
-
-                                {/* Submission Section or Join/Drop Actions */}
-                                <section className="border-t border-slate-100 dark:border-slate-800 pt-8 mt-10">
-                                    <div className="flex items-center gap-2 mb-6">
-                                        <h3 className="text-xl font-bold text-slate-900 dark:text-white">
-                                            {isCompleted ? 'Mission Status' : isPending ? 'Mission Logged' : 'Submit Your Quest'}
-                                        </h3>
-                                    </div>
-
-                                    <QuestAction
-                                        questId={quest.id}
-                                        isSnatched={isSnatched}
-                                        userStatus={userStatus}
-                                        isPending={isPending}
-                                        isCompleted={isCompleted}
-                                    />
-
-                                    {!isSnatched && quest.maxSnatchers > 1 && (
-                                        <div className="mt-4 border-t border-slate-100 dark:border-slate-800 pt-4">
-                                            <p className="text-center text-sm text-slate-500 mb-2">Or collaborate with others</p>
-                                            <SquadAction questId={quest.id} maxSnatchers={quest.maxSnatchers} />
-                                        </div>
+                                                ))}
+                                            </ul>
+                                        </section>
                                     )}
 
-                                    {isSnatched && userStatus?.squadId && (
-                                        <div className="mt-4 text-center">
-                                            <SquadLeaveButton squadId={userStatus.squadId} />
-                                        </div>
+                                    {/* Resources Section */}
+                                    {quest.resources && quest.resources.length > 0 && (
+                                        <section>
+                                            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
+                                                <span className="material-symbols-outlined text-[18px]">link</span> Resources
+                                            </h3>
+                                            <ul className="space-y-3">
+                                                {quest.resources.map((resource, index) => {
+                                                    // Extract URL if markdown formatted [text](url)
+                                                    let displayStr = resource;
+                                                    let url = "";
+                                                    const match = resource.match(/\[(.*?)\]\((.*?)\)/);
+                                                    if (match) {
+                                                        displayStr = match[1];
+                                                        url = match[2];
+                                                    } else if (resource.startsWith('http')) {
+                                                        url = resource;
+                                                    }
+
+                                                    return (
+                                                        <li key={index} className="flex items-start gap-3 bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/30 rounded-lg p-4">
+                                                            <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 mt-0.5">description</span>
+                                                            <div className="flex flex-col">
+                                                                {url ? (
+                                                                    <a href={url} target="_blank" rel="noopener noreferrer" className="text-blue-700 dark:text-blue-300 font-semibold hover:underline break-all text-sm">
+                                                                        {displayStr}
+                                                                    </a>
+                                                                ) : (
+                                                                    <span className="text-blue-700 dark:text-blue-300 font-semibold text-sm">
+                                                                        {displayStr}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </li>
+                                                    );
+                                                })}
+                                            </ul>
+                                        </section>
                                     )}
-                                </section>
-                            </div>
-                        </article>
-                    </div>
 
-                    {/* Sidebar */}
-                    <aside className="lg:col-span-4 space-y-6 lg:sticky lg:top-24">
-                        {/* Time Remaining */}
-                        <div className="bg-white dark:bg-surface-dark rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-200 dark:border-slate-800 p-6">
-                            <div className="flex items-center gap-2 mb-4">
-                                <span className="material-symbols-outlined text-primary text-[20px]">timer</span>
-                                <h4 className="text-sm font-bold text-slate-900 dark:text-white">Time Remaining</h4>
-                            </div>
-                            <QuestTimer deadline={quest.deadline} />
-                        </div>
+                                    {/* Submission Section or Join/Drop Actions */}
+                                    <section className="border-t border-slate-100 dark:border-slate-800 pt-8 mt-10">
+                                        <div className="flex items-center gap-2 mb-6">
+                                            <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+                                                {isCompleted ? 'Mission Status' : isPending ? 'Mission Logged' : 'Submit Your Quest'}
+                                            </h3>
+                                        </div>
 
-                        {/* Squad Members */}
-                        <div className="bg-white dark:bg-surface-dark rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-200 dark:border-slate-800 p-6">
-                            <div className="flex justify-between items-center mb-4">
-                                <div className="flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-primary text-[20px]">groups</span>
-                                    <h4 className="text-sm font-bold text-slate-900 dark:text-white">
-                                        {quest.maxSnatchers > 1 ? (userStatus?.squadId ? 'Your Squad' : 'Open Squads') : 'Active Questers'}
-                                    </h4>
-                                </div>
-                                <span className={`text-xs font-mono font-bold px-2 py-1 rounded ${quest.snatches.length >= quest.maxSnatchers ? 'bg-red-100 text-red-700' : 'bg-primary/10 text-primary'}`}>
-                                    {quest.snatches.length}/{quest.maxSnatchers}
-                                </span>
-                            </div>
-                            <div className="space-y-4">
-                                {quest.maxSnatchers === 1 && (
-                                    <>
-                                        {quest.snatches.map((snatch) => (
-                                            <Link href={`/profile/${snatch.user.id}`} key={snatch.user.id} className="flex items-center gap-3 p-2 -mx-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
-                                                {snatch.user.avatar ? (
-                                                    <Image src={snatch.user.avatar as string} alt={snatch.user.name || 'User'} width={40} height={40} className="size-10 rounded-full object-cover group-hover:scale-105 transition-transform" />
-                                                ) : (
-                                                    <div className="size-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-slate-500 group-hover:scale-105 transition-transform">
-                                                        {(snatch.user.name || snatch.user.handle || '?')[0].toUpperCase()}
-                                                    </div>
-                                                )}
-                                                <div className="flex-1 min-w-0">
-                                                    <p className="text-sm font-semibold text-slate-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                                                        {snatch.user.name || snatch.user.handle || 'Anonymous'}
-                                                    </p>
-                                                </div>
-                                            </Link>
-                                        ))}
-                                        {quest.snatches.length === 0 && (
-                                            <div className="text-center py-4 text-sm text-slate-500 italic">No brave souls yet. Be the first!</div>
-                                        )}
-                                        {quest.snatches.length < quest.maxSnatchers && (
-                                            <div className="flex items-center gap-3 opacity-60">
-                                                <div className="size-10 rounded-full bg-slate-50 dark:bg-slate-800 border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center text-slate-400">
-                                                    <span className="material-symbols-outlined text-[18px]">add</span>
-                                                </div>
-                                                <div className="flex-1"><p className="text-sm text-slate-500 italic">Spot Open</p></div>
+                                        <QuestAction
+                                            questId={quest.id}
+                                            isSnatched={isSnatched}
+                                            userStatus={userStatus}
+                                            isPending={isPending}
+                                            isCompleted={isCompleted}
+                                        />
+
+                                        {!isSnatched && quest.maxSnatchers > 1 && (
+                                            <div className="mt-4 border-t border-slate-100 dark:border-slate-800 pt-4">
+                                                <p className="text-center text-sm text-slate-500 mb-2">Or collaborate with others</p>
+                                                <SquadAction questId={quest.id} maxSnatchers={quest.maxSnatchers} />
                                             </div>
                                         )}
-                                    </>
-                                )}
 
-                                {quest.maxSnatchers > 1 && userStatus?.squadId && (() => {
-                                    const mySquad = quest.squads.find(s => s.id === userStatus.squadId);
-                                    if (!mySquad) return null;
-                                    return (
+                                        {isSnatched && userStatus?.squadId && (
+                                            <div className="mt-4 text-center">
+                                                <SquadLeaveButton squadId={userStatus.squadId} />
+                                            </div>
+                                        )}
+                                    </section>
+                                </div>
+                            </article>
+                        </div>
+
+                        {/* Sidebar */}
+                        <aside className="lg:col-span-4 space-y-6 lg:sticky lg:top-24">
+                            {/* Time Remaining */}
+                            <div className="bg-white dark:bg-surface-dark rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-200 dark:border-slate-800 p-6">
+                                <div className="flex items-center gap-2 mb-4">
+                                    <span className="material-symbols-outlined text-primary text-[20px]">timer</span>
+                                    <h4 className="text-sm font-bold text-slate-900 dark:text-white">Time Remaining</h4>
+                                </div>
+                                <QuestTimer deadline={quest.deadline} />
+                            </div>
+
+                            {/* Squad Members */}
+                            <div className="bg-white dark:bg-surface-dark rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-200 dark:border-slate-800 p-6">
+                                <div className="flex justify-between items-center mb-4">
+                                    <div className="flex items-center gap-2">
+                                        <span className="material-symbols-outlined text-primary text-[20px]">groups</span>
+                                        <h4 className="text-sm font-bold text-slate-900 dark:text-white">
+                                            {quest.maxSnatchers > 1 ? (userStatus?.squadId ? 'Your Squad' : 'Open Squads') : 'Active Questers'}
+                                        </h4>
+                                    </div>
+                                    <span className={`text-xs font-mono font-bold px-2 py-1 rounded ${quest.snatches.length >= quest.maxSnatchers ? 'bg-red-100 text-red-700' : 'bg-primary/10 text-primary'}`}>
+                                        {quest.snatches.length}/{quest.maxSnatchers}
+                                    </span>
+                                </div>
+                                <div className="space-y-4">
+                                    {quest.maxSnatchers === 1 && (
                                         <>
-                                            <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-3">{mySquad.name}</p>
-                                            {mySquad.snatches.map((snatch) => (
+                                            {quest.snatches.map((snatch) => (
                                                 <Link href={`/profile/${snatch.user.id}`} key={snatch.user.id} className="flex items-center gap-3 p-2 -mx-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
                                                     {snatch.user.avatar ? (
                                                         <Image src={snatch.user.avatar as string} alt={snatch.user.name || 'User'} width={40} height={40} className="size-10 rounded-full object-cover group-hover:scale-105 transition-transform" />
@@ -350,71 +314,107 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                                                     </div>
                                                 </Link>
                                             ))}
-                                            {Array.from({ length: quest.maxSnatchers - mySquad.snatches.length }).map((_, i) => (
-                                                <div key={i} className="flex items-center gap-3 opacity-60">
+                                            {quest.snatches.length === 0 && (
+                                                <div className="text-center py-4 text-sm text-slate-500 italic">No brave souls yet. Be the first!</div>
+                                            )}
+                                            {quest.snatches.length < quest.maxSnatchers && (
+                                                <div className="flex items-center gap-3 opacity-60">
                                                     <div className="size-10 rounded-full bg-slate-50 dark:bg-slate-800 border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center text-slate-400">
                                                         <span className="material-symbols-outlined text-[18px]">add</span>
                                                     </div>
                                                     <div className="flex-1"><p className="text-sm text-slate-500 italic">Spot Open</p></div>
                                                 </div>
-                                            ))}
+                                            )}
                                         </>
-                                    )
-                                })()}
+                                    )}
 
-                                {quest.maxSnatchers > 1 && !userStatus?.squadId && (
-                                    <>
-                                        {quest.squads.length === 0 ? (
-                                            <div className="text-center py-4 text-sm text-slate-500 italic">No open squads. Create one!</div>
-                                        ) : (
-                                            quest.squads.map(squad => (
-                                                <div key={squad.id} className="p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 rounded-lg mb-2">
-                                                    <div className="flex justify-between items-center mb-2">
-                                                        <p className="text-sm font-bold text-slate-900 dark:text-white">{squad.name}</p>
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="text-xs font-mono text-slate-500">{squad.snatches.length}/{quest.maxSnatchers}</span>
-                                                            <SquadJoinButton squadId={squad.id} disabled={squad.snatches.length >= quest.maxSnatchers} />
+                                    {quest.maxSnatchers > 1 && userStatus?.squadId && (() => {
+                                        const mySquad = quest.squads.find(s => s.id === userStatus.squadId);
+                                        if (!mySquad) return null;
+                                        return (
+                                            <>
+                                                <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-3">{mySquad.name}</p>
+                                                {mySquad.snatches.map((snatch) => (
+                                                    <Link href={`/profile/${snatch.user.id}`} key={snatch.user.id} className="flex items-center gap-3 p-2 -mx-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                                                        {snatch.user.avatar ? (
+                                                            <Image src={snatch.user.avatar as string} alt={snatch.user.name || 'User'} width={40} height={40} className="size-10 rounded-full object-cover group-hover:scale-105 transition-transform" />
+                                                        ) : (
+                                                            <div className="size-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-slate-500 group-hover:scale-105 transition-transform">
+                                                                {(snatch.user.name || snatch.user.handle || '?')[0].toUpperCase()}
+                                                            </div>
+                                                        )}
+                                                        <div className="flex-1 min-w-0">
+                                                            <p className="text-sm font-semibold text-slate-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                                                                {snatch.user.name || snatch.user.handle || 'Anonymous'}
+                                                            </p>
+                                                        </div>
+                                                    </Link>
+                                                ))}
+                                                {Array.from({ length: quest.maxSnatchers - mySquad.snatches.length }).map((_, i) => (
+                                                    <div key={i} className="flex items-center gap-3 opacity-60">
+                                                        <div className="size-10 rounded-full bg-slate-50 dark:bg-slate-800 border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center text-slate-400">
+                                                            <span className="material-symbols-outlined text-[18px]">add</span>
+                                                        </div>
+                                                        <div className="flex-1"><p className="text-sm text-slate-500 italic">Spot Open</p></div>
+                                                    </div>
+                                                ))}
+                                            </>
+                                        )
+                                    })()}
+
+                                    {quest.maxSnatchers > 1 && !userStatus?.squadId && (
+                                        <>
+                                            {quest.squads.length === 0 ? (
+                                                <div className="text-center py-4 text-sm text-slate-500 italic">No open squads. Create one!</div>
+                                            ) : (
+                                                quest.squads.map(squad => (
+                                                    <div key={squad.id} className="p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 rounded-lg mb-2">
+                                                        <div className="flex justify-between items-center mb-2">
+                                                            <p className="text-sm font-bold text-slate-900 dark:text-white">{squad.name}</p>
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="text-xs font-mono text-slate-500">{squad.snatches.length}/{quest.maxSnatchers}</span>
+                                                                <SquadJoinButton squadId={squad.id} disabled={squad.snatches.length >= quest.maxSnatchers} />
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex -space-x-2">
+                                                            {squad.snatches.map(s => (
+                                                                s.user.avatar ? (
+                                                                    <Image key={s.user.id} src={s.user.avatar as string} width={32} height={32} className="size-8 rounded-full border-2 border-white dark:border-surface-dark object-cover" alt="" />
+                                                                ) : (
+                                                                    <div key={s.user.id} className="size-8 rounded-full border-2 border-white dark:border-surface-dark bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-slate-500 text-xs">
+                                                                        {(s.user.name || '?')[0].toUpperCase()}
+                                                                    </div>
+                                                                )
+                                                            ))}
                                                         </div>
                                                     </div>
-                                                    <div className="flex -space-x-2">
-                                                        {squad.snatches.map(s => (
-                                                            s.user.avatar ? (
-                                                                <Image key={s.user.id} src={s.user.avatar as string} width={32} height={32} className="size-8 rounded-full border-2 border-white dark:border-surface-dark object-cover" alt="" />
-                                                            ) : (
-                                                                <div key={s.user.id} className="size-8 rounded-full border-2 border-white dark:border-surface-dark bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-slate-500 text-xs">
-                                                                    {(s.user.name || '?')[0].toUpperCase()}
-                                                                </div>
-                                                            )
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            ))
-                                        )}
-                                    </>
-                                )}
+                                                ))
+                                            )}
+                                        </>
+                                    )}
+                                </div>
                             </div>
-                        </div>
 
-                        {/* Help / Discord */}
-                        <div className="bg-gradient-to-br from-[#EA580C] to-[#FB923C] rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6 text-white">
-                            <h4 className="text-lg font-bold mb-2">Need a teammate?</h4>
-                            <p className="text-white/90 text-sm mb-4 leading-relaxed">
-                                Most advanced quests are easier with a partner. Check Discord to find a buddy.
-                            </p>
+                            {/* Help / Discord */}
+                            <div className="bg-gradient-to-br from-[#EA580C] to-[#FB923C] rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6 text-white">
+                                <h4 className="text-lg font-bold mb-2">Need a teammate?</h4>
+                                <p className="text-white/90 text-sm mb-4 leading-relaxed">
+                                    Most advanced quests are easier with a partner. Check Discord to find a buddy.
+                                </p>
 
-                            <a
-                                href="#"
-                                className="flex items-center justify-center gap-2 w-full bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/40 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200"
-                            >
-                                <svg aria-hidden="true" className="size-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2763-3.68-.2763-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.0991.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.699.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1569 2.4189z"></path>
-                                </svg>
-                                Join Discord Server
-                            </a>
-                        </div>
-                    </aside>
-                </div>
-            </main>
+                                <a
+                                    href="#"
+                                    className="flex items-center justify-center gap-2 w-full bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/40 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200"
+                                >
+                                    <svg aria-hidden="true" className="size-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2763-3.68-.2763-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.0991.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.699.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1569 2.4189z"></path>
+                                    </svg>
+                                    Join Discord Server
+                                </a>
+                            </div>
+                        </aside>
+                    </div>
+                </main>
             </div>
         </div>
     )

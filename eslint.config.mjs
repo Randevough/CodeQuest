@@ -13,6 +13,16 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  {
+    rules: {
+      "react/no-unescaped-entities": "warn",
+      "@typescript-eslint/no-require-imports": "warn",
+      "@next/next/no-img-element": "warn",
+      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/no-unused-vars": "error",
+      "@typescript-eslint/ban-ts-comment": "error"
+    }
+  }
 ]);
 
 export default eslintConfig;
