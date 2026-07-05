@@ -21,6 +21,9 @@ interface ProfileSidebarProps {
         points: number
         completedQuests: number
         image?: string | null
+        bio?: string | null
+        githubUrl?: string | null
+        linkedinUrl?: string | null
     }
     badges: Badge[]
 }
@@ -59,10 +62,8 @@ export function ProfileSidebar({ user, badges }: ProfileSidebarProps) {
 
 
                 {/* Bio Section */}
-                {/* @ts-ignore: Prisma client field */}
                 {user.bio ? (
                     <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-6 px-2">
-                        {/* @ts-ignore: Prisma client field */}
                         {user.bio}
                     </p>
                 ) : (
@@ -73,24 +74,19 @@ export function ProfileSidebar({ user, badges }: ProfileSidebarProps) {
 
                 {/* Social Actions */}
                 <div className="flex gap-3 w-full justify-center">
-                    {/* @ts-ignore: Prisma client field */}
                     {user.githubUrl && (
-                        /* @ts-ignore: Prisma client field */
                         <a className="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg border border-gray-200 dark:border-border-dark text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:border-slate-300 dark:hover:border-slate-600 transition-all text-sm font-medium" href={user.githubUrl} target="_blank" rel="noopener noreferrer">
                             <span className="material-symbols-outlined text-[18px]">code</span>
                             GitHub
                         </a>
                     )}
-                    {/* @ts-ignore: Prisma client field */}
                     {user.linkedinUrl && (
-                        /* @ts-ignore: Prisma client field */
                         <a className="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg border border-gray-200 dark:border-border-dark text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:border-slate-300 dark:hover:border-slate-600 transition-all text-sm font-medium" href={user.linkedinUrl} target="_blank" rel="noopener noreferrer">
                             <span className="material-symbols-outlined text-[18px]">work</span>
                             LinkedIn
                         </a>
                     )}
 
-                    {/* @ts-ignore: Prisma client field */}
                     {!user.githubUrl && !user.linkedinUrl && (
                         <div className="text-xs text-slate-400">No social links added</div>
                     )}
@@ -148,11 +144,8 @@ export function ProfileSidebar({ user, badges }: ProfileSidebarProps) {
                 onClose={() => setIsEditModalOpen(false)}
                 user={{
                     name: user.name,
-                    // @ts-ignore: Prisma client field
                     bio: user.bio,
-                    // @ts-ignore: Prisma client field
                     githubUrl: user.githubUrl,
-                    // @ts-ignore: Prisma client field
                     linkedinUrl: user.linkedinUrl
                 }}
                 badges={badges}

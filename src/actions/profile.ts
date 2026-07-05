@@ -37,7 +37,6 @@ export async function uploadProfileImage(formData: FormData) {
         await prisma.user.update({
             where: { id: userId },
             data: {
-                // @ts-ignore: Prisma client not generated yet
                 image: blob.url,
                 avatar: blob.url // Keep avatar in sync for backward compatibility/simplicity
             }

@@ -35,7 +35,6 @@ export default async function PublicProfilePage(props: { params: Promise<{ id: s
     const user = await prisma.user.findUnique({
         where: { id: params.id },
         include: {
-            // @ts-ignore: Prisma client field
             badges: {
                 include: { badge: true }
             }
@@ -82,7 +81,6 @@ export default async function PublicProfilePage(props: { params: Promise<{ id: s
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                         <ProfileSidebar
                             user={{ ...user, completedQuests: completedQuestsCount }}
-                            // @ts-ignore: Prisma client field
                             badges={user.badges.map((ub: Prisma.UserBadgeGetPayload<{ include: { badge: true } }>) => ({ ...ub.badge, isFeatured: ub.isFeatured }))}
                         />
                         <ProfileTabs
@@ -90,7 +88,6 @@ export default async function PublicProfilePage(props: { params: Promise<{ id: s
                             portfolioSnatches={portfolioSnatches}
                             user={user}
                             isOwner={isOwner}
-                            // @ts-ignore: Prisma client field
                             badges={user.badges.map((ub: Prisma.UserBadgeGetPayload<{ include: { badge: true } }>) => ub.badge)}
                             allBadges={allBadges}
                         />
