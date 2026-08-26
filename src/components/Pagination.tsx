@@ -5,7 +5,7 @@ import { usePathname, useSearchParams } from 'next/navigation'
 
 export interface PageControlProps {
     page: number | string;
-    isActive?: boolean;
+
     children: React.ReactNode;
     className?: string;
     disabled?: boolean;
@@ -13,7 +13,7 @@ export interface PageControlProps {
     createPageURL: (pageNumber: number | string) => string;
 }
 
-const PageControl = ({ page, isActive, children, className, disabled, onPageChange, createPageURL }: PageControlProps) => {
+const PageControl = ({ page, children, className, disabled, onPageChange, createPageURL }: PageControlProps) => {
     const isEllipsis = page === '...';
 
     if (isEllipsis) {
@@ -123,7 +123,6 @@ export function Pagination({
                         <PageControl
                             key={i}
                             page={page}
-                            isActive={isActive}
                             className={`min-w-[36px] h-[36px] px-2 flex items-center justify-center rounded-lg text-sm font-medium transition-all
                                 ${isActive
                                     ? 'bg-blue-600 text-white shadow-sm ring-1 ring-blue-600/20'

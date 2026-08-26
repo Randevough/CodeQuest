@@ -6,6 +6,10 @@ import { Toaster } from 'sonner';
 
 // ... (omitted code)
 
+export const metadata: Metadata = {
+  title: 'CodeQuest',
+  description: 'CodeQuest platform',
+};
 export default function RootLayout({
   children,
 }: Readonly<{

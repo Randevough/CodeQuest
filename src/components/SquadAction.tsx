@@ -22,7 +22,7 @@ export function SquadAction({ questId, maxSnatchers }: { questId: string, maxSna
             } else {
                 toast.error(result.error as string)
             }
-        } catch (e) {
+        } catch {
             toast.error('Action failed')
         } finally {
             setLoading(false)
@@ -90,7 +90,7 @@ export function SquadJoinButton({ squadId, disabled }: { squadId: string, disabl
             } else {
                 toast.error(result.error as string)
             }
-        } catch (e) {
+        } catch {
             toast.error('Action failed')
         } finally {
             setLoading(false)
@@ -123,7 +123,7 @@ export function SquadLeaveButton({ squadId }: { squadId: string }) {
             } else {
                 toast.error(result.error as string)
             }
-        } catch (e) {
+        } catch {
             toast.error('Action failed')
         } finally {
             setLoading(false)

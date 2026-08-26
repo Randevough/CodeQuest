@@ -68,16 +68,6 @@ interface LeaderboardUser {
 }
 
 export function LeaderboardPreview({ users }: { users: LeaderboardUser[] }) {
-    // Helper to get initials
-    const getInitials = (name: string | null, handle: string | null) => {
-        const displayName = name || handle || '?';
-        const parts = displayName.split(' ').filter(Boolean);
-        if (parts.length >= 2) {
-            return (parts[0][0] + parts[1][0]).toUpperCase();
-        }
-        return displayName.substring(0, 2).toUpperCase();
-    };
-
     return (
         <div className="bg-surface-light dark:bg-surface-dark rounded-lg border border-border-light dark:border-border-dark shadow-sm">
             <div className="px-6 py-4 border-b border-border-light dark:border-border-dark flex items-center justify-between">

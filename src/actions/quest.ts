@@ -76,6 +76,14 @@ export async function joinQuest(questId: string) {
                 where: { id: questId }
             });
 
+            if (quest.status === 'Closed' || quest.status === 'Inactive') {
+                throw new Error("This quest is no longer available (Closed/Inactive).");
+            }
+
+            if (quest.deadline && new Date() > quest.deadline) {
+                throw new Error("This quest is past its deadline.");
+            }
+
             if (currentActiveSnatchers >= quest.maxSnatchers) {
                 throw new Error("Quest is full");
             }
@@ -327,7 +335,7 @@ export async function dropQuest(questId: string) {
     if (!user) redirect('/login');
 
     try {
-        const result = await prisma.$transaction(async (tx) => {
+        await prisma.$transaction(async (tx) => {
             // 1. Find the active snatch
             const snatch = await tx.snatch.findUnique({
                 where: {

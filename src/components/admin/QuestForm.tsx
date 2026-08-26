@@ -110,7 +110,7 @@ export function QuestForm({ initialData, isEditing = false }: QuestFormProps) {
         setCategory(initialData?.category || ''); // revert to initial or empty
     };
 
-    const handleSubmit = async (draftFormData: FormData) => {
+    const handleSubmit = async () => {
         // We need to construct the real FormData with our state values because 
         // CustomDropdown doesn't use native inputs that FormData picks up automatically (unless we hidden input it).
         // It's safer to just set them manually.

@@ -50,7 +50,7 @@ export function WorkspaceQuestCard({ snatch }: { snatch: SnatchWithQuest }) {
             } else {
                 toast.success('Quest archived successfully')
             }
-        } catch (e) {
+        } catch {
             toast.error('Archive failed')
         } finally {
             setLoading(false)

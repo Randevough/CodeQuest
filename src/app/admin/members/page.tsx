@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db"
-import { manualReset } from "@/actions/admin"
+
 import Link from "next/link"
 import { Pagination } from "@/components/Pagination"
 import { MemberActionMenu } from "@/components/admin/MemberActionMenu"
@@ -133,7 +133,6 @@ export default async function MemberDirectoryPage({
                                                 </td>
                                                 <td className="py-4 px-6">
                                                     <span className="text-sm text-slate-600 dark:text-slate-300 font-medium whitespace-nowrap">
-                                                        {/* @ts-ignore: _count property from prisma include */}
                                                         {user._count?.snatches || 0} Completed
                                                     </span>
                                                 </td>

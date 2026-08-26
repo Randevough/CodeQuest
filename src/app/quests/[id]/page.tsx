@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/db'
-import type { Metadata } from 'next'
+
 import { notFound } from 'next/navigation'
-import { getUserActiveSnatches, getQuestUserStatus } from '@/actions/quest'
+import { getQuestUserStatus } from '@/actions/quest'
 import Link from 'next/link'
 import { QuestAction } from '@/components/QuestAction'
 import { Header } from '@/components/Header'

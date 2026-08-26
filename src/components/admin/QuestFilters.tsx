@@ -7,7 +7,7 @@ import { useTransition, useState, useEffect, useCallback } from 'react';
 export function QuestFilters() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const [isPending, startTransition] = useTransition();
+    const [, startTransition] = useTransition();
 
     const initialStatus = searchParams.get('status') || 'All';
     const initialSearch = searchParams.get('q') || '';

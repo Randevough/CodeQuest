@@ -3,7 +3,7 @@ import Link from "next/link";
 import { PointsInfoModal } from "./PointsInfoModal";
 import Image from "next/image";
 
-export async function UserStanding({ timeframe = 'all' }: { timeframe?: string }) {
+export async function UserStanding() {
     const standing = await getLeaderboardStanding();
 
     if (!standing) {

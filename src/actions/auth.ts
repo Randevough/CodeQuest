@@ -7,6 +7,8 @@ import { AuthError } from 'next-auth';
 import { redirect } from 'next/navigation';
 import { rateLimit } from '@/lib/rate-limit';
 import { headers } from 'next/headers';
+import crypto from 'crypto';
+import { sendVerificationEmail } from '@/lib/email';
 
 export async function authenticate(prevState: string | undefined, formData: FormData) {
     const ip = (await headers()).get('x-forwarded-for') || 'unknown';
@@ -23,16 +25,18 @@ export async function authenticate(prevState: string | undefined, formData: Form
 
     try {
         await signIn('credentials', { ...Object.fromEntries(formData), redirectTo });
-    } catch (error) {
-        if (error instanceof AuthError) {
-            switch (error.type) {
-                case 'CredentialsSignin':
-                    return 'Invalid credentials.';
-                default:
-                    return 'Something went wrong.';
+    } catch (e: unknown) {
+        if (e instanceof AuthError) {
+            if (e.type === 'CredentialsSignin') {
+                const errCode = (e as any).code || (e as any).cause?.err?.code || (e as any).cause?.err?.message;
+                if (errCode === 'unverified_email' || errCode === 'UnverifiedEmailError') {
+                    return 'Please check your email and verify your account before logging in.';
+                }
+                return 'Invalid credentials.';
             }
+            return 'Something went wrong.';
         }
-        throw error;
+        throw e;
     }
 }
 
@@ -65,6 +69,19 @@ export async function signup(prevState: string | undefined, formData: FormData) 
             name: name || email.split('@')[0],
         }
     });
+
+    const token = crypto.randomBytes(32).toString('hex');
+    const expires = new Date(Date.now() + 1000 * 60 * 60 * 24); // 24 hours
+
+    await prisma.verificationToken.create({
+        data: {
+            identifier: email,
+            token,
+            expires
+        }
+    });
+
+    await sendVerificationEmail(email, token);
 
     // Manual redirect for UX flow requested
     redirect('/login?signedUp=true');

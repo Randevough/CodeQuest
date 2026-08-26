@@ -1,6 +1,33 @@
-import { beforeAll, beforeEach, afterAll } from 'vitest'
+import { beforeAll, beforeEach, afterAll, vi } from 'vitest'
 import { PrismaClient } from '@prisma/client'
 import { execSync } from 'child_process'
+
+vi.mock('next/cache', () => ({
+  revalidatePath: vi.fn(),
+  revalidateTag: vi.fn(),
+}))
+
+vi.mock('next/server', () => ({
+  NextResponse: { json: vi.fn() },
+  NextRequest: vi.fn(),
+}))
+
+vi.mock('next-auth', () => ({
+    AuthError: class AuthError extends Error {
+        type?: string;
+        constructor(message?: string) {
+            super(message);
+        }
+    },
+    default: function () {
+        return {
+            handlers: {},
+            auth: vi.fn(),
+            signIn: vi.fn(),
+            signOut: vi.fn()
+        }
+    }
+}))
 
 // We will use a separate Prisma client for tests pointing to the test DB
 const prisma = new PrismaClient({

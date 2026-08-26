@@ -14,6 +14,7 @@ async function main() {
     console.log(`Active: ${activeCount}`);
     console.log(`Draft: ${draftCount}`);
     console.log(`Closed: ${closedCount}`);
+    console.log(`Null Status: ${nullStatusCount}`);
 }
 
 main()

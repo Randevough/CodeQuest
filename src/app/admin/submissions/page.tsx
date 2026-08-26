@@ -11,8 +11,16 @@ export default function SubmissionQueuePage() {
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
     const [selectedSnatchId, setSelectedSnatchId] = useState<string | null>(null);
 
-    // Data State
-    const [submissions, setSubmissions] = useState<any[]>([]);
+    type Submission = {
+        id: string;
+        status: string;
+        updatedAt: Date | string;
+        submissionUrl?: string | null;
+        user: { name: string | null; email: string; avatar: string | null; };
+        quest: { id: string; title: string; };
+        squad?: { id: string; name: string | null; } | null;
+    };
+    const [submissions, setSubmissions] = useState<Submission[]>([]);
     const [loading, setLoading] = useState(true);
     const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0 });
 
@@ -74,7 +82,7 @@ export default function SubmissionQueuePage() {
             <SubmissionReviewModal
                 isOpen={isReviewModalOpen}
                 onClose={handleCloseReview}
-                snatch={selectedSnatch}
+                snatch={selectedSnatch as unknown as import('@prisma/client').Prisma.SnatchGetPayload<{ include: { user: true, quest: true, squad: { include: { snatches: { include: { user: true } } } } } }>}
             />
             <header className="h-16 flex-shrink-0 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 sm:px-8 bg-white dark:bg-slate-900 z-10">
                 <div className="flex items-center gap-4 transition-all">
@@ -150,10 +158,10 @@ export default function SubmissionQueuePage() {
                                                             <div className="relative w-10 h-10 flex-shrink-0">
                                                                 {snatch.user.avatar ? (
                                                                     <Image
-                                                                        alt={snatch.user.name}
+                                                                        alt={snatch.user.name as string}
                                                                         fill
                                                                         className="rounded-full object-cover border border-slate-200 dark:border-slate-700"
-                                                                        src={snatch.user.avatar}
+                                                                        src={snatch.user.avatar as string}
                                                                     />
                                                                 ) : (
                                                                     <div className="w-full h-full rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-600">

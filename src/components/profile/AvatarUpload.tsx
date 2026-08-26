@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react'
 import { uploadProfileImage } from '@/actions/profile'
 import { toast } from 'sonner'
-import Image from 'next/image'
+
 
 interface AvatarUploadProps {
     currentAvatar?: string | null
@@ -41,7 +41,7 @@ export function AvatarUpload({ currentAvatar, name, size = 128, editable = false
             } else {
                 toast.error(result.error as string)
             }
-        } catch (error) {
+        } catch {
             toast.error('Upload failed')
         } finally {
             setIsUploading(false)

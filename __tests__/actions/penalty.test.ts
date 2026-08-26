@@ -29,7 +29,8 @@ describe('Penalty Enforcement', () => {
             data: {
                 name: 'Test Penalty User',
                 email: 'penalty@example.com',
-                handle: 'penaltyuser'
+                handle: 'penaltyuser',
+                emailVerified: new Date()
             }
         })
 
@@ -38,7 +39,8 @@ describe('Penalty Enforcement', () => {
                 name: 'Admin',
                 email: 'admin@example.com',
                 handle: 'admin',
-                role: 'Admin'
+                role: 'Admin',
+                emailVerified: new Date()
             }
         })
 
@@ -55,14 +57,13 @@ describe('Penalty Enforcement', () => {
         })
 
         const authMod = await import('@/auth')
-        // @ts-ignore
-        authMod.auth.mockResolvedValue({
+        vi.mocked(authMod.auth as import('vitest').Mock).mockResolvedValue({
             user: { id: user.id, email: user.email, name: user.name, role: user.role }
         })
     })
 
     afterEach(() => {
-        vi.restoreAllMocks()
+        vi.clearAllMocks()
     })
 
     it('prevents joining a quest if user has an active penalty', async () => {
@@ -110,8 +111,7 @@ describe('Penalty Enforcement', () => {
         if (!process.env.DATABASE_URL_TEST) return
 
         const authMod = await import('@/auth')
-        // @ts-ignore
-        authMod.auth.mockResolvedValue({
+        vi.mocked(authMod.auth as import('vitest').Mock).mockResolvedValue({
             user: { id: admin.id, email: admin.email, name: admin.name, role: admin.role }
         })
 

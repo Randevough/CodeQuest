@@ -14,6 +14,7 @@ datasource db {
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
+  emailVerified DateTime?
   name      String?
   avatar    String?
   image     String?
@@ -167,4 +168,12 @@ model Notification {
 
   @@index([userId, read])
   @@index([userId, createdAt])
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
 }

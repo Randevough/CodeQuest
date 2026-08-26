@@ -1,9 +1,13 @@
-import NextAuth from "next-auth"
+import NextAuth, { CredentialsSignin } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import { prisma } from "@/lib/db"
 import bcrypt from "bcryptjs"
 import { z } from "zod"
 import { authConfig } from "./auth.config"
+
+class UnverifiedEmailError extends CredentialsSignin {
+    code = "unverified_email"
+}
 
 async function getUser(email: string) {
     try {
@@ -36,6 +40,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     if (!user) return null;
 
                     if (!user.password) return null; // Passwords are now required for credentials login
+
+                    if (!user.emailVerified) {
+                        throw new UnverifiedEmailError();
+                    }
 
                     const passwordsMatch = await bcrypt.compare(password, user.password);
 

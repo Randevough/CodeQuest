@@ -13,8 +13,19 @@ describe('checkBadges', () => {
             data: {
                 name: 'Test User',
                 email: 'test@example.com',
-                handle: 'testuser'
+                handle: 'testuser',
+                emailVerified: new Date()
             }
+        })
+
+        // Seed badges
+        await testPrisma.badge.createMany({
+            data: [
+                { name: 'Centurion', slug: 'point-collector', description: '100 points', category: 'POINTS', imageUrl: '' },
+                { name: 'First Blood', slug: 'novice', description: '1 quest', category: 'PROGRESSION', imageUrl: '' },
+                { name: 'Hardened Veteran', slug: 'conqueror', description: 'Advanced quest', category: 'DIFFICULTY', imageUrl: '' }
+            ],
+            skipDuplicates: true
         })
     })
 
@@ -56,7 +67,7 @@ describe('checkBadges', () => {
                 title: 'Hard Quest',
                 description: 'Hard',
                 points: 100,
-                difficulty: 'Hard',
+                difficulty: 'Advanced',
                 category: 'Frontend',
                 maxSnatchers: 1
             }

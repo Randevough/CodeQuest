@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+
 import Link from 'next/link'
 import Image from 'next/image'
 import { dropQuest } from '@/actions/quest'
@@ -22,7 +22,7 @@ export function QuestCard({ quest, isSnatched }: { quest: Quest, isSnatched: boo
     const [loading, setLoading] = useState(false)
     const [msg, setMsg] = useState('')
     const [showDropConfirm, setShowDropConfirm] = useState(false)
-    const router = useRouter()
+
 
     const handleDrop = async () => {
         setLoading(true)
@@ -35,7 +35,7 @@ export function QuestCard({ quest, isSnatched }: { quest: Quest, isSnatched: boo
             } else {
                 setMsg(result.error as string)
             }
-        } catch (e) {
+        } catch {
             setMsg('Action failed')
         } finally {
             setLoading(false)

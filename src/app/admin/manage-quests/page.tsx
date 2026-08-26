@@ -21,7 +21,7 @@ export default async function ManageQuestsPage({ searchParams }: ManageQuestsPag
     const query = params.q || '';
 
     // TODO: Update getQuests to support sorting by updatedAt desc
-    const { success, data: quests, pagination } = await getQuests({
+    const { data: quests, pagination } = await getQuests({
         page,
         limit: 10,
         search: query,

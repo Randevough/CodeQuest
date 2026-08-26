@@ -13,7 +13,7 @@ export default async function ProfilePage() {
     const user = await prisma.user.findUnique({
         where: { email: session.user.email },
         include: {
-            // @ts-ignore: Prisma client field
+
             badges: {
                 include: { badge: true }
             }
@@ -39,7 +39,6 @@ export default async function ProfilePage() {
 
     const activeSnatches = snatches.filter(s => ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED'].includes(s.status))
     const portfolioSnatches = snatches.filter(s => ['ACCEPTED', 'ARCHIVED'].includes(s.status))
-    const activeQuests = activeSnatches.map(s => s.quest)
 
     // Calculate completed count from local filter
     const completedQuestsCount = portfolioSnatches.length
@@ -53,7 +52,7 @@ export default async function ProfilePage() {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                         <ProfileSidebar
                             user={{ ...user, completedQuests: completedQuestsCount }}
-                            // @ts-ignore: Prisma client field
+
                             badges={user.badges.map((ub: Prisma.UserBadgeGetPayload<{ include: { badge: true } }>) => ({ ...ub.badge, isFeatured: ub.isFeatured }))}
                         />
                         <ProfileTabs
@@ -61,7 +60,7 @@ export default async function ProfilePage() {
                             portfolioSnatches={portfolioSnatches}
                             user={user}
                             isOwner={true}
-                            // @ts-ignore: Prisma client field
+
                             badges={user.badges.map((ub: Prisma.UserBadgeGetPayload<{ include: { badge: true } }>) => ub.badge)}
                             allBadges={allBadges}
                         />

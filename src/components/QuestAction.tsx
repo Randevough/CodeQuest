@@ -39,7 +39,7 @@ export function QuestAction({
             } else {
                 toast.error(result.error as string)
             }
-        } catch (e) {
+        } catch {
             toast.error('Action failed')
         } finally {
             setLoading(false)
@@ -62,9 +62,9 @@ export function QuestAction({
                 toast.success('Quest Submitted! Retrieval Drones dispatched.')
                 router.refresh()
             } else {
-                toast.error((result as any).error)
+                toast.error((result as { error?: string }).error || 'Error')
             }
-        } catch (e) {
+        } catch {
             toast.error('Submission failed')
         } finally {
             setLoading(false)

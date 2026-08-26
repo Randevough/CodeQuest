@@ -144,6 +144,9 @@ export async function reviewSubmission(snatchId: string, status: 'ACCEPTED' | 'R
             })
         }
 
+        let pointDelta = 0;
+        const isReReview = ['ACCEPTED', 'REJECTED'].includes(originalSnatch.status);
+
         await prisma.$transaction(async (tx) => {
             const snatchIds = targetSnatches.map(s => s.id)
             await tx.snatch.updateMany({
@@ -156,12 +159,24 @@ export async function reviewSubmission(snatchId: string, status: 'ACCEPTED' | 'R
             })
 
             if (status === 'ACCEPTED' && originalSnatch.status !== 'ACCEPTED') {
+                pointDelta = originalSnatch.quest.points;
                 for (const s of targetSnatches) {
                     await tx.user.update({
                         where: { id: s.userId },
                         data: {
-                            points: { increment: s.quest.points },
+                            points: { increment: pointDelta },
                             completedQuests: { increment: 1 }
+                        }
+                    })
+                }
+            } else if (status !== 'ACCEPTED' && originalSnatch.status === 'ACCEPTED') {
+                pointDelta = -originalSnatch.quest.points;
+                for (const s of targetSnatches) {
+                    await tx.user.update({
+                        where: { id: s.userId },
+                        data: {
+                            points: { decrement: originalSnatch.quest.points },
+                            completedQuests: { decrement: 1 }
                         }
                     })
                 }
@@ -222,7 +237,7 @@ export async function reviewSubmission(snatchId: string, status: 'ACCEPTED' | 'R
         }
 
         revalidatePath('/admin', 'layout')
-        return { success: true }
+        return { success: true, pointDelta, isReReview }
     } catch (error) {
         console.error("Failed to review submission:", error)
         return { success: false, error: error instanceof Error ? error.message : "Failed to review submission" }

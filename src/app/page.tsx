@@ -2,7 +2,7 @@ import { prisma } from '@/lib/db'
 import { QuestCard } from '@/components/QuestCard'
 import { QuestSearch } from '@/components/QuestSearch'
 import { getUserActiveSnatches, getAllUserQuestIds } from '@/actions/quest'
-import Link from 'next/link'
+
 import { LoginToast } from '@/components/LoginToast'
 import { Header } from '@/components/Header'
 import { ActivityFeed } from '@/components/ActivityFeed'
@@ -18,11 +18,6 @@ type QuestWithCount = Prisma.QuestGetPayload<{
 }>
 export const dynamic = 'force-dynamic'
 
-// Helper to get active user quest IDs (exclude these from board)
-async function getMyActiveQuestIds() {
-  const activeIds = await getUserActiveSnatches();
-  return activeIds;
-}
 
 // Updated getQuests using proper Database filtering for "Availability"
 async function getQuests(searchParams: { q?: string, difficulty?: string, sort?: string, page?: string }, excludedIds: string[]) {
