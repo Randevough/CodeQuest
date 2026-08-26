@@ -13,7 +13,7 @@ export async function WorkspaceHeader() {
             </div>
             <div className={`hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-mono font-semibold tracking-widest ${isFull
                 ? 'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-800'
-                : 'bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700'
+                : 'bg-white dark:bg-surface-dark text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700'
                 }`}>
                 <span className="material-symbols-outlined text-[15px]">list_alt</span>
                 <span>SLOTS {activeCount} / 3</span>

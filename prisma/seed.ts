@@ -14,6 +14,7 @@ async function main() {
         update: {
             role: 'Admin', // Ensure role is verified if user exists
             points: 450,   // Reset points to spec
+            password,      // Ensure password is reset to admin123
         },
         create: {
             email,

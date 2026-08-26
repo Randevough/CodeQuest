@@ -133,8 +133,9 @@ export function QuestCard({ quest, isSnatched }: { quest: Quest, isSnatched: boo
                         className={`text-xs font-semibold px-3 py-1.5 rounded transition-all
                             ${isFull
                                 ? 'bg-slate-100 text-slate-400 cursor-not-allowed dark:bg-slate-700 dark:text-slate-500'
-                                : 'text-orange-600 border border-orange-500/20 hover:bg-orange-500 hover:text-white hover:border-orange-500'
+                                : 'text-amber-500 border border-amber-500/50 hover:bg-amber-600 hover:text-white hover:border-amber-600'
                             }
+                           
                         `}
                     >
                         {isFull ? 'Full' : 'View Details'}

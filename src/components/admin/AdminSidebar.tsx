@@ -27,9 +27,9 @@ export function AdminSidebar({ memberCount = 0, submissionCount = 0, user }: Adm
         const isActive = pathname === path || (path !== '/admin' && pathname?.startsWith(path));
 
         if (isActive) {
-            return "flex items-center gap-3 px-3 py-2 rounded-lg bg-orange-50/50 text-orange-600 relative transition-all group font-medium";
+            return "flex items-center gap-3 px-3 py-2 rounded-lg bg-orange-50/50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 relative transition-all group font-medium";
         }
-        return "flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group";
+        return "flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors group";
     };
 
     // Helper to get initials
@@ -77,15 +77,15 @@ export function AdminSidebar({ memberCount = 0, submissionCount = 0, user }: Adm
                         </div>
                         {/* Reordered Menu: Explore, Leaderboard, Workspace */}
                         <Link className={getLinkClass('/')} href="/" onClick={closeMobileSidebar}>
-                            <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname === '/' ? 'text-orange-600' : 'text-slate-400 group-hover:text-primary'}`}>explore</span>
+                            <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname === '/' ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400 group-hover:text-primary dark:group-hover:text-white'}`}>explore</span>
                             <span className="text-sm font-medium">Explore Quests</span>
                         </Link>
                         <Link className={getLinkClass('/leaderboard')} href="/leaderboard" onClick={closeMobileSidebar}>
-                            <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname?.startsWith('/leaderboard') ? 'text-orange-600' : 'text-slate-400 group-hover:text-primary'}`}>emoji_events</span>
+                            <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname?.startsWith('/leaderboard') ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400 group-hover:text-primary dark:group-hover:text-white'}`}>emoji_events</span>
                             <span className="text-sm font-medium">Leaderboard</span>
                         </Link>
                         <Link className={getLinkClass('/workspace')} href="/workspace" onClick={closeMobileSidebar}>
-                            <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname?.startsWith('/workspace') ? 'text-orange-600' : 'text-slate-400 group-hover:text-primary'}`}>code</span>
+                            <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname?.startsWith('/workspace') ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400 group-hover:text-primary dark:group-hover:text-white'}`}>code</span>
                             <span className="text-sm font-medium">Workspace</span>
                         </Link>
                     </nav>
@@ -94,25 +94,25 @@ export function AdminSidebar({ memberCount = 0, submissionCount = 0, user }: Adm
                             Admin Command Center
                         </div>
                         <Link className={getLinkClass('/admin')} href="/admin" onClick={closeMobileSidebar}>
-                            <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname === '/admin' ? 'text-orange-600' : 'text-slate-400 group-hover:text-primary'}`}>dashboard</span>
+                            <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname === '/admin' ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400 group-hover:text-primary dark:group-hover:text-white'}`}>dashboard</span>
                             <span className="text-sm font-medium">Overview</span>
                         </Link>
                         <Link className={getLinkClass('/admin/manage-quests')} href="/admin/manage-quests" onClick={closeMobileSidebar}>
-                            <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname?.startsWith('/admin/manage-quests') ? 'text-orange-600' : 'text-slate-400 group-hover:text-primary'}`}>assignment</span>
+                            <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname?.startsWith('/admin/manage-quests') ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400 group-hover:text-primary dark:group-hover:text-white'}`}>assignment</span>
                             <span className="text-sm font-medium">Manage Quests</span>
                         </Link>
                         <Link className={getLinkClass('/admin/submissions')} href="/admin/submissions" onClick={closeMobileSidebar}>
-                            <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname?.startsWith('/admin/submissions') ? 'text-orange-600' : 'text-slate-400 group-hover:text-primary'}`}>inbox</span>
+                            <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname?.startsWith('/admin/submissions') ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400 group-hover:text-primary dark:group-hover:text-white'}`}>inbox</span>
                             <span className="text-sm font-medium whitespace-nowrap">Submission Queue</span>
                             {submissionCount > 0 && (
                                 <span className="ml-auto bg-orange-100 dark:bg-orange-800 text-orange-600 dark:text-orange-300 text-xs font-bold px-2 py-0.5 rounded-full">{submissionCount}</span>
                             )}
                         </Link>
                         <Link className={getLinkClass('/admin/members')} href="/admin/members" onClick={closeMobileSidebar}>
-                            <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname?.startsWith('/admin/members') ? 'text-orange-600' : 'text-slate-400 group-hover:text-primary'}`}>group</span>
+                            <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname?.startsWith('/admin/members') ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400 group-hover:text-primary dark:group-hover:text-white'}`}>group</span>
                             <span className="text-sm font-medium whitespace-nowrap">Member Directory</span>
                             {memberCount > 0 && (
-                                <span className="ml-auto bg-orange-50 text-orange-600 text-xs font-bold px-2 py-0.5 rounded-full">{memberCount}</span>
+                                <span className="ml-auto bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 text-xs font-bold px-2 py-0.5 rounded-full">{memberCount}</span>
                             )}
                         </Link>
                     </nav>

@@ -52,7 +52,7 @@ export default async function MemberDirectoryPage({
 
     return (
         <div className="flex-1 flex flex-col h-full overflow-hidden relative">
-            <header className="h-16 flex-shrink-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 sm:px-8 z-10 transition-all">
+            <header className="h-16 flex-shrink-0 bg-white dark:bg-surface-dark border-b border-slate-200 dark:border-border-dark flex items-center justify-between px-4 sm:px-8 z-10 transition-all">
                 <div className="flex items-center gap-4 transition-all">
                     <MobileSidebarTrigger className="md:hidden" />
                     <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 font-['Plus_Jakarta_Sans']">Member Directory</h1>
@@ -61,7 +61,7 @@ export default async function MemberDirectoryPage({
                     {/* Invite Member button removed as per request */}
                 </div>
             </header>
-            <div className="flex-1 overflow-y-auto p-4 sm:p-8 bg-slate-50 dark:bg-slate-900 font-['Plus_Jakarta_Sans']">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-8 bg-slate-50 dark:bg-[#0a0a0a] font-['Plus_Jakarta_Sans']">
                 <div className="mx-auto max-w-6xl flex flex-col gap-6">
                     {/* Search and Filters */}
                     <div className="flex flex-col sm:flex-row justify-between items-end sm:items-center gap-4">
@@ -73,7 +73,7 @@ export default async function MemberDirectoryPage({
                                 <input
                                     name="q"
                                     defaultValue={query}
-                                    className="w-full h-10 pl-10 pr-4 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 hover:border-orange-500 placeholder:text-slate-400 transition-all shadow-sm"
+                                    className="w-full h-10 pl-10 pr-4 rounded bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 hover:border-orange-500 placeholder:text-slate-400 transition-all shadow-sm"
                                     placeholder="Search members..."
                                     type="text"
                                 />
@@ -82,11 +82,11 @@ export default async function MemberDirectoryPage({
                     </div>
 
                     {/* Table */}
-                    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm overflow-hidden">
+                    <div className="bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark rounded-lg shadow-sm overflow-hidden">
                         <div className="overflow-x-auto">
                             <table className="w-full min-w-[900px] text-left border-collapse">
                                 <thead>
-                                    <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/30">
+                                    <tr className="border-b border-slate-200 dark:border-border-dark bg-slate-50/50 dark:bg-white/5">
                                         <th className="py-3 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-[35%] gap-2">Name</th>
                                         <th className="py-3 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-[10%]">Points</th>
                                         <th className="py-3 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-[10%]">Quests</th>
@@ -96,17 +96,17 @@ export default async function MemberDirectoryPage({
                                         <th className="py-3 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider text-right w-[5%]">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+                                <tbody className="divide-y divide-slate-200 dark:divide-border-dark">
                                     {users.map((user) => {
                                         const hasPenalty = user.penalties.length > 0;
                                         const status = hasPenalty ? 'On Cooldown' : 'Active';
 
                                         return (
-                                            <tr key={user.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                                            <tr key={user.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
                                                 <td className="py-4 px-6">
                                                     <Link href={`/profile/${user.id}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
                                                         {user.image ? (
-                                                            <div className="h-9 w-9 relative rounded-full overflow-hidden ring-2 ring-white dark:ring-slate-800 shrink-0">
+                                                            <div className="h-9 w-9 relative rounded-full overflow-hidden ring-2 ring-white dark:ring-surface-dark shrink-0">
                                                                 <Image
                                                                     src={user.image}
                                                                     alt={user.name || 'User'}
@@ -144,7 +144,7 @@ export default async function MemberDirectoryPage({
                                                 <td className="py-4 px-6">
                                                     <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold ${user.role === 'Admin'
                                                         ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
-                                                        : 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+                                                        : 'bg-orange-50 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400'
                                                         }`}>
                                                         {user.role || 'Member'}
                                                     </span>
@@ -178,7 +178,7 @@ export default async function MemberDirectoryPage({
                             </table>
                         </div>
                         {/* Pagination Footer */}
-                        <div className="border-t border-slate-200 dark:border-slate-700 px-6 py-4 flex flex-col sm:flex-row items-center justify-between bg-slate-50/50 dark:bg-slate-800 gap-4">
+                        <div className="border-t border-slate-200 dark:border-border-dark px-6 py-4 flex flex-col sm:flex-row items-center justify-between bg-slate-50/50 dark:bg-white/5 gap-4">
                             <p className="text-sm text-slate-500">Showing <span className="font-bold text-slate-900 dark:text-slate-100">{total === 0 ? 0 : skip + 1}</span> to <span className="font-bold text-slate-900 dark:text-slate-100">{Math.min(skip + limit, total)}</span> of <span className="font-bold text-slate-900 dark:text-slate-100">{total}</span> results</p>
                             <div className="mt-0">
                                 <Pagination totalPages={totalPages} />

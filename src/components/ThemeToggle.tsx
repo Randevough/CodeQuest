@@ -15,7 +15,6 @@ export function ThemeToggle() {
         >
             <span
                 className="material-symbols-outlined text-[20px] transition-transform duration-300"
-                style={{ transform: isDark ? 'rotate(0deg)' : 'rotate(180deg)' }}
             >
                 {isDark ? 'light_mode' : 'dark_mode'}
             </span>

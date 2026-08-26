@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { SubmissionReviewModal } from '@/components/admin/submissions/SubmissionReviewModal';
-import { getSubmissions } from '@/actions/submission';
+import { getSubmissions, seedSubmissions } from '@/actions/submission';
 import { Pagination } from '@/components/Pagination';
 import { MobileSidebarTrigger } from '@/components/admin/MobileSidebarTrigger';
 
@@ -11,16 +11,8 @@ export default function SubmissionQueuePage() {
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
     const [selectedSnatchId, setSelectedSnatchId] = useState<string | null>(null);
 
-    type Submission = {
-        id: string;
-        status: string;
-        updatedAt: Date | string;
-        submissionUrl?: string | null;
-        user: { name: string | null; email: string; avatar: string | null; };
-        quest: { id: string; title: string; };
-        squad?: { id: string; name: string | null; } | null;
-    };
-    const [submissions, setSubmissions] = useState<Submission[]>([]);
+    // Data State
+    const [submissions, setSubmissions] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0 });
 
@@ -70,6 +62,10 @@ export default function SubmissionQueuePage() {
         fetchData(); // Refresh list after review
     };
 
+    const handleSeedData = async () => {
+        await seedSubmissions();
+        fetchData();
+    };
 
     const handlePageChange = (page: number) => {
         setPagination(prev => ({ ...prev, page }));
@@ -78,17 +74,20 @@ export default function SubmissionQueuePage() {
     const selectedSnatch = submissions.find(s => s.id === selectedSnatchId);
 
     return (
-        <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900 relative font-['Plus_Jakarta_Sans']">
+        <div className="flex flex-col h-full bg-slate-50 dark:bg-[#0a0a0a] relative font-['Plus_Jakarta_Sans']">
             <SubmissionReviewModal
                 isOpen={isReviewModalOpen}
                 onClose={handleCloseReview}
-                snatch={selectedSnatch as unknown as import('@prisma/client').Prisma.SnatchGetPayload<{ include: { user: true, quest: true, squad: { include: { snatches: { include: { user: true } } } } } }>}
+                snatch={selectedSnatch}
             />
-            <header className="h-16 flex-shrink-0 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 sm:px-8 bg-white dark:bg-slate-900 z-10">
+            <header className="h-16 flex-shrink-0 border-b border-slate-200 dark:border-border-dark flex items-center justify-between px-4 sm:px-8 bg-white dark:bg-surface-dark z-10">
                 <div className="flex items-center gap-4 transition-all">
                     <MobileSidebarTrigger className="md:hidden" />
                     <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Submission Queue</h1>
                 </div>
+                <button onClick={handleSeedData} className="text-xs text-orange-500 hover:text-orange-600 underline">
+                    Seed Data
+                </button>
             </header>
 
             <div className="flex-1 overflow-y-auto p-4 sm:p-8">
@@ -100,14 +99,14 @@ export default function SubmissionQueuePage() {
                                 <span className="material-symbols-outlined text-[20px]">search</span>
                             </span>
                             <input
-                                className="w-full h-10 pl-10 pr-4 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 hover:border-orange-500 placeholder:text-slate-400 transition-all shadow-sm"
+                                className="w-full h-10 pl-10 pr-4 rounded bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark text-sm focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 hover:border-orange-500 placeholder:text-slate-400 transition-all shadow-sm"
                                 placeholder="Search student or quest..."
                                 type="text"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
                         </div>
-                        <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg">
+                        <div className="flex bg-slate-100 dark:bg-white/10 p-1 rounded-lg">
                             {['All', 'Pending', 'Revision', 'Accepted'].map((status) => (
                                 <button
                                     key={status}
@@ -127,11 +126,11 @@ export default function SubmissionQueuePage() {
                     </div>
 
                     {/* Table */}
-                    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm overflow-hidden">
+                    <div className="bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark rounded-lg shadow-sm overflow-hidden">
                         <div className="overflow-x-auto">
                             <table className="w-full min-w-[1000px] text-left border-collapse">
                                 <thead>
-                                    <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/30">
+                                    <tr className="border-b border-slate-200 dark:border-border-dark bg-slate-50/50 dark:bg-white/5">
                                         <th className="py-3 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-[30%]">SUBMITTER</th>
                                         <th className="py-3 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-[20%]">Quest</th>
                                         <th className="py-3 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-[15%]">Status</th>
@@ -140,7 +139,7 @@ export default function SubmissionQueuePage() {
                                         <th className="py-3 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-[15%] text-right">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+                                <tbody className="divide-y divide-slate-200 dark:divide-border-dark">
                                     {loading ? (
                                         <tr>
                                             <td colSpan={6} className="py-8 text-center text-slate-500">Loading submissions...</td>
@@ -151,20 +150,20 @@ export default function SubmissionQueuePage() {
                                         </tr>
                                     ) : (
                                         submissions.map((snatch) => (
-                                            <tr key={snatch.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                                            <tr key={snatch.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
                                                 <td className="py-4 px-6">
                                                     <div className="flex items-center gap-4">
                                                         <div className="flex items-center gap-3">
                                                             <div className="relative w-10 h-10 flex-shrink-0">
                                                                 {snatch.user.avatar ? (
                                                                     <Image
-                                                                        alt={snatch.user.name as string}
+                                                                        alt={snatch.user.name}
                                                                         fill
-                                                                        className="rounded-full object-cover border border-slate-200 dark:border-slate-700"
-                                                                        src={snatch.user.avatar as string}
+                                                                        className="rounded-full object-cover border border-slate-200 dark:border-border-dark"
+                                                                        src={snatch.user.avatar}
                                                                     />
                                                                 ) : (
-                                                                    <div className="w-full h-full rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-600">
+                                                                    <div className="w-full h-full rounded-full bg-slate-200 dark:bg-white/10 flex items-center justify-center text-xs font-bold text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-border-dark">
                                                                         {snatch.user.name?.charAt(0) || '?'}
                                                                     </div>
                                                                 )}
@@ -216,7 +215,7 @@ export default function SubmissionQueuePage() {
                         </div>
 
                         {/* Pagination Footer */}
-                        <div className="border-t border-slate-200 dark:border-slate-700 px-6 py-4 flex flex-col sm:flex-row items-center justify-between bg-slate-50/50 dark:bg-slate-800 gap-4">
+                        <div className="border-t border-slate-200 dark:border-border-dark px-6 py-4 flex flex-col sm:flex-row items-center justify-between bg-slate-50/50 dark:bg-white/5 gap-4">
                             <p className="text-sm text-slate-500 dark:text-slate-400">
                                 Showing <span className="font-bold text-slate-900 dark:text-slate-100">{pagination.total === 0 ? 0 : (pagination.page - 1) * 10 + 1}</span> to <span className="font-bold text-slate-900 dark:text-slate-100">{Math.min(pagination.page * 10, pagination.total)}</span> of <span className="font-bold text-slate-900 dark:text-slate-100">{pagination.total}</span> results
                             </p>
@@ -259,7 +258,7 @@ function StatusBadge({ status }: { status: string }) {
         );
     } else {
         return (
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-50 dark:bg-white/5 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-border-dark">
                 <span className="h-1.5 w-1.5 rounded-full bg-slate-400"></span>
                 <span className="text-xs font-medium">Pending</span>
             </div>

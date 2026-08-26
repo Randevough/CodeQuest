@@ -2,22 +2,20 @@ import { prisma } from '@/lib/db'
 import { QuestCard } from '@/components/QuestCard'
 import { QuestSearch } from '@/components/QuestSearch'
 import { getUserActiveSnatches, getAllUserQuestIds } from '@/actions/quest'
-
+import Link from 'next/link'
 import { LoginToast } from '@/components/LoginToast'
 import { Header } from '@/components/Header'
-import { ActivityFeed } from '@/components/ActivityFeed'
-import { Pagination } from '@/components/Pagination'
-import { Prisma } from '@prisma/client'
 
-type QuestWithCount = Prisma.QuestGetPayload<{
-  include: {
-    _count: {
-      select: { snatches: true }
-    }
-  }
-}>
+import { Pagination } from '@/components/Pagination'
+
+
 export const dynamic = 'force-dynamic'
 
+// Helper to get active user quest IDs (exclude these from board)
+async function getMyActiveQuestIds() {
+  const activeIds = await getUserActiveSnatches();
+  return activeIds;
+}
 
 // Updated getQuests using proper Database filtering for "Availability"
 async function getQuests(searchParams: { q?: string, difficulty?: string, sort?: string, page?: string }, excludedIds: string[]) {
@@ -59,7 +57,7 @@ async function getQuests(searchParams: { q?: string, difficulty?: string, sort?:
   whereClause = Prisma.sql`${whereClause} AND "status" = 'Active' AND (
     SELECT COUNT(*) FROM "Snatch" 
     WHERE "Snatch"."questId" = "Quest"."id" 
-    AND "Snatch"."status" IN ('ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'ACCEPTED', 'ARCHIVED')
+    AND "Snatch"."status" IN ('ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED', 'ARCHIVED')
   ) < "maxSnatchers"`
 
   // Sorting
@@ -96,16 +94,16 @@ async function getQuests(searchParams: { q?: string, difficulty?: string, sort?:
     },
     include: {
       _count: {
-        select: { snatches: { where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'ACCEPTED'] } } } }
+        select: { snatches: { where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED'] } } } }
       }
     }
   })
 
   // Re-sort results in JS to match ID order (since 'IN' query might scramble order)
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const questsMap = new Map(quests.map(q => [q.id, q]))
   const sortedQuests = validIds
-
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .map(id => questsMap.get(id))
     .filter(q => q !== undefined)
 
@@ -122,7 +120,7 @@ async function getMyActiveQuests() {
       id: { in: activeIds }
     },
     include: {
-      _count: { select: { snatches: { where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'ACCEPTED'] } } } } }
+      _count: { select: { snatches: { where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED'] } } } } }
     }
   });
 }
@@ -139,7 +137,7 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
 
   // 1. Get my active quests first (needed for exclusion)
   const myActiveQuests = await getMyActiveQuests();
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 
   // 2. Get ALL interacted IDs for exclusion from board (Active + Completed + Archived)
   const allExcludedIds = await getAllUserQuestIds();
@@ -192,7 +190,7 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
                     </span>
                   </div>
                   <div className="flex overflow-x-auto styled-scrollbar items-stretch -mx-6 px-6 pb-3 gap-4">
-                    {myActiveQuests.map((quest: QuestWithCount) => (
+                    {myActiveQuests.map((quest: any) => (
                       <div key={quest.id} className="min-w-[320px] md:min-w-[500px] max-w-[640px] flex-none">
                         <QuestCard quest={quest} isSnatched={true} />
                       </div>
@@ -203,41 +201,35 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
             </section>
           )}
 
-          {/* ── QUEST BOARD + ACTIVITY FEED ── */}
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 items-start">
-            <section>
-              <div className="flex flex-col items-center text-center gap-2 mb-8">
-                <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Quest Board</h1>
-                <p className="text-slate-500 dark:text-slate-400">Solve problems, build cool things, and earn points to climb the ranks. <br /> Your next challenge starts here!</p>
-              </div>
+          {/* ── QUEST BOARD ── */}
+          <section>
+            <div className="flex flex-col items-center text-center gap-2 mb-8">
+              <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Quest Board</h1>
+              <p className="text-slate-500 dark:text-slate-400">Solve problems, build cool things, and earn points to climb the ranks. <br /> Your next challenge starts here!</p>
+            </div>
 
-              <div className="mb-8">
-                <QuestSearch />
-              </div>
+            <div className="mb-8">
+              <QuestSearch />
+            </div>
 
-              {availableQuests.length === 0 ? (
-                <div className="text-center py-20 border border-dashed border-slate-200 dark:border-slate-700 rounded-3xl bg-white/40 dark:bg-white/5 backdrop-blur-sm">
-                  <p className="text-slate-500">No quests found.</p>
+            {availableQuests.length === 0 ? (
+              <div className="text-center py-20 border border-dashed border-slate-200 dark:border-slate-700 rounded-3xl bg-white/40 dark:bg-white/5 backdrop-blur-sm">
+                <p className="text-slate-500">No quests found.</p>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                  {availableQuests.map((quest: any) => (
+                    <QuestCard key={quest.id} quest={quest} isSnatched={false} />
+                  ))}
                 </div>
-              ) : (
-                <>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    { }
-                    {availableQuests.map((quest: QuestWithCount) => (
-                      <QuestCard key={quest.id} quest={quest} isSnatched={false} />
-                    ))}
-                  </div>
-                  <div className="mt-6">
-                    <Pagination totalPages={totalPages} />
-                  </div>
-                </>
-              )}
-            </section>
-
-            {/* ── ACTIVITY FEED SIDEBAR ── */}
-            <ActivityFeed />
-          </div>
-
+                <div className="mt-6">
+                  <Pagination totalPages={totalPages} />
+                </div>
+              </>
+            )}
+          </section>
 
         </main>
       </div>
