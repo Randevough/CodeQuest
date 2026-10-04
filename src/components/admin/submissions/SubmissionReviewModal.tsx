@@ -1,30 +1,12 @@
 import { useState } from 'react';
 import Image from 'next/image';
-import { reviewSubmission } from '@/actions/submission';
+import { reviewSubmission, type SubmissionItem } from '@/actions/submission';
 import { toast } from 'sonner';
-
-import { Prisma } from '@prisma/client';
-
-type SnatchWithRelations = Prisma.SnatchGetPayload<{
-    include: {
-        user: true;
-        quest: true;
-        squad: {
-            include: {
-                snatches: {
-                    include: {
-                        user: true;
-                    }
-                }
-            }
-        }
-    }
-}>;
 
 interface SubmissionReviewModalProps {
     isOpen: boolean;
     onClose: () => void;
-    snatch?: SnatchWithRelations;
+    snatch?: SubmissionItem;
 }
 
 export function SubmissionReviewModal({ isOpen, onClose, snatch }: SubmissionReviewModalProps) {

@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { SubmissionReviewModal } from '@/components/admin/submissions/SubmissionReviewModal';
-import { getSubmissions, seedSubmissions } from '@/actions/submission';
+import { getSubmissions, type SubmissionItem } from '@/actions/submission';
 import { Pagination } from '@/components/Pagination';
 import { MobileSidebarTrigger } from '@/components/admin/MobileSidebarTrigger';
 
@@ -12,7 +12,7 @@ export default function SubmissionQueuePage() {
     const [selectedSnatchId, setSelectedSnatchId] = useState<string | null>(null);
 
     // Data State
-    const [submissions, setSubmissions] = useState<any[]>([]);
+    const [submissions, setSubmissions] = useState<SubmissionItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0 });
 
@@ -62,11 +62,6 @@ export default function SubmissionQueuePage() {
         fetchData(); // Refresh list after review
     };
 
-    const handleSeedData = async () => {
-        await seedSubmissions();
-        fetchData();
-    };
-
     const handlePageChange = (page: number) => {
         setPagination(prev => ({ ...prev, page }));
     };
@@ -85,9 +80,6 @@ export default function SubmissionQueuePage() {
                     <MobileSidebarTrigger className="md:hidden" />
                     <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Submission Queue</h1>
                 </div>
-                <button onClick={handleSeedData} className="text-xs text-orange-500 hover:text-orange-600 underline">
-                    Seed Data
-                </button>
             </header>
 
             <div className="flex-1 overflow-y-auto p-4 sm:p-8">
@@ -157,7 +149,7 @@ export default function SubmissionQueuePage() {
                                                             <div className="relative w-10 h-10 flex-shrink-0">
                                                                 {snatch.user.avatar ? (
                                                                     <Image
-                                                                        alt={snatch.user.name}
+                                                                        alt={snatch.user.name || 'User'}
                                                                         fill
                                                                         className="rounded-full object-cover border border-slate-200 dark:border-border-dark"
                                                                         src={snatch.user.avatar}

@@ -123,6 +123,8 @@ export async function getSubmissions({
     }
 }
 
+export type SubmissionItem = NonNullable<Awaited<ReturnType<typeof getSubmissions>>['data']>[number]
+
 export async function reviewSubmission(snatchId: string, status: 'ACCEPTED' | 'REJECTED' | 'REVISION_NEEDED', feedback?: string) {
     try {
         await requireAdmin()
