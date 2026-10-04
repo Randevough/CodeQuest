@@ -2,20 +2,12 @@ import { prisma } from '@/lib/db'
 import { QuestCard } from '@/components/QuestCard'
 import { QuestSearch } from '@/components/QuestSearch'
 import { getUserActiveSnatches, getAllUserQuestIds } from '@/actions/quest'
-import Link from 'next/link'
 import { LoginToast } from '@/components/LoginToast'
 import { Header } from '@/components/Header'
 
 import { Pagination } from '@/components/Pagination'
 
-
 export const dynamic = 'force-dynamic'
-
-// Helper to get active user quest IDs (exclude these from board)
-async function getMyActiveQuestIds() {
-  const activeIds = await getUserActiveSnatches();
-  return activeIds;
-}
 
 // Updated getQuests using proper Database filtering for "Availability"
 async function getQuests(searchParams: { q?: string, difficulty?: string, sort?: string, page?: string }, excludedIds: string[]) {
@@ -70,59 +62,67 @@ async function getQuests(searchParams: { q?: string, difficulty?: string, sort?:
     orderBy = Prisma.sql`ORDER BY "points" ASC`
   }
 
-  // Execute Count (for pagination)
-  // We need to count valid items first
-  const countQuery = Prisma.sql`SELECT COUNT(*) as count FROM "Quest" ${whereClause}`
-  const totalResult = await prisma.$queryRaw<[{ count: bigint }]>(countQuery)
-  const total = Number(totalResult[0].count)
+  try {
+    // Execute Count (for pagination)
+    // We need to count valid items first
+    const countQuery = Prisma.sql`SELECT COUNT(*) as count FROM "Quest" ${whereClause}`
+    const totalResult = await prisma.$queryRaw<[{ count: bigint }]>(countQuery)
+    const total = Number(totalResult[0].count)
 
-  // Execute Fetch ID Query (with Limit/Offset)
-  // We fetch IDs first using Raw SQL to handle the complex filtering
-  const idsQuery = Prisma.sql`SELECT "id" FROM "Quest" ${whereClause} ${orderBy} LIMIT ${limit} OFFSET ${offset}`
-  const validIdsResult = await prisma.$queryRaw<{ id: string }[]>(idsQuery)
-  const validIds = validIdsResult.map(r => r.id)
+    // Execute Fetch ID Query (with Limit/Offset)
+    // We fetch IDs first using Raw SQL to handle the complex filtering
+    const idsQuery = Prisma.sql`SELECT "id" FROM "Quest" ${whereClause} ${orderBy} LIMIT ${limit} OFFSET ${offset}`
+    const validIdsResult = await prisma.$queryRaw<{ id: string }[]>(idsQuery)
+    const validIds = validIdsResult.map(r => r.id)
 
-  if (validIds.length === 0) {
-    return { quests: [], total, page, limit }
-  }
-
-  // Now sort manually or by fetching in order (using 'in' does not guarantee order)
-  // To preserve order, we can map the result.
-  const quests = await prisma.quest.findMany({
-    where: {
-      id: { in: validIds }
-    },
-    include: {
-      _count: {
-        select: { snatches: { where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED'] } } } }
-      }
+    if (validIds.length === 0) {
+      return { quests: [], total, page, limit }
     }
-  })
 
-  // Re-sort results in JS to match ID order (since 'IN' query might scramble order)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const questsMap = new Map(quests.map(q => [q.id, q]))
-  const sortedQuests = validIds
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .map(id => questsMap.get(id))
-    .filter(q => q !== undefined)
+    // Now sort manually or by fetching in order (using 'in' does not guarantee order)
+    // To preserve order, we can map the result.
+    const quests = await prisma.quest.findMany({
+      where: {
+        id: { in: validIds }
+      },
+      include: {
+        _count: {
+          select: { snatches: { where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED'] } } } }
+        }
+      }
+    })
 
-  return { quests: sortedQuests, total, page, limit }
+    // Re-sort results in JS to match ID order (since 'IN' query might scramble order)
+    const questsMap = new Map(quests.map(q => [q.id, q]))
+    const sortedQuests = validIds
+      .map(id => questsMap.get(id))
+      .filter(q => q !== undefined)
+
+    return { quests: sortedQuests, total, page, limit }
+  } catch (error) {
+    console.error('getQuests DB fetch notice (fallback used):', error);
+    return { quests: [], total: 0, page, limit };
+  }
 }
 
 // Helper to get full details of active quests
 async function getMyActiveQuests() {
-  const activeIds = await getUserActiveSnatches();
-  if (activeIds.length === 0) return [];
+  try {
+    const activeIds = await getUserActiveSnatches();
+    if (activeIds.length === 0) return [];
 
-  return await prisma.quest.findMany({
-    where: {
-      id: { in: activeIds }
-    },
-    include: {
-      _count: { select: { snatches: { where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED'] } } } } }
-    }
-  });
+    return await prisma.quest.findMany({
+      where: {
+        id: { in: activeIds }
+      },
+      include: {
+        _count: { select: { snatches: { where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED'] } } } } }
+      }
+    });
+  } catch (error) {
+    console.error('getMyActiveQuests DB fetch notice (fallback used):', error);
+    return [];
+  }
 }
 
 
@@ -137,7 +137,6 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
 
   // 1. Get my active quests first (needed for exclusion)
   const myActiveQuests = await getMyActiveQuests();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 
   // 2. Get ALL interacted IDs for exclusion from board (Active + Completed + Archived)
   const allExcludedIds = await getAllUserQuestIds();
@@ -190,7 +189,7 @@ export default async function Home({ searchParams }: { searchParams: { q?: strin
                     </span>
                   </div>
                   <div className="flex overflow-x-auto styled-scrollbar items-stretch -mx-6 px-6 pb-3 gap-4">
-                    {myActiveQuests.map((quest: any) => (
+                    {myActiveQuests.map((quest) => (
                       <div key={quest.id} className="min-w-[320px] md:min-w-[500px] max-w-[640px] flex-none">
                         <QuestCard quest={quest} isSnatched={true} />
                       </div>

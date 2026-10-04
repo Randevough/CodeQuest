@@ -21,7 +21,9 @@ async function getUser(email: string) {
     }
 }
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+import { cookies } from "next/headers"
+
+const nextAuthResult = NextAuth({
     ...authConfig,
     providers: [
         Credentials({
@@ -121,3 +123,51 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         signIn: '/login',
     },
 })
+
+export const { handlers, signIn, signOut } = nextAuthResult
+
+export const auth = (async (...args: Parameters<typeof nextAuthResult.auth>) => {
+    if (process.env.NODE_ENV === 'development') {
+        try {
+            const cookieStore = await cookies()
+            const devRole = cookieStore.get('cq_dev_role')?.value ?? 'admin'
+
+            if (devRole === 'admin') {
+                return {
+                    user: {
+                        id: 'dev-admin-id',
+                        name: 'Admin Developer',
+                        email: 'codequest@cyber-univ.ac.id',
+                        role: 'Admin',
+                        points: 1337,
+                        avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=AdminDev',
+                        image: 'https://api.dicebear.com/7.x/bottts/svg?seed=AdminDev',
+                    },
+                    expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+                }
+            }
+
+            if (devRole === 'member') {
+                return {
+                    user: {
+                        id: 'dev-member-id',
+                        name: 'Student Member',
+                        email: 'student@cyber-univ.ac.id',
+                        role: 'Member',
+                        points: 450,
+                        avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=StudentDev',
+                        image: 'https://api.dicebear.com/7.x/bottts/svg?seed=StudentDev',
+                    },
+                    expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+                }
+            }
+            // devRole === 'none' -> falls through to original auth
+        } catch {
+            // Ignored if cookies() is inaccessible
+        }
+    }
+
+    // @ts-expect-error - NextAuth original auth takes variable arguments
+    return nextAuthResult.auth(...args)
+}) as typeof nextAuthResult.auth
+

@@ -28,7 +28,8 @@ export async function authenticate(prevState: string | undefined, formData: Form
     } catch (e: unknown) {
         if (e instanceof AuthError) {
             if (e.type === 'CredentialsSignin') {
-                const errCode = (e as any).code || (e as any).cause?.err?.code || (e as any).cause?.err?.message;
+                const errorWithCode = e as AuthError & { code?: string; cause?: { err?: { code?: string; message?: string } } };
+                const errCode = errorWithCode.code || errorWithCode.cause?.err?.code || errorWithCode.cause?.err?.message;
                 if (errCode === 'unverified_email' || errCode === 'UnverifiedEmailError') {
                     return 'Please check your email and verify your account before logging in.';
                 }

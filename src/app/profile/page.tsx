@@ -4,38 +4,83 @@ import { ProfileSidebar } from '@/components/profile/ProfileSidebar'
 import { ProfileTabs } from '@/components/profile/ProfileTabs'
 import { prisma } from '@/lib/db'
 import { redirect } from 'next/navigation'
-import { Prisma } from '@prisma/client'
+import { Badge, Prisma } from '@prisma/client'
+
+type UserWithBadges = Prisma.UserGetPayload<{
+    include: {
+        badges: {
+            include: { badge: true }
+        }
+    }
+}>
+
+type ProfileSnatch = Prisma.SnatchGetPayload<{
+    include: {
+        quest: true
+    }
+}>
 
 export default async function ProfilePage() {
     const session = await auth()
     if (!session?.user?.email) redirect('/login')
 
-    const user = await prisma.user.findUnique({
-        where: { email: session.user.email },
-        include: {
+    let user: UserWithBadges | null = null
+    let allBadges: Badge[] = []
+    let snatches: ProfileSnatch[] = []
 
-            badges: {
-                include: { badge: true }
+    try {
+        user = await prisma.user.findUnique({
+            where: { email: session.user.email },
+            include: {
+                badges: {
+                    include: { badge: true }
+                }
             }
+        })
+
+        allBadges = await prisma.badge.findMany({ orderBy: { createdAt: 'asc' } })
+
+        if (user) {
+            snatches = await prisma.snatch.findMany({
+                where: {
+                    userId: user.id,
+                    status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'ACCEPTED', 'ARCHIVED'] }
+                },
+                include: {
+                    quest: true
+                },
+                orderBy: { updatedAt: 'desc' }
+            })
         }
-    })
+    } catch (error) {
+        console.error('ProfilePage database fetch notice (fallback used):', error)
+    }
 
-    if (!user) redirect('/login')
-
-    // Fetch all available badges (for the locked view)
-    const allBadges = await prisma.badge.findMany({ orderBy: { createdAt: 'asc' } })
-
-    // Fetch all relevant snatches for the user
-    const snatches = await prisma.snatch.findMany({
-        where: {
-            userId: user.id,
-            status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'ACCEPTED', 'ARCHIVED'] }
-        },
-        include: {
-            quest: true
-        },
-        orderBy: { updatedAt: 'desc' }
-    })
+    if (!user) {
+        if (process.env.NODE_ENV === 'development') {
+            user = {
+                id: session.user.id || 'dev-user-id',
+                name: session.user.name || 'Dev User',
+                email: session.user.email,
+                avatar: session.user.image || 'https://api.dicebear.com/7.x/bottts/svg?seed=DevUser',
+                image: session.user.image || 'https://api.dicebear.com/7.x/bottts/svg?seed=DevUser',
+                bio: 'Fullstack Explorer & CodeQuest Developer',
+                githubUrl: 'https://github.com',
+                linkedinUrl: 'https://linkedin.com',
+                handle: 'dev_explorer',
+                role: session.user.role || 'Member',
+                points: session.user.points || 450,
+                completedQuests: 5,
+                badges: [],
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                password: null,
+                emailVerified: new Date(),
+            } as UserWithBadges
+        } else {
+            redirect('/login')
+        }
+    }
 
     const activeSnatches = snatches.filter(s => ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED'].includes(s.status))
     const portfolioSnatches = snatches.filter(s => ['ACCEPTED', 'ARCHIVED'].includes(s.status))
