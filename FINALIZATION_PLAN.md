@@ -1,14 +1,15 @@
 # CodeQuest - Finalization Plan & Production Roadmap
 
 **Branch Checkpoint:** `chore/finalize`  
-**Tanggal Audit & Rencana:** 04 Oktober 2026  
+**Tanggal Rencana:** 04 Oktober 2026  
 **Status Fase 0 (Audit):** ✅ Selesai  
 **Status Fase 1 (Debug & Stabilization):** ✅ Selesai (Build, TypeScript, dan Lint LOLOS 100%)  
-**Status Fase 2 (Analisis Paralel Spesialis):** ✅ Selesai (READ-ONLY)  
+**Status Fase 2 (Analisis Spesialis):** ✅ Selesai & Disetujui  
+**Status Fase 3 (Peningkatan & Persiapan Deploy):** 📋 Rencana Siap Eksekusi (Belum menyentuh kode)  
 
 ---
 
-## 1. Status Project Saat Ini (Hasil Audit & Verifikasi)
+## 1. Status Project Saat Ini (Baseline Stabil)
 
 ### 1.1 Stack & Framework
 - **Framework:** Next.js `16.1.4` (App Router, Turbopack)
@@ -36,28 +37,15 @@
 
 ---
 
-### 1.3 Ringkasan Fitur Aplikasi
-- **Fitur Selesai (Ready):**
-  - **Auth & Onboarding:** Registrasi akun kampus, verifikasi email token, login credential, role switching developer.
-  - **Quest Hub:** Pencarian quest, filter kesulitan (`Beginner`, `Intermediate`, `Advanced`), filter kategori (`Web`, `AI`, `Mobile`), pagination.
-  - **Snatch & Collaboration:** Snatching mandiri dan snatching berkelompok (Squad) dengan guard pembatasan kuota snatching.
-  - **Admin Quest Management:** Pembuatan quest, edit quest, status draft/publish/closed, proteksi penghapusan quest jika terdapat snatcher aktif.
-  - **Gamification & Profile:** Perhitungan poin, sistem badge (Progression, Points, Category, Difficulty), penentuan featured badges, upload avatar.
-  - **Leaderboard:** Peringkat pengguna, filter kategori/periode, paginasi.
-  - **Moderasi & Penalty:** Penalti anggota oleh admin, proteksi otomatis agar anggota berpenalti tidak bisa mengambil quest baru.
-  - **Theming:** Dark/light mode switcher persist via cookie/local storage.
-
----
-
-### 1.4 Hasil Pengujian Terkini (Pipeline Verification)
+### 1.3 Hasil Pengujian Terkini (Pipeline Verification)
 - **`npm run build`**: ✅ **PASSED** (Semua 17 rute selesai dikompilasi dan dioptimasi oleh Turbopack tanpa error).
 - **`npx tsc --noEmit`**: ✅ **PASSED** (0 TypeScript compile errors).
 - **`npm run lint`**: ✅ **PASSED** (0 lint errors; 34 warning minor/formatting non-blocking).
-- **`npm run test` (Vitest)**: ℹ️ Exclude `.kilo/**` dan `.next/**` terpasang; siap untuk test run dengan environment test DB.
+- **`npm run test` (Vitest)**: ℹ️ Exclude `.kilo/**` dan `.next/**` terpasang.
 
 ---
 
-## 2. Daftar Bug yang Teridentifikasi & Status Perbaikan
+## 2. Daftar Bug & Status Perbaikan
 
 | ID | Lokasi | Kategori | Deskripsi | Status | Solusi yang Diterapkan |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -68,193 +56,142 @@
 | **BUG-05** | Multi-file (`src/actions/*`, `src/app/*`) | Lint Blocker | Pemakaian `any` tanpa tipe spesifik dan unused variables (`Link`, `getMyActiveQuestIds`, dll). | ✅ **RESOLVED** | Dihapus unused import/variable dan diganti dengan tipe aman (`User`, `NextRequest`, `Session`, dsb). |
 | **BUG-06** | `vitest.config.ts` & `eslint.config.mjs` | Test/Lint Config | Scanner memindai folder `.kilo` worktree dan memicu duplicate error. | ✅ **RESOLVED** | Ditambahkan ignore rule untuk `.kilo/**` dan `.next/**`. |
 
-*Catatan: Saat ini tidak ada bug yang memblokir build atau compile (0 blocker tersisa).*
-
 ---
 
-## 3. Hasil Analisis Spesialis (Fase 2 - READ-ONLY)
+## 3. Implementation Plan: Fase 3 (Peningkatan & Persiapan Deploy)
 
-### 3.1 Agent 2: Performance & Core Web Vitals (Lighthouse)
+> **PENTING:** Rencana ini belum diaplikasikan ke kode. Semua langkah di bawah baru akan dieksekusi setelah mendapatkan persetujuan spesifik.
 
-#### A. Evaluasi Font Loading & CLS
-- **Kondisi Saat Ini:**
-  [`src/app/layout.tsx`](file:///c:/Users/USER/Desktop/CodeQuest/src/app/layout.tsx) memuat font Inter, Plus Jakarta Sans, dan Material Symbols via tag `<link>` eksternal Google Fonts CDN (`https://fonts.googleapis.com`).
-- **Masalah:**
-  1. Memicu 3 HTTP network request tambahan yang memblokir rendering awal.
-  2. Menyebabkan FOUT (Flash of Unstyled Text) dan Cumulative Layout Shift (CLS) saat font berganti.
-  3. Memicu peringatan `@next/next/no-page-custom-font`.
-- **Rekomendasi:**
-  Migrasi ke `next/font/google`:
+### 3.1 Domain Performance (Agent 2)
+
+#### Task 3.1.1: Self-Hosted Font Loading (`next/font/google`)
+- **File Target:** [`src/app/layout.tsx`](file:///c:/Users/USER/Desktop/CodeQuest/src/app/layout.tsx) & [`src/app/admin/layout.tsx`](file:///c:/Users/USER/Desktop/CodeQuest/src/app/admin/layout.tsx)
+- **Langkah:**
+  1. Hapus tag `<link>` eksternal `fonts.googleapis.com` dari `<head>`.
+  2. Impor `Inter` dan `Plus_Jakarta_Sans` dari `next/font/google` dengan `subsets: ['latin']`, `display: 'swap'`, dan CSS variable.
+  3. Terapkan variable class ke elemen `<html>` atau `<body>`.
+  4. Untuk Material Symbols Outlined, gunakan file `.woff2` lokal di `public/fonts/` atau class font lokal untuk memotong 100% request CDN eksternal.
+- **Dampak:** Menghilangkan 3 external blocking network request, mencegah FOUT, dan mengeliminasi warning `@next/next/no-page-custom-font`.
+
+#### Task 3.1.2: Perbaikan Bug Vercel Blob Local & Migrasi Tag `<img>`
+- **Akar Masalah Bug Vercel Blob di Local:**
+  1. Pada [`next.config.ts:20`](file:///c:/Users/USER/Desktop/CodeQuest/next.config.ts#L20), hostname Vercel Blob di-hardcode ke satu sub-domain spesifik:
+     ```ts
+     hostname: '6t5tfdwgh8pvy3vf.public.blob.vercel-storage.com'
+     ```
+     Jika store yang digunakan berbeda atau token `BLOB_READ_WRITE_TOKEN` menghasilkan host lain, Next.js Image Optimization akan **memblokir** gambar tersebut (error 400 hostname not configured).
+  2. **Solusi:** Ganti hostname menjadi pola wildcard:
+     ```ts
+     {
+       protocol: 'https',
+       hostname: '*.public.blob.vercel-storage.com',
+     }
+     ```
+     Dengan wildcard ini, gambar dari store Vercel Blob mana pun akan selalu diizinkan di local maupun production.
+- **Langkah Migrasi 5 Tag `<img>` Sisa:**
+  - [`src/components/Header.tsx`](file:///c:/Users/USER/Desktop/CodeQuest/src/components/Header.tsx): Migrasi avatar pengguna desktop & mobile nav ke `<Image width={36} height={36} />`.
+  - [`src/components/profile/AvatarUpload.tsx`](file:///c:/Users/USER/Desktop/CodeQuest/src/components/profile/AvatarUpload.tsx): Migrasi preview avatar ke `<Image fill />`.
+  - [`src/components/profile/ProfileTabs.tsx`](file:///c:/Users/USER/Desktop/CodeQuest/src/components/profile/ProfileTabs.tsx): Migrasi icon badge/quest ke `<Image width={40} height={40} />`.
+  - [`src/app/quests/[id]/page.tsx`](file:///c:/Users/USER/Desktop/CodeQuest/src/app/quests/[id]/page.tsx): Migrasi avatar snatcher ke `<Image width={40} height={40} />`.
+
+#### Task 3.1.3: Dynamic Import untuk Komponen Berat & Modal
+- **File Target:** [`src/app/admin/page.tsx`](file:///c:/Users/USER/Desktop/CodeQuest/src/app/admin/page.tsx)
+- **Langkah:**
+  Ganti impor statis `ActivityTrendChart` dan `DifficultyDistributionChart` dengan `next/dynamic`:
   ```ts
-  import { Inter, Plus_Jakarta_Sans } from 'next/font/google'
-  const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' })
-  const jakarta = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-jakarta', display: 'swap' })
+  const ActivityTrendChart = dynamic(
+    () => import('@/components/admin/AdminCharts').then(m => m.ActivityTrendChart),
+    { ssr: false, loading: () => <div className="h-64 animate-pulse bg-slate-100 dark:bg-zinc-800 rounded-xl" /> }
+  )
   ```
-  *Dampak: Tinggi | Usaha: Rendah (S)*
-
-#### B. Evaluasi Unoptimized Images (`<img>` vs `next/image`)
-- **Kondisi Saat Ini:**
-  Masih terdapat 5 tag `<img>` murni:
-  - `src/components/Header.tsx:103 & 222` (Avatar pengguna)
-  - `src/components/profile/AvatarUpload.tsx:85` (Preview avatar)
-  - `src/components/profile/ProfileTabs.tsx:327` (Icon badge)
-  - `src/app/quests/[id]/page.tsx:289` (Avatar snatcher)
-- **Masalah:**
-  Avatar dari Dicebear atau Vercel Blob tidak mendapatkan kompresi WebP/AVIF otomatis, tidak memiliki `srcset` responsif, dan dapat memperlambat LCP (Largest Contentful Paint).
-- **Rekomendasi:**
-  Ganti seluruh tag `<img>` dengan `<Image />` dari `next/image` dengan properti `width`, `height`, dan `alt` eksplisit. Hostname remote sudah terdaftar di `next.config.ts`.
-  *Dampak: Sedang | Usaha: Rendah (S)*
-
-#### C. Evaluasi Bundle Size & Code-Splitting
-- **Kondisi Saat Ini:**
-  Komponen berat `recharts` di [`src/components/admin/AdminCharts.tsx`](file:///c:/Users/USER/Desktop/CodeQuest/src/components/admin/AdminCharts.tsx) diimpor secara statis pada halaman admin [`src/app/admin/page.tsx`](file:///c:/Users/USER/Desktop/CodeQuest/src/app/admin/page.tsx).
-- **Masalah:**
-  Library `recharts` berukuran ~150KB+ di-bundle ke dalam chunk JS halaman admin, memperbesar First Load JS.
-- **Rekomendasi:**
-  Gunakan `next/dynamic` dengan skeleton placeholder:
-  ```ts
-  const ActivityTrendChart = dynamic(() => import('@/components/admin/AdminCharts').then(m => m.ActivityTrendChart), { ssr: false, loading: () => <ChartSkeleton /> })
-  ```
-  *Dampak: Sedang | Usaha: Rendah (S)*
-
-#### D. Evaluasi Komponen Modal
-- **Kondisi Saat Ini:**
-  Modal review, modal konfirmasi delete, dan modal edit profile di-bundle langsung di halaman parent meski awalnya berstatus `isOpen = false`.
-- **Rekomendasi:**
-  Lazy-load modal menggunakan dynamic import saat dibuka (`next/dynamic`).
-  *Dampak: Rendah-Sedang | Usaha: Rendah (S)*
+- **Dampak:** Memotong ukuran bundle JavaScript inisial halaman admin sebesar ~150KB+.
 
 ---
 
-### 3.2 Agent 3: Rekomendasi Deployment & Infrastruktur Production
+### 3.2 Domain Deployment & Infrastruktur (Agent 3)
 
-#### A. Rekomendasi Platform: Vercel vs Alternatif
-1. **Platform Paling Direkomendasikan: Vercel**
-   - **Alasan Utama:**
-     - Next.js 16 dengan Turbopack didukung native dengan performa Edge / Serverless functions optimal.
-     - Project menggunakan `@vercel/blob` untuk penyimpanan avatar; integrasi token dan dashboard Vercel Blob berjalan 1-click tanpa perlu S3 adapter tambahan.
-     - Server Actions, revalidation tag, dan cookie middleware berjalan mulus out-of-the-box.
-2. **Alternatif: Self-Hosted Docker / Railway / VPS**
-   - **Konsekuensi:**
-     - Memerlukan `output: 'standalone'` di `next.config.ts`.
-     - Perlu Dockerfile multi-stage dengan runtime Node.js 20+.
-     - Jika tidak ingin bergantung pada Vercel Blob, harus membuat adapter penyimpanan S3/Cloudflare R2 atau MinIO mandiri.
+#### Task 3.2.1: Otomasi File Proyek (Dikerjakan oleh AI di Repo)
+1. **Security Headers di [`next.config.ts`](file:///c:/Users/USER/Desktop/CodeQuest/next.config.ts):**
+   Tambahkan konfigurasi `headers()` standar keamanan:
+   - `X-Frame-Options: DENY` (mencegah clickjacking)
+   - `X-Content-Type-Options: nosniff` (mencegah MIME sniffing)
+   - `Referrer-Policy: strict-origin-when-cross-origin`
+   - `Permissions-Policy: camera=(), microphone=(), geolocation=()`
+2. **Prisma Linux Engine Target di [`prisma/schema.prisma`](file:///c:/Users/USER/Desktop/CodeQuest/prisma/schema.prisma):**
+   Tambahkan `binaryTargets = ["native", "rhel-openssl-3.0.x"]` di generator client agar binary engine Prisma terjamin cocok saat di-build di container Vercel Linux.
+3. **Build Script di [`package.json`](file:///c:/Users/USER/Desktop/CodeQuest/package.json):**
+   Pastikan script build menyertakan generate client: `"build": "prisma generate && next build"`.
 
-#### B. Checklist Environment Variables Production
-| Key | Tujuan | Contoh Nilai / Keterangan |
-| :--- | :--- | :--- |
-| `DATABASE_URL` | Koneksi database operasional (Prisma runtime) | `postgresql://postgres.[ref]:[pass]@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true` |
-| `DIRECT_URL` | Koneksi langsung untuk migrasi skema | `postgresql://postgres.[ref]:[pass]@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres` |
-| `AUTH_SECRET` | Enkripsi cookie dan JWT NextAuth | 32-byte string acak (`openssl rand -base64 32`) |
-| `BLOB_READ_WRITE_TOKEN` | Akses baca/tulis Vercel Blob Storage | Dihasilkan dari Vercel Storage Dashboard |
-| `UPSTASH_REDIS_REST_URL` | Endpoint Redis untuk rate limiter auth | `https://[id].upstash.io` |
-| `UPSTASH_REDIS_REST_TOKEN` | Token otorisasi REST Redis Upstash | Token dari Upstash Console |
-| `NEXTAUTH_URL` / `AUTH_URL` | Canonical URL domain production | `https://codequest.cyber-univ.ac.id` |
-| `RESEND_API_KEY` | Pengiriman email verifikasi | Token API dari Resend |
-
-#### C. Titik Rawan Produksi (Potential Failure Points) & Solusi
-1. **Supabase Connection Limit & IPv4 Deprecation:**
-   - Supabase mematikan port direct 5432 untuk IPv4 pada paket free.
-   - **Mitigasi:** `DATABASE_URL` WAJIB mengarah ke pooler port 6543 dengan parameter `?pgbouncer=true&connection_limit=1`.
-2. **Prisma Binary Target di Linux Vercel:**
-   - Lingkungan lokal adalah Windows, sedangkan Vercel berjalan di Amazon Linux / Debian.
-   - **Mitigasi:** Pastikan `prisma generate` dijalankan saat build (`npx prisma generate && next build` atau build cache Vercel). Jika perlu, tambahkan `binaryTargets = ["native", "rhel-openssl-3.0.x"]` di `schema.prisma`.
-3. **Domain Whitelist Autentikasi Kampus:**
-   - `src/auth.ts` membatasi login hanya untuk domain `@cyber-univ.ac.id`.
-   - **Mitigasi:** Pastikan admin memiliki akun berakhiran `@cyber-univ.ac.id` yang sudah terverifikasi di database production sebelum launch.
+#### Task 3.2.2: Panduan Setup Manual (Dikerjakan User di Dashboard)
+1. **Supabase Dashboard (Project Settings -> Database):**
+   - **DATABASE_URL (Runtime):** Salin URL **Transaction Pooler (Port 6543)**.
+     *Rekomendasi:* Tambahkan parameter `?pgbouncer=true&connection_limit=1`. Ini mencegah Vercel Serverless Functions menghabiskan kuota koneksi PostgreSQL saat banyak user mengakses bersamaan.
+   - **DIRECT_URL (Migrations):** Salin URL **Direct Connection (Port 5432)** untuk keperluan migrasi schema.
+2. **Vercel Dashboard:**
+   - Hubungkan repository `Randevough/CodeQuest`.
+   - Di menu *Settings -> Environment Variables*, tambahkan:
+     - `DATABASE_URL` (Pooler 6543)
+     - `DIRECT_URL` (Direct 5432)
+     - `AUTH_SECRET` (generate string 32-byte acak via `openssl rand -base64 32`)
+     - `BLOB_READ_WRITE_TOKEN` (otomatis tersedia jika Vercel Blob store dihubungkan via tab Storage)
+     - `UPSTASH_REDIS_REST_URL` & `UPSTASH_REDIS_REST_TOKEN` (dari console Upstash)
+     - `NEXTAUTH_URL` (domain production, misal `https://codequest.cyber-univ.ac.id`)
+3. **Eksekusi Migrasi Database ke Supabase Production:**
+   - Jalankan perintah dari terminal:
+     ```bash
+     npx prisma migrate deploy
+     npx tsx prisma/seed_badges.ts
+     ```
 
 ---
 
-### 3.3 Agent 4: Peningkatan Realistis (Enhancement)
+### 3.3 Domain Enhancement & SEO (Agent 4)
 
-#### A. Quick Wins (Rekomendasi Utama)
-1. **Dynamic SEO Metadata (`src/app/quests/[id]/page.tsx`)**:
-   Tambahkan `generateMetadata`:
-   ```ts
-   export async function generateMetadata({ params }): Promise<Metadata> {
-       const quest = await getQuest(params.id)
-       return {
-           title: `${quest?.title || 'Quest Details'} | CodeQuest`,
-           description: quest?.description.slice(0, 160),
-       }
-   }
-   ```
-2. **Sitemap & Robots Generator (`src/app/sitemap.ts` & `src/app/robots.ts`)**:
-   Buat generator sitemap otomatis untuk rute publik dan blokir indexing `/admin/**`.
-3. **Penyelesaian TODO Sorting di Admin Quests**:
-   Perbarui [`src/app/admin/manage-quests/page.tsx:23`](file:///c:/Users/USER/Desktop/CodeQuest/src/app/admin/manage-quests/page.tsx#L23) dengan menambahkan opsi pengurutan `updatedAt: 'desc'`.
-4. **Keamanan HTTP Headers di `next.config.ts`**:
-   Tambahkan header `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`.
+#### Task 3.3.1: Evaluasi Performa Dynamic SEO Metadata
+- **Pertanyaan User: *"Berat ngga ya itu?"***
+- **Analisis & Jawaban: TIDAK BERAT, sangat ringan.**
+  - **Mengapa:**
+    1. Di Next.js App Router, `generateMetadata` dieksekusi di server sebelum response HTML dikirim ke browser.
+    2. Fungsi query `getQuest(id)` dibungkus dengan `React.cache()` sehingga query database **hanya dieksekusi 1 kali** untuk seluruh siklus request (Next.js me-reuse hasil query antara `generateMetadata` dan component halaman utama).
+    3. Ukuran data yang diambil hanya `title` dan `description` (beberapa byte teks).
+  - **Keuntungan:** Tautan quest yang dibagikan ke WhatsApp, Discord, Slack, atau LinkedIn akan langsung menampilkan kartu preview interaktif yang profesional.
 
-#### B. Peningkatan Lanjutan (Opsional Pasca-Launch)
-1. **PWA Manifest (`src/app/manifest.ts`)**:
-   Konfigurasi icon aplikasi, display `standalone`, dan theme color `#0a0a0a` untuk pengalaman installable di mobile/desktop.
-2. **Accessibility (a11y) Polish**:
-   Pastikan modal review menangkap fokus (focus trap) dan mendukung penutupan via tombol keyboard `Escape`.
-3. **Error Monitoring (Sentry)**:
-   Integrasikan `@sentry/nextjs` untuk menangkap uncaught exception pada server actions dan client components.
+#### Task 3.3.2: Generator `sitemap.ts` & `robots.ts`
+- **File Target:** `src/app/sitemap.ts` & `src/app/robots.ts`
+- **Implementasi:**
+  - `robots.ts`: Izinkan indexing untuk `/`, `/about`, `/leaderboard`, `/quests/*`, dan blokir indexing pada `/admin/*`, `/api/*`, `/workspace/*`.
+  - `sitemap.ts`: Daftarkan URL statis dan lakukan query dinamis ID quest aktif untuk XML sitemap otomatis.
+
+#### Task 3.3.3: Penyelesaian TODO Admin Quests Sorting
+- **File Target:** [`src/actions/quest.ts`](file:///c:/Users/USER/Desktop/CodeQuest/src/actions/quest.ts) & [`src/app/admin/manage-quests/page.tsx`](file:///c:/Users/USER/Desktop/CodeQuest/src/app/admin/manage-quests/page.tsx)
+- **Implementasi:**
+  Tambahkan parameter `orderBy: { updatedAt: 'desc' }` pada query admin agar quest yang baru diedit atau dibuat selalu muncul di posisi teratas.
 
 ---
 
-## 4. Roadmap Berurutan Berdasarkan Prioritas
+## 4. Strategi Git & Sinkronisasi GitHub
 
-| Prioritas | Item Pekerjaan | Domain | Estimasi Usaha | Status |
-| :--- | :--- | :--- | :---: | :---: |
-| **🔴 MUST** | Fix Build Blocker (`seedSubmissions`) | Bug Fix | **S** | ✅ **DONE** |
-| **🔴 MUST** | Fix Array Type Handling di Quest Details | Bug Fix | **S** | ✅ **DONE** |
-| **🔴 MUST** | Strongly Type Leaderboard Response | Bug Fix | **S** | ✅ **DONE** |
-| **🔴 MUST** | Fix Synchronous setState di DevRoleSwitcher | Bug Fix | **S** | ✅ **DONE** |
-| **🔴 MUST** | Fix ESLint Explicit `any` & Unused Vars | Code Quality | **S** | ✅ **DONE** |
-| **🔴 MUST** | Verifikasi Pipeline Build Lokal (`npm run build`) | CI/CD | **S** | ✅ **DONE** |
-| **🔴 MUST** | Konfigurasi Environment Variables Production di Vercel | Deployment | **S** | ⏳ Menunggu Deploy |
-| **🔴 MUST** | Eksekusi Prisma Migration ke Supabase Production | Database | **S** | ⏳ Menunggu Deploy |
-| **🟡 SHOULD** | Migrasi Google Fonts ke `next/font/google` (Inter + Jakarta) | Performance | **S** | Usulan |
-| **🟡 SHOULD** | Migrasi Sisa 5 Tag `<img>` ke `<Image />` | Performance | **S** | Usulan |
-| **🟡 SHOULD** | Dynamic Import untuk Recharts di Admin Dashboard | Performance | **S** | Usulan |
-| **🟡 SHOULD** | Dynamic SEO Metadata & OpenGraph per Quest | SEO / UX | **S** | Usulan |
-| **🟡 SHOULD** | Generate `sitemap.ts` & `robots.ts` | SEO | **S** | Usulan |
-| **🟡 SHOULD** | Selesaikan TODO Sort di `admin/manage-quests` | Feature Polish | **S** | Usulan |
-| **🟢 NICE** | Security HTTP Headers di `next.config.ts` | Security | **S** | Usulan |
-| **🟢 NICE** | Web App Manifest (`src/app/manifest.ts`) untuk PWA | UX / Mobile | **M** | Usulan |
-| **🟢 NICE** | Integrasi Error Monitoring (Sentry) | Observability | **M** | Usulan |
-| **🟢 NICE** | Migrasi konvensi `middleware.ts` ke Next 16 `proxy` | Maintenance | **S** | Usulan |
+1. **Status Saat Ini:**
+   - Branch `chore/finalize` telah berisi seluruh perbaikan bug Fase 1 yang sudah lolos build 100%.
+   - Branch ini sudah di-push ke remote `origin/chore/finalize`.
+2. **Menghindari / Menyelesaikan Merge Conflict:**
+   - Karena branch `chore/finalize` bercabang langsung dari commit terakhir `master` (`5be808b`), branch ini adalah *clean fast-forward*.
+   - Jika kamu ingin branch `master` di GitHub langsung mencerminkan hasil final ini tanpa konflik merge PR:
+     ```bash
+     git push origin chore/finalize:master --force
+     ```
+     Perintah ini akan secara aman mengupdate `master` di GitHub ke posisi commit terbaru yang stabil tanpa konflik.
 
 ---
 
-## 5. Checklist Deploy Langkah demi Langkah
+## 5. Checklist Verifikasi Akhir Sebelum Deploy
 
-### Langkah 1: Persiapan Akun & Layanan Eksternal
-- [ ] **Supabase:** Pastikan project PostgreSQL aktif. Buka *Project Settings -> Database* dan salin:
-  - Transaction Pooler (Port 6543) -> untuk `DATABASE_URL`
-  - Direct / Session Pooler (Port 5432) -> untuk `DIRECT_URL`
-- [ ] **Upstash Redis:** Buat database Redis gratis di console Upstash untuk rate limiter auth.
-- [ ] **Vercel Blob:** Aktifkan Vercel Blob store pada dashboard proyek Vercel.
-- [ ] **Resend:** Dapatkan API key pengiriman email domain kampus atau SMTP service.
-
-### Langkah 2: Setup Proyek di Hosting (Vercel)
-- [ ] Import repository GitHub `Randevough/CodeQuest` (pilih branch `chore/finalize` atau `master`).
-- [ ] Framework preset otomatis: **Next.js**.
-- [ ] Isi seluruh Environment Variables sesuai daftar di Bagian 3.2.B.
-- [ ] Build command: `npm run build` (atau `npx prisma generate && next build`).
-
-### Langkah 3: Eksekusi Migrasi Database Production
-- [ ] Dari terminal lokal atau CI/CD, jalankan migrasi ke database Supabase production:
-  ```bash
-  npx prisma migrate deploy
-  ```
-- [ ] Seed badge bawaan ke database production:
-  ```bash
-  npx tsx prisma/seed_badges.ts
-  ```
-
-### Langkah 4: Trigger Deploy & Pre-Flight Check
-- [ ] Klik **Deploy** di dashboard Vercel.
-- [ ] Amati log build: pastikan Turbopack static page generation berjalan sukses tanpa exception.
-
-### Langkah 5: Smoke Testing Pasca-Deploy
-- [ ] **Halaman Publik:** Buka Landing Page (`/`), About (`/about`), Quest Hub.
-- [ ] **Quest Detail:** Buka salah satu quest (`/quests/[id]`), pastikan checklist requirements dan resource link terbuka normal.
-- [ ] **Autentikasi:** Coba registrasi dan login menggunakan email `@cyber-univ.ac.id`.
-- [ ] **Leaderboard:** Buka halaman `/leaderboard`, cek filter dan peringkat.
-- [ ] **Admin Portal:** Login dengan akun Admin, periksa dashboard statistik, daftar submission (`/admin/submissions`), dan manajemen quest (`/admin/manage-quests`).
-- [ ] **Media Upload:** Uji coba upload avatar di halaman `/profile` dan pastikan file tersimpan di Vercel Blob.
+- [ ] Pola wildcard `*.public.blob.vercel-storage.com` terpasang di `next.config.ts`.
+- [ ] Font lokal self-hosted terpasang tanpa link Google Fonts eksternal.
+- [ ] 5 tag `<img>` termigrasi ke `<Image />`.
+- [ ] `sitemap.ts` dan `robots.ts` ter-generate.
+- [ ] `npx tsc --noEmit` -> PASS (0 error).
+- [ ] `npm run lint` -> PASS (0 error).
+- [ ] `npm run build` -> PASS (17 routes compiled).
+- [ ] Push/Force push final ke `master`.
+- [ ] Konfigurasi Vercel Environment Variables & deploy.
