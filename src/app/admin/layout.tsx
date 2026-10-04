@@ -19,35 +19,55 @@ export default async function AdminLayout({
     // Better: Check Role
     // if (session?.user?.role !== 'Admin') redirect('/');
 
-    const memberCount = await prisma.user.count();
+    let memberCount = 0;
+    let submissionCount = 0;
+    let adminUser = null;
 
-    // Count pending and revision needed submissions
-    const submissionCount = await prisma.snatch.count({
-        where: {
-            status: { in: ['SUBMITTED', 'REVISION_NEEDED'] }
-        }
-    });
+    try {
+        memberCount = await prisma.user.count();
 
-    // Fetch admin user data for sidebar
-    const adminUser = await prisma.user.findUnique({
-        where: { email: session.user.email! },
-        select: {
-            id: true,
-            name: true,
-            email: true,
-            avatar: true,
-            points: true,
-            handle: true,
-            image: true
+        // Count pending and revision needed submissions
+        submissionCount = await prisma.snatch.count({
+            where: {
+                status: { in: ['SUBMITTED', 'REVISION_NEEDED'] }
+            }
+        });
+
+        // Fetch admin user data for sidebar
+        if (session.user.email) {
+            adminUser = await prisma.user.findUnique({
+                where: { email: session.user.email },
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    avatar: true,
+                    points: true,
+                    handle: true,
+                    image: true
+                }
+            });
         }
-    });
+    } catch (error) {
+        console.error('AdminLayout database fetch notice (fallback used):', error);
+    }
+
+    const effectiveAdminUser = adminUser || {
+        id: session.user.id || 'dev-admin-id',
+        name: session.user.name || 'Admin Developer',
+        email: session.user.email || 'codequest@cyber-univ.ac.id',
+        avatar: session.user.image || 'https://api.dicebear.com/7.x/bottts/svg?seed=AdminDev',
+        points: session.user.points || 1337,
+        handle: 'admin_dev',
+        image: session.user.image || 'https://api.dicebear.com/7.x/bottts/svg?seed=AdminDev'
+    };
 
     return (
         <AdminSidebarProvider>
             <div className="flex h-screen w-full bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-sans">
                 {/* Material Symbols support - ensure it's loaded in root layout or here */}
                 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-                <AdminSidebar memberCount={memberCount} submissionCount={submissionCount} user={adminUser} />
+                <AdminSidebar memberCount={memberCount} submissionCount={submissionCount} user={effectiveAdminUser} />
                 <main className="flex-1 flex flex-col h-full overflow-hidden relative">
                     {children}
                 </main>

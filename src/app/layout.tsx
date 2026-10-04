@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 // import { Geist, Geist_Mono } from "next/font/google"; // Removing Geist for Inter
 import "./globals.css";
 import { Toaster } from 'sonner';
+import { auth } from "@/auth";
+import { DevRoleSwitcher } from "@/components/dev/DevRoleSwitcher";
 
 // ... (omitted code)
 
@@ -10,11 +12,13 @@ export const metadata: Metadata = {
   title: 'CodeQuest',
   description: 'CodeQuest platform',
 };
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -32,9 +36,10 @@ export default function RootLayout({
         className="antialiased bg-gray-50 dark:bg-black text-gray-900 dark:text-white"
         suppressHydrationWarning
       >
-        <Providers>
+        <Providers session={session}>
           {children}
           <Toaster richColors position="top-center" />
+          {process.env.NODE_ENV === 'development' && <DevRoleSwitcher />}
         </Providers>
       </body>
     </html>

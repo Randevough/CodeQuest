@@ -5,10 +5,28 @@ export const authConfig = {
         signIn: '/login',
     },
     callbacks: {
-        authorized({ auth, request: { nextUrl } }) {
+        authorized({ auth, request }) {
+            const { nextUrl, cookies } = request
             const isLoggedIn = !!auth?.user
             const isAdmin = auth?.user?.role === 'Admin'
             const { pathname } = nextUrl
+
+            // Dev mode bypass support
+            if (process.env.NODE_ENV === 'development') {
+                const devRole = cookies?.get('cq_dev_role')?.value ?? 'admin'
+                if (devRole === 'admin') {
+                    // Admin can preview all pages
+                    return true
+                }
+                if (devRole === 'member') {
+                    // Member restricted from admin routes
+                    if (pathname.startsWith('/admin')) {
+                        return Response.redirect(new URL('/', nextUrl))
+                    }
+                    return true
+                }
+                // If devRole === 'none', fall through to normal production authorization checks
+            }
 
             // Auth routes (/login, /signup) — redirect logged-in users to home
             if (pathname.startsWith('/login') || pathname.startsWith('/signup')) {
