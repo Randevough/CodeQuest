@@ -71,7 +71,7 @@ export default async function LeaderboardPage(props: { searchParams: Promise<{ p
                                     className="bg-white dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
                                     suppressHydrationWarning
                                 >
-                                    <LeaderboardTable users={users.map(u => ({ ...u, role: u.role || 'Member', handle: u.handle || '@unknown' }))} page={page} pageSize={pageSize} />
+                                    <LeaderboardTable users={users} page={page} pageSize={pageSize} />
                                     <PaginationControls page={page} pageSize={pageSize} total={total} />
                                 </div>
                             </div>
