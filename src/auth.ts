@@ -167,7 +167,6 @@ export const auth = (async (...args: Parameters<typeof nextAuthResult.auth>) => 
         }
     }
 
-    // @ts-expect-error - NextAuth original auth takes variable arguments
     return nextAuthResult.auth(...args)
 }) as typeof nextAuthResult.auth
 

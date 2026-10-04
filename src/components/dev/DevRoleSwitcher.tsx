@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useSyncExternalStore } from 'react'
+import { useRouter } from 'next/navigation'
 
 export type DevRole = 'admin' | 'member' | 'none'
 
@@ -19,6 +20,7 @@ function setCookie(name: string, value: string, days = 30) {
 const emptySubscribe = () => () => {}
 
 export function DevRoleSwitcher() {
+    const router = useRouter()
     const isMounted = useSyncExternalStore(
         emptySubscribe,
         () => true,
