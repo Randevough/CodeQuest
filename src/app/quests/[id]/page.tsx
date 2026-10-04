@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/db'
 import { notFound } from 'next/navigation'
-import { getUserActiveSnatches, getQuestUserStatus } from '@/actions/quest'
+import { getQuestUserStatus } from '@/actions/quest'
 import Link from 'next/link'
 import { QuestAction } from '@/components/QuestAction'
 import { Header } from '@/components/Header'
@@ -60,15 +60,17 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
 
     // Parse Requirements (Checklist)
     let requirements: string[] = [];
-    try {
-        if (quest.requirements) {
+    if (Array.isArray(quest.requirements)) {
+        requirements = quest.requirements;
+    } else if (typeof quest.requirements === 'string') {
+        try {
             const parsed = JSON.parse(quest.requirements);
             if (Array.isArray(parsed)) {
                 requirements = parsed;
             }
+        } catch (e) {
+            console.error("Failed to parse requirements", e);
         }
-    } catch (e) {
-        console.error("Failed to parse requirements", e);
     }
 
     // Difficulty badge helper
@@ -204,13 +206,16 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                                                     <div>
                                                         <h5 className="font-semibold text-blue-900 dark:text-blue-100 text-sm mb-1">Provided Materials</h5>
                                                         {(() => {
-                                                            const parts = quest.resources.split(/(\[.*?\]\(.*?\))/g);
+                                                            const resourceText = Array.isArray(quest.resources)
+                                                                ? quest.resources.join('\n')
+                                                                : (quest.resources || '');
+                                                            const parts = resourceText.split(/(\[.*?\]\(.*?\))/g);
                                                             return (
                                                                 <div className="text-slate-600 dark:text-slate-300 text-sm whitespace-pre-wrap font-medium">
                                                                     {parts.map((part, i) => {
                                                                         const match = part.match(/\[(.*?)\]\((.*?)\)/);
                                                                         if (match) {
-                                                                            const [_, text, url] = match;
+                                                                            const [, text, url] = match;
                                                                             return (
                                                                                 <a
                                                                                     key={i}
