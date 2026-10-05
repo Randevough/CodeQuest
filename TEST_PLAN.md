@@ -188,13 +188,13 @@ Authentication credentials, role guards, and rate limiting.
 ## Feature Area 8: Leaderboard, Activity Feed & Analytics (Priority: P2 - Normal)
 Community engagement feeds and metrics computation.
 
-- [ ] **8.1 Leaderboard Ranking (`getLeaderboardUsers`, `getLeaderboardStanding`)**
+- [x] **8.1 Leaderboard Ranking (`getLeaderboardUsers`, `getLeaderboardStanding`)**
   - **What it does:** Orders users by points descending, computes rank, pagination, and user's relative standing.
   - **Test Type:** Unit / Integration
   - **Key Scenarios:**
     - Rank calculation: Ties, pagination offsets.
     - Standing: Accurate rank calculation for caller outside top 10.
-- [ ] **8.2 Activity Feed & Dashboard Stats (`getActivityFeed`, `getAdminDashboardStats`)**
+- [x] **8.2 Activity Feed & Dashboard Stats (`getActivityFeed`, `getAdminDashboardStats`)**
   - **What it does:** Computes recent system events and aggregate dashboard KPIs (active snatches, total users, pending reviews).
   - **Test Type:** Unit / Integration
   - **Key Scenarios:**
