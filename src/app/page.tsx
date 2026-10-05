@@ -3,8 +3,26 @@ import Image from 'next/image'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { prisma } from '@/lib/db'
+import type { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: 'CodeQuest - Platform Gamifikasi Coding Mahasiswa Cyber University',
+  description: 'Tingkatkan skill pemrograman melalui misi nyata berbasis studi kasus riil. Snatch quest coding, kirim bukti implementasi, dan raih peringkat teratas di leaderboard mahasiswa Cyber University.',
+  openGraph: {
+    title: 'CodeQuest - Platform Gamifikasi Coding Mahasiswa Cyber University',
+    description: 'Taklukkan tantangan coding nyata, kumpulkan poin EXP dan lencana eksklusif, serta puncaki leaderboard mahasiswa kampus.',
+    type: 'website',
+    images: [{ url: '/icon-big.png', width: 512, height: 512, alt: 'CodeQuest' }]
+  },
+  twitter: {
+    card: 'summary',
+    title: 'CodeQuest - Platform Gamifikasi Coding Mahasiswa',
+    description: 'Taklukkan tantangan coding nyata, kumpulkan poin EXP dan lencana eksklusif.',
+    images: ['/icon-big.png']
+  }
+}
 
 interface QuestItem {
   id: string

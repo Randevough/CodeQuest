@@ -9,8 +9,8 @@
 - **Status Fase 3 (Batch 2 - Infra & Security Headers):** ✅ Selesai (`d75ef8e`)  
 - **Status Fase 3 (Batch 3 - Route Architecture: Move Board to `/explore`):** ✅ Selesai
 - **Status Fase 3 (Batch 4 - Landing Page CodeQuest di `/`):** ✅ Selesai
-- **Status Fase 3 (Batch 5 - Dynamic SEO, Sitemap, Robots & Admin Polish):** 📋 Bergantung pada Rute Final
-- **Status Fase 3 (Batch 6 - Verifikasi Final, Git Sync & Vercel Deploy):** ⏳ Menunggu Tahap Akhir  
+- **Status Fase 3 (Batch 5 - Dynamic SEO, Sitemap, Robots & Admin Polish):** ✅ Selesai
+- **Status Fase 3 (Batch 6 - Verifikasi Final, Git Sync & Vercel Deploy):** ⏳ Menunggu Tahap Akhir
 
 ---
 
@@ -74,12 +74,12 @@
 
 ---
 
-### 2.5 Batch 5: Dynamic SEO, Sitemap, Robots & Admin Sorting
+### 2.5 Batch 5: Dynamic SEO, Sitemap, Robots & Admin Sorting ✅ (Selesai)
 **Tujuan:** Mengindeks seluruh rute baru secara tepat ke mesin pencari dan memoles dashboard admin.
-1. **Dynamic OpenGraph/SEO:** `generateMetadata` pada `src/app/quests/[id]/page.tsx` dan metadata kaya pada `src/app/page.tsx` (Landing Page).
-2. **Sitemap (`src/app/sitemap.ts`):** Mengindeks rute `/` (Landing Page), `/explore` (Quest Board), `/leaderboard`, `/about`, dan seluruh ID quest aktif.
-3. **Robots (`src/app/robots.ts`):** Mengizinkan indexing landing page dan quest publik, mengecualikan `/admin/*`, `/workspace/*`, `/api/*`.
-4. **Admin Quest Sorting:** Tambahkan sorting `updatedAt: 'desc'` di `src/actions/quest.ts`.
+- [x] **Dynamic OpenGraph/SEO:** `generateMetadata` pada `src/app/quests/[id]/page.tsx` dan metadata kaya pada `src/app/page.tsx` (Landing Page) & `src/app/explore/page.tsx`.
+- [x] **Sitemap (`src/app/sitemap.ts`):** Mengindeks rute `/` (Landing Page), `/explore` (Quest Board), `/leaderboard`, `/about`, dan seluruh ID quest aktif.
+- [x] **Robots (`src/app/robots.ts`):** Mengizinkan indexing landing page dan quest publik, mengecualikan `/admin/*`, `/workspace/*`, `/api/*`.
+- [x] **Admin Quest Sorting:** Tambahkan sorting `updatedAt: 'desc'` di `src/actions/quest.ts` dan bersihkan TODO komentar.
 
 ---
 
@@ -111,5 +111,5 @@
 - [x] **Batch 2:** OWASP Security headers, target binary Linux Prisma, script build `prisma generate && next build`.
 - [x] **Batch 3:** Rute Quest Board termigrasi ke `/explore`, navigasi Header & auth redirect terintegrasi.
 - [x] **Batch 4:** Landing Page CodeQuest di `/` selesai dibangun dan responsive.
-- [ ] **Batch 5:** Dynamic SEO metadata, `sitemap.ts`, `robots.ts`, dan admin sorting terpasang.
+- [x] **Batch 5:** Dynamic SEO metadata, `sitemap.ts`, `robots.ts`, dan admin sorting terpasang.
 - [ ] **Batch 6:** Verifikasi penuh (`tsc`, `lint`, `build`), push `master`, deploy Vercel & Supabase.

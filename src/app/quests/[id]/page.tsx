@@ -6,39 +6,83 @@ import { QuestAction } from '@/components/QuestAction'
 import { Header } from '@/components/Header'
 import { QuestTimer } from '@/components/QuestTimer'
 import Image from 'next/image'
+import { cache } from 'react'
+import type { Metadata } from 'next'
 
 // Force dynamic since we use user specific data and params
 export const dynamic = 'force-dynamic'
 
-async function getQuest(id: string) {
-    const quest = await prisma.quest.findUnique({
-        where: { id },
-        include: {
-            _count: {
-                select: { snatches: { where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED'] } } } }
-            },
-            snatches: {
-                where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED'] } },
-                include: {
-                    user: {
-                        select: {
-                            id: true,
-                            name: true,
-                            avatar: true,
-                            role: true,
-                            handle: true
-                        }
-                    }
+const getQuest = cache(async (id: string) => {
+    try {
+        const quest = await prisma.quest.findUnique({
+            where: { id },
+            include: {
+                _count: {
+                    select: { snatches: { where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED'] } } } }
                 },
-                take: 5 // Limit to 5 for now in the sidebar
+                snatches: {
+                    where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED'] } },
+                    include: {
+                        user: {
+                            select: {
+                                id: true,
+                                name: true,
+                                avatar: true,
+                                role: true,
+                                handle: true
+                            }
+                        }
+                    },
+                    take: 5 // Limit to 5 for now in the sidebar
+                }
             }
+        })
+        if (!quest) return null
+        return quest
+    } catch (error) {
+        console.error('getQuest DB error notice:', error)
+        return null
+    }
+})
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> | { id: string } }): Promise<Metadata> {
+    const resolvedParams = await params
+    const quest = await getQuest(resolvedParams.id)
+    if (!quest) {
+        return {
+            title: 'Quest Not Found | CodeQuest',
+            description: 'The requested quest could not be located on CodeQuest.'
         }
-    })
-    if (!quest) return null
-    return quest
+    }
+
+    const shortDesc = quest.description.length > 150 ? `${quest.description.slice(0, 150)}...` : quest.description
+
+    return {
+        title: `${quest.title} (${quest.difficulty} · ${quest.points} pts) | CodeQuest`,
+        description: shortDesc,
+        openGraph: {
+            title: `${quest.title} | CodeQuest`,
+            description: shortDesc,
+            type: 'website',
+            images: [
+                {
+                    url: '/icon-big.png',
+                    width: 512,
+                    height: 512,
+                    alt: quest.title,
+                }
+            ]
+        },
+        twitter: {
+            card: 'summary',
+            title: `${quest.title} | CodeQuest`,
+            description: shortDesc,
+            images: ['/icon-big.png'],
+        }
+    }
 }
 
-export default async function QuestPage({ params }: { params: { id: string } }) {
+export default async function QuestPage({ params }: { params: Promise<{ id: string }> | { id: string } }) {
     // Next 15+ await params
     const resolvedParams = await params
     const quest = await getQuest(resolvedParams.id)

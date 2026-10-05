@@ -5,8 +5,14 @@ import { getUserActiveSnatches, getAllUserQuestIds } from '@/actions/quest'
 import { LoginToast } from '@/components/LoginToast'
 import { Header } from '@/components/Header'
 import { Pagination } from '@/components/Pagination'
+import type { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: 'Explore Quests | CodeQuest',
+  description: 'Jelajahi dan snatch misi pemrograman aktif di CodeQuest. Filter berdasarkan kategori Web, AI, Mobile, dan tingkat kesulitan.',
+}
 
 // Updated getQuests using proper Database filtering for "Availability"
 async function getQuests(searchParams: { q?: string, difficulty?: string, sort?: string, page?: string }, excludedIds: string[]) {
