@@ -206,27 +206,28 @@ Community engagement feeds and metrics computation.
 ## Feature Area 9: Core UI Components (Priority: P2 - Normal)
 Render validation, accessibility, and interactive behaviors on client components.
 
-- [ ] **9.1 QuestCard Component**
+- [x] **9.1 QuestCard Component**
   - **What it does:** Displays quest badges, difficulty colors, points, snatch count, and action triggers.
   - **Test Type:** Component Unit (@testing-library/react)
   - **Key Scenarios:**
     - Renders points, difficulty badge, title.
     - Correct status indicator (Closed vs Open).
-- [ ] **9.2 QuestTimer Component**
+- [x] **9.2 QuestTimer Component**
   - **What it does:** Shows countdown to quest deadline and indicates expired status.
   - **Test Type:** Component Unit (@testing-library/react)
   - **Key Scenarios:**
     - Displays remaining hours/days.
     - Renders 'Expired' when deadline is past.
-- [ ] **9.3 Pagination Component**
+- [x] **9.3 Pagination Component**
   - **What it does:** Provides page numbers, prev/next buttons, and disabled states.
   - **Test Type:** Component Unit (@testing-library/react)
   - **Key Scenarios:**
     - Disables 'Previous' on page 1.
     - Emits page change event on click.
-- [ ] **9.4 Header & Navigation Component**
+- [x] **9.4 Header & Navigation Component**
   - **What it does:** Renders navigation links, unread notification counter, and login/profile buttons.
   - **Test Type:** Component Unit (@testing-library/react)
   - **Key Scenarios:**
     - Shows admin link only if user role is Admin.
     - Displays unread notification badge when count > 0.
+
