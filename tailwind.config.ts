@@ -25,8 +25,9 @@ const config: Config = {
                 "text-subtle": "#666666",
             },
             fontFamily: {
-                sans: ["Plus Jakarta Sans", "sans-serif"],
-                display: ["Plus Jakarta Sans", "sans-serif"],
+                sans: ["var(--font-plus-jakarta-sans)", "Plus Jakarta Sans", "sans-serif"],
+                display: ["var(--font-plus-jakarta-sans)", "Plus Jakarta Sans", "sans-serif"],
+                inter: ["var(--font-inter)", "Inter", "sans-serif"],
                 mono: [
                     "ui-monospace",
                     "SFMono-Regular",

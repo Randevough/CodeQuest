@@ -186,12 +186,12 @@
 
 ## 5. Checklist Verifikasi Akhir Sebelum Deploy
 
-- [ ] Pola wildcard `*.public.blob.vercel-storage.com` terpasang di `next.config.ts`.
-- [ ] Font lokal self-hosted terpasang tanpa link Google Fonts eksternal.
-- [ ] 5 tag `<img>` termigrasi ke `<Image />`.
+- [x] Pola wildcard `*.public.blob.vercel-storage.com` terpasang di `next.config.ts`.
+- [x] Font lokal self-hosted terpasang tanpa link Google Fonts eksternal.
+- [x] 5 tag `<img>` termigrasi ke `<Image />`.
 - [ ] `sitemap.ts` dan `robots.ts` ter-generate.
-- [ ] `npx tsc --noEmit` -> PASS (0 error).
-- [ ] `npm run lint` -> PASS (0 error).
-- [ ] `npm run build` -> PASS (17 routes compiled).
+- [x] `npx tsc --noEmit` -> PASS (0 error).
+- [x] `npm run lint` -> PASS (0 error, 25 warnings non-blocking).
+- [x] `npm run build` -> PASS (17 routes compiled).
 - [ ] Push/Force push final ke `master`.
 - [ ] Konfigurasi Vercel Environment Variables & deploy.

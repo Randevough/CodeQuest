@@ -100,9 +100,11 @@ export function Header({ activePage }: HeaderProps) {
 								className="flex items-center justify-center size-8 rounded-full bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 overflow-hidden hover:border-orange-400 dark:hover:border-orange-500 transition-all"
 							>
 								{session?.user?.avatar ? (
-									<img
+									<Image
 										src={session.user.avatar}
-										alt="User"
+										alt={session.user.name || "User"}
+										width={32}
+										height={32}
 										className="w-full h-full object-cover"
 									/>
 								) : (
@@ -219,9 +221,11 @@ export function Header({ activePage }: HeaderProps) {
 							<div className="flex items-center px-3 gap-3">
 								<div className="size-8 rounded-full bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center">
 									{session?.user?.avatar ? (
-										<img
+										<Image
 											src={session.user.avatar}
-											alt="User"
+											alt={session.user.name || "User"}
+											width={32}
+											height={32}
 											className="w-full h-full object-cover"
 										/>
 									) : (

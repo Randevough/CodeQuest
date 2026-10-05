@@ -1,7 +1,21 @@
 import Link from 'next/link';
 import { getAdminDashboardStats } from '@/actions/admin-dashboard';
 import { StatsGrid, LeaderboardPreview } from '@/components/admin/AdminStats';
-import { ActivityTrendChart, DifficultyDistributionChart } from '@/components/admin/AdminCharts';
+import nextDynamic from 'next/dynamic';
+
+const ActivityTrendChart = nextDynamic(
+    () => import('@/components/admin/AdminCharts').then(m => m.ActivityTrendChart),
+    {
+        loading: () => <div className="h-64 animate-pulse bg-slate-100 dark:bg-zinc-800 rounded-xl" />
+    }
+);
+
+const DifficultyDistributionChart = nextDynamic(
+    () => import('@/components/admin/AdminCharts').then(m => m.DifficultyDistributionChart),
+    {
+        loading: () => <div className="h-64 animate-pulse bg-slate-100 dark:bg-zinc-800 rounded-xl" />
+    }
+);
 
 export const dynamic = 'force-dynamic';
 
