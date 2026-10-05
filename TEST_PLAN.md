@@ -119,20 +119,20 @@ In-app notifications for quest submissions, badge unlocks, and admin reviews.
 ## Feature Area 5: User Profile & Badges (Priority: P1 - High)
 Player identity, avatar uploads, biographical details, and showcased badges.
 
-- [ ] **5.1 Profile Update (`updateProfile`)**
+- [x] **5.1 Profile Update (`updateProfile`)**
   - **What it does:** Modifies name, bio, handle, GitHub URL, and LinkedIn URL.
   - **Test Type:** Unit / Integration
   - **Key Scenarios:**
     - Happy path: Valid handles and URLs updated successfully.
     - Validation: Unique handle constraint, invalid URL schemas.
     - Security: Cannot modify another user's profile.
-- [ ] **5.2 Featured Badges (`updateFeaturedBadges`)**
+- [x] **5.2 Featured Badges (`updateFeaturedBadges`)**
   - **What it does:** Allows users to pick up to 3 earned badges to display on their public card.
   - **Test Type:** Unit / Integration
   - **Key Scenarios:**
     - Happy path: Up to 3 badges set with `isFeatured: true`.
     - Validation: Cannot feature unearned badges or exceed max limit (e.g. 3).
-- [ ] **5.3 Profile Image Upload (`uploadProfileImage`)**
+- [x] **5.3 Profile Image Upload (`uploadProfileImage`)**
   - **What it does:** Validates file size, MIME type, and uploads to blob storage.
   - **Test Type:** Unit
   - **Key Scenarios:**
