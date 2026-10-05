@@ -74,21 +74,21 @@ Administrative control for quest creation, modification, status toggling, and li
 ## Feature Area 3: Squad & Collaboration System (Priority: P1 - High)
 Multiplayer collaboration feature allowing players to form teams around quests.
 
-- [ ] **3.1 Squad Creation (`createSquad`)**
+- [x] **3.1 Squad Creation (`createSquad`)**
   - **What it does:** Allows a user with an active quest to initiate a squad and become the leader.
   - **Test Type:** Integration / Unit
   - **Key Scenarios:**
     - Happy path: User creates squad -> Squad record created, user's snatch linked to `squadId`.
     - Validation: Squad name length check, max squads per quest check.
     - Pre-condition: User must have snatched or be eligible to snatch the quest.
-- [ ] **3.2 Joining a Squad (`joinSquad`)**
+- [x] **3.2 Joining a Squad (`joinSquad`)**
   - **What it does:** Allows another player to join an existing squad for a quest if capacity allows.
   - **Test Type:** Integration / Unit
   - **Key Scenarios:**
     - Happy path: Snatches the quest (if not already) and sets `squadId`.
     - Capacity limit: Rejects join if squad is full.
     - Conflict check: Cannot join multiple squads for the same quest.
-- [ ] **3.3 Leaving a Squad (`leaveSquad`)**
+- [x] **3.3 Leaving a Squad (`leaveSquad`)**
   - **What it does:** Removes member from squad; if creator leaves, handles squad disband or leadership transfer.
   - **Test Type:** Integration / Unit
   - **Key Scenarios:**
