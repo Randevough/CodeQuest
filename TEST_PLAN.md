@@ -144,14 +144,14 @@ Player identity, avatar uploads, biographical details, and showcased badges.
 ## Feature Area 6: Admin Member Management & Assignment (Priority: P1 - High)
 Staff oversight: direct quest assignments, roles, suspensions, and manual resets.
 
-- [ ] **6.1 Direct Quest Assignment (`assignQuest`)**
+- [x] **6.1 Direct Quest Assignment (`assignQuest`)**
   - **What it does:** Admin forces assignment of a quest to a specific user.
   - **Test Type:** Integration / Unit
   - **Key Scenarios:**
     - Happy path: User receives snatch with `assignedById`.
     - Force flag: Bypasses max capacity only if `force = true`.
     - Penalty guard: Blocked if user has an active penalty.
-- [ ] **6.2 Member Role & Account Actions (`updateUserRole`, `deactivateUser`, `deleteUser`, `manualReset`)**
+- [x] **6.2 Member Role & Account Actions (`updateUserRole`, `deactivateUser`, `deleteUser`, `manualReset`)**
   - **What it does:** Grants/revokes Admin role, suspends accounts, resets points/stats.
   - **Test Type:** Unit / Integration
   - **Key Scenarios:**
