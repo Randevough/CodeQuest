@@ -164,19 +164,19 @@ Staff oversight: direct quest assignments, roles, suspensions, and manual resets
 ## Feature Area 7: Auth, Guards & Security Infrastructure (Priority: P0 - Critical)
 Authentication credentials, role guards, and rate limiting.
 
-- [ ] **7.1 Authorization Guards (`requireAuth`, `requireAdmin`)**
+- [x] **7.1 Authorization Guards (`requireAuth`, `requireAdmin`)**
   - **What it does:** Enforces authenticated session and Admin role on server actions and route handlers.
   - **Test Type:** Unit
   - **Key Scenarios:**
     - requireAuth: Throws Unauthorized when session is missing.
     - requireAdmin: Throws Forbidden when user role is "Member".
-- [ ] **7.2 Rate Limiting (`rateLimit`)**
+- [x] **7.2 Rate Limiting (`rateLimit`)**
   - **What it does:** Throttles abusive requests via Upstash Redis or memory fallback.
   - **Test Type:** Unit
   - **Key Scenarios:**
     - Normal usage: Allows requests within quota.
     - Spike abuse: Blocks requests when limit exceeded.
-- [ ] **7.3 Signup & Auth Logic (`signup`, `authenticate`)**
+- [x] **7.3 Signup & Auth Logic (`signup`, `authenticate`)**
   - **What it does:** Validates password complexity, checks duplicate email, hashes password, creates verification token.
   - **Test Type:** Unit / Integration
   - **Key Scenarios:**
