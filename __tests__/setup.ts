@@ -15,6 +15,14 @@ vi.mock('next/server', () => ({
 vi.mock('next-auth', () => ({
     AuthError: class AuthError extends Error {
         type?: string;
+        code?: string;
+        constructor(message?: string) {
+            super(message);
+        }
+    },
+    CredentialsSignin: class CredentialsSignin extends Error {
+        type = 'CredentialsSignin';
+        code = 'credentials';
         constructor(message?: string) {
             super(message);
         }

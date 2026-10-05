@@ -75,7 +75,7 @@ export function PointsInfoModal() {
                                     <div>
                                         <h4 className="font-semibold text-slate-900 dark:text-white mb-1">Approved Quests Only</h4>
                                         <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                                            Points <span className="inline-flex align-baseline translate-y-0.5"><Image src="/icon.png" alt="Points" width={14} height={14} className="object-contain" /></span> displayed on the leaderboard are strictly from quests that have been <strong className="text-slate-900 dark:text-slate-200 font-medium">'Approved'</strong> by the Admin team.
+                                            Points <span className="inline-flex align-baseline translate-y-0.5"><Image src="/icon.png" alt="Points" width={14} height={14} className="object-contain" /></span> displayed on the leaderboard are strictly from quests that have been <strong className="text-slate-900 dark:text-slate-200 font-medium">&apos;Approved&apos;</strong> by the Admin team.
                                         </p>
                                     </div>
                                 </div>
@@ -87,7 +87,7 @@ export function PointsInfoModal() {
                                     <div>
                                         <h4 className="font-semibold text-slate-900 dark:text-white mb-1">Pending Validation</h4>
                                         <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                                            Tasks with <strong className="text-slate-900 dark:text-slate-200 font-medium">'Pending Review'</strong> or <strong className="text-slate-900 dark:text-slate-200 font-medium">'Revision Needed'</strong> status will not be added to your total balance until they are officially accepted.
+                                            Tasks with <strong className="text-slate-900 dark:text-slate-200 font-medium">&apos;Pending Review&apos;</strong> or <strong className="text-slate-900 dark:text-slate-200 font-medium">&apos;Revision Needed&apos;</strong> status will not be added to your total balance until they are officially accepted.
                                         </p>
                                     </div>
                                 </div>

@@ -198,7 +198,7 @@ function EmptyState() {
             </div>
             <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100 mb-1">No quests found</h3>
             <p className="text-slate-500 dark:text-slate-400 text-sm max-w-xs mb-6">
-                We couldn't find any quests matching your filters. Try adjusting your search or create a new one.
+                We couldn&apos;t find any quests matching your filters. Try adjusting your search or create a new one.
             </p>
             <Link
                 href="/admin/manage-quests/create"

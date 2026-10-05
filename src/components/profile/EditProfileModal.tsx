@@ -56,7 +56,7 @@ export function EditProfileModal({ isOpen, onClose, user, badges = [] }: EditPro
             setLinkedinUrl(user.linkedinUrl || '')
             setFeaturedIds(badges.filter(b => b.isFeatured).map(b => b.id))
         }
-    }, [isOpen])
+    }, [isOpen, user.name, user.bio, user.githubUrl, user.linkedinUrl, badges])
 
     if (!isOpen || !mounted) return null
 

@@ -1,7 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useDebounce } from 'use-debounce';
 import { SubmissionReviewModal } from '@/components/admin/submissions/SubmissionReviewModal';
 import { getSubmissions, type SubmissionItem } from '@/actions/submission';
 import { Pagination } from '@/components/Pagination';
@@ -19,14 +20,15 @@ export default function SubmissionQueuePage() {
     // Filter State
     const [filterStatus, setFilterStatus] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
+    const [debouncedQuery] = useDebounce(searchQuery, 400);
 
-    const fetchData = async () => {
+    const fetchData = useCallback(async (page: number, status: string, query: string) => {
         setLoading(true);
         try {
             const res = await getSubmissions({
-                page: pagination.page,
-                status: filterStatus,
-                query: searchQuery
+                page,
+                status,
+                query
             });
             if (res.success && res.data) {
                 setSubmissions(res.data);
@@ -37,19 +39,11 @@ export default function SubmissionQueuePage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
-        fetchData();
-    }, [pagination.page, filterStatus]); // Re-fetch on page or filter change
-
-    // Debounce search
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            fetchData();
-        }, 500);
-        return () => clearTimeout(timer);
-    }, [searchQuery]);
+        fetchData(pagination.page, filterStatus, debouncedQuery);
+    }, [fetchData, pagination.page, filterStatus, debouncedQuery]);
 
     const handleOpenReview = (snatchId: string) => {
         setSelectedSnatchId(snatchId);
@@ -59,7 +53,7 @@ export default function SubmissionQueuePage() {
     const handleCloseReview = () => {
         setIsReviewModalOpen(false);
         setSelectedSnatchId(null);
-        fetchData(); // Refresh list after review
+        fetchData(pagination.page, filterStatus, searchQuery); // Refresh list after review
     };
 
     const handlePageChange = (page: number) => {

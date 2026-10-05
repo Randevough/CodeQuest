@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { testPrisma } from '../setup'
 import { verifyEmail } from '@/actions/verify'
 import { signup, authenticate } from '@/actions/auth'
+import { AuthError } from 'next-auth'
 
 vi.mock('next/navigation', () => ({
     redirect: vi.fn(() => { throw new Error('NEXT_REDIRECT') })
@@ -19,7 +20,11 @@ vi.mock('@/auth', () => ({
     signIn: vi.fn(async (provider, credentials) => {
         const user = await testPrisma.user.findUnique({ where: { email: credentials.email } })
         if (!user?.emailVerified) {
-            throw new Error('unverified_email')
+            const err = Object.assign(new AuthError('unverified_email'), {
+                type: 'CredentialsSignin',
+                code: 'unverified_email'
+            })
+            throw err
         }
         return { success: true }
     })

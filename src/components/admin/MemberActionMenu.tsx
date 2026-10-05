@@ -227,7 +227,7 @@ export function MemberActionMenu({ user }: { user: UserProp }) {
                     <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-md overflow-hidden p-6 animate-in zoom-in-95 border-t-4 border-red-600">
                         <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Delete {user.name}?</h3>
                         <p className="text-slate-600 dark:text-slate-300 mb-4 leading-relaxed">
-                            This action is <strong>permanent</strong> and cannot be undone. All of the user's data, including their completed quests and badges, will be permanently removed.
+                            This action is <strong>permanent</strong> and cannot be undone. All of the user&apos;s data, including their completed quests and badges, will be permanently removed.
                         </p>
                         <div className="mb-6">
                             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">

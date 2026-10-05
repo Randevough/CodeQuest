@@ -66,7 +66,7 @@ export default function GlobalError({
                             </h2>
                             
                             <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed">
-                                We're having trouble connecting to the server. Our team has been notified and is looking into the issue. Please try again in a few moments.
+                                We&apos;re having trouble connecting to the server. Our team has been notified and is looking into the issue. Please try again in a few moments.
                             </p>
                         </div>
 

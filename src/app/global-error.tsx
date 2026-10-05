@@ -62,7 +62,7 @@ export default function GlobalError({
                                 </h2>
                                 
                                 <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed">
-                                    We couldn't load the application due to an unexpected error. Our team has been notified. Please try again or report the issue.
+                                    We couldn&apos;t load the application due to an unexpected error. Our team has been notified. Please try again or report the issue.
                                 </p>
                             </div>
                             

@@ -151,7 +151,7 @@ export function QuestCard({ quest, isSnatched }: { quest: Quest, isSnatched: boo
                     <div className="bg-white dark:bg-zinc-800 rounded-xl shadow-xl max-w-sm w-full p-6 border border-slate-100 dark:border-zinc-700">
                         <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Drop this Quest?</h3>
                         <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">
-                            Are you sure? You won't be able to join another quest for 2 days.
+                            Are you sure? You won&apos;t be able to join another quest for 2 days.
                         </p>
                         <div className="flex gap-3">
                             <button
