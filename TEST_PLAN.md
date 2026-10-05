@@ -100,13 +100,13 @@ Multiplayer collaboration feature allowing players to form teams around quests.
 ## Feature Area 4: Notification System (Priority: P1 - High)
 In-app notifications for quest submissions, badge unlocks, and admin reviews.
 
-- [ ] **4.1 Notification Dispatch & Retrieval (`createNotification`, `getNotifications`)**
+- [x] **4.1 Notification Dispatch & Retrieval (`createNotification`, `getNotifications`)**
   - **What it does:** Creates structured alerts (type, message, link) and lists notifications for the current user.
   - **Test Type:** Unit / Integration
   - **Key Scenarios:**
     - Dispatch: Inserts notification with `read: false`.
     - Ordering: Returns recent notifications first with pagination/limit.
-- [ ] **4.2 Read Status Management (`markNotificationRead`, `markAllNotificationsRead`, `getUnreadNotificationCount`)**
+- [x] **4.2 Read Status Management (`markNotificationRead`, `markAllNotificationsRead`, `getUnreadNotificationCount`)**
   - **What it does:** Tracks unread counter and marks single or bulk notifications as read.
   - **Test Type:** Unit / Integration
   - **Key Scenarios:**
