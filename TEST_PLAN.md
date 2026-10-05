@@ -7,7 +7,7 @@ This document defines the comprehensive automated test suite for CodeQuest, cove
 ## Feature Area 1: Quest Lifecycle & Workspace (Priority: P0 - Critical)
 Core player mechanics for managing claimed quests and submitting work.
 
-- [ ] **1.1 Quest Submission (`submitQuest`)**
+- [x] **1.1 Quest Submission (`submitQuest`)**
   - **What it does:** Allows a user with an `ACTIVE` or `REVISION_NEEDED` snatch to submit a URL (GitHub repo, live preview) for review. Updates status to `SUBMITTED`.
   - **Test Type:** Integration / Unit
   - **Key Scenarios:**
@@ -16,20 +16,20 @@ Core player mechanics for managing claimed quests and submitting work.
     - Validation error: Invalid URL string format -> returns error, does not mutate DB.
     - Auth / Permission: Unauthenticated caller -> rejects with error.
     - State violation: Submitting a quest that is already `ACCEPTED` or not snatched -> rejects with error.
-- [ ] **1.2 Dropping Quests (`dropQuest`)**
+- [x] **1.2 Dropping Quests (`dropQuest`)**
   - **What it does:** Allows a user to forfeit an active quest snatch, marking it `DROPPED` and freeing snatch capacity.
   - **Test Type:** Integration / Unit
   - **Key Scenarios:**
     - Happy path: Active snatch is marked `DROPPED`, capacity is restored.
     - State violation: Cannot drop a quest that is already `ACCEPTED` or `SUBMITTED` without admin review.
     - Auth check: Cannot drop another user's snatch.
-- [ ] **1.3 Archiving Quests (`archiveQuest`)**
+- [x] **1.3 Archiving Quests (`archiveQuest`)**
   - **What it does:** Allows users to archive completed quests from their active workspace view.
   - **Test Type:** Integration / Unit
   - **Key Scenarios:**
     - Happy path: Snatch status updated to `ARCHIVED`.
     - Permission: Caller must own the snatch.
-- [ ] **1.4 Workspace Querying (`getWorkspaceQuests`, `getQuestUserStatus`)**
+- [x] **1.4 Workspace Querying (`getWorkspaceQuests`, `getQuestUserStatus`)**
   - **What it does:** Retrieves categorized snatches (Active, In Review, Completed) and single quest relationship state for the current session.
   - **Test Type:** Integration / Unit
   - **Key Scenarios:**

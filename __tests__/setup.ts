@@ -12,6 +12,18 @@ vi.mock('next/server', () => ({
   NextRequest: vi.fn(),
 }))
 
+vi.mock('next/navigation', () => ({
+  redirect: vi.fn(),
+  useRouter: vi.fn(() => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
+    back: vi.fn(),
+  })),
+  usePathname: vi.fn(() => '/'),
+  useSearchParams: vi.fn(() => new URLSearchParams()),
+}))
+
 vi.mock('next-auth', () => ({
     AuthError: class AuthError extends Error {
         type?: string;
