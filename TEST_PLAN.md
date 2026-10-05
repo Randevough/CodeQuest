@@ -41,27 +41,27 @@ Core player mechanics for managing claimed quests and submitting work.
 ## Feature Area 2: Admin Quest Management & CRUD (Priority: P0 - Critical)
 Administrative control for quest creation, modification, status toggling, and lifecycle.
 
-- [ ] **2.1 Quest Creation (`createQuest`)**
+- [x] **2.1 Quest Creation (`createQuest`)**
   - **What it does:** Validates and creates a new quest with title, description, category, difficulty, points, deadline, and requirements.
   - **Test Type:** Unit / Integration
   - **Key Scenarios:**
     - Happy path: Valid FormData creates Quest record with defaults (status Draft or Active).
     - Validation: Missing title or points < 0 returns structured field errors.
     - Permission: Rejects non-Admin users.
-- [ ] **2.2 Quest Update & Status (`updateQuest`, `updateQuestStatus`)**
+- [x] **2.2 Quest Update & Status (`updateQuest`, `updateQuestStatus`)**
   - **What it does:** Modifies quest metadata and switches state between Draft, Active, and Closed.
   - **Test Type:** Unit / Integration
   - **Key Scenarios:**
     - Happy path: Updating difficulty/points preserves existing snatches.
     - Status toggle: Closing a quest prevents future snatches.
     - Non-existent ID: Returns 404/not found error.
-- [ ] **2.3 Quest Deletion & Duplication (`deleteQuest`, `duplicateQuest`)**
+- [x] **2.3 Quest Deletion & Duplication (`deleteQuest`, `duplicateQuest`)**
   - **What it does:** Deletes quests without active dependencies or clones an existing quest structure.
   - **Test Type:** Unit / Integration
   - **Key Scenarios:**
     - Duplicate: Clones title as "Copy of ...", sets status to Draft, resets snatches.
     - Delete: Cascades or safely deletes unattached quest; handles attached snatches according to business rules.
-- [ ] **2.4 Quest Filtering & Sorting Query (`getQuests`)**
+- [x] **2.4 Quest Filtering & Sorting Query (`getQuests`)**
   - **What it does:** Server-side search, category filter, difficulty filter, status filter, and pagination.
   - **Test Type:** Unit / Integration
   - **Key Scenarios:**
