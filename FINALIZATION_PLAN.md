@@ -8,8 +8,8 @@
 - **Status Fase 3 (Batch 1 - Performance & Assets):** ✅ Selesai (`b5333d7`)  
 - **Status Fase 3 (Batch 2 - Infra & Security Headers):** ✅ Selesai (`d75ef8e`)  
 - **Status Fase 3 (Batch 3 - Route Architecture: Move Board to `/explore`):** ✅ Selesai
-- **Status Fase 3 (Batch 4 - Landing Page CodeQuest di `/`):** 💡 Fase Brainstorming & Desain
-- **Status Fase 3 (Batch 5 - Dynamic SEO, Sitemap, Robots & Admin Polish):** 📋 Bergantung pada Rute Final  
+- **Status Fase 3 (Batch 4 - Landing Page CodeQuest di `/`):** ✅ Selesai
+- **Status Fase 3 (Batch 5 - Dynamic SEO, Sitemap, Robots & Admin Polish):** 📋 Bergantung pada Rute Final
 - **Status Fase 3 (Batch 6 - Verifikasi Final, Git Sync & Vercel Deploy):** ⏳ Menunggu Tahap Akhir  
 
 ---
@@ -58,23 +58,19 @@
 
 ---
 
-### 2.4 Batch 4: Brainstorming & Implementasi Landing Page CodeQuest (`/`)
+### 2.4 Batch 4: Brainstorming & Implementasi Landing Page CodeQuest (`/`) ✅ (Selesai)
 **Tujuan:** Membuat halaman depan publik yang informatif, menarik, dan berestetika tinggi untuk menjelaskan apa itu CodeQuest kepada calon pengguna/mahasiswa Cyber University sebelum login.
-1. **Brainstorming Sesi:**
-   - **Hero Section:** Headline kuat, sub-headline, CTA ganda ("Mulai Misi Sekarang" -> `/signup`, "Jelajahi Quest" -> `/explore`).
-   - **Problem & Solution / Value Proposition:** Mengapa CodeQuest ada (belajar pemrograman dengan studi kasus nyata & bersaing sehat antar mahasiswa).
-   - **How It Works (3 Langkah Mudah):**
-     1. *Snatch Quest:* Pilih misi coding sesuai tingkat keahlianmu.
-     2. *Solve & Submit:* Kerjakan kode dan kirim bukti repository/deployment.
-     3. *Earn EXP & Badges:* Naikkan peringkatmu di leaderboard kampus.
-   - **Gamification Showcase:** Tampilan preview Badges, EXP, dan Rank tier.
-   - **Live Quest Snapshot:** Cuplikan 3 quest terpopuler/terbaru dari database.
-   - **Cyber University Identity & Community:** Kredensial kampus dan ajakan kolaborasi.
-   - **FAQ & Footer:** Jawaban atas pertanyaan umum seputar akun, poin, dan aturan main.
-2. **Implementasi UI:**
-   - Dibuat di `src/app/page.tsx`.
-   - Menggunakan estetika modern (Tailwind CSS, dark mode support, micro-animations, glassmorphism, zero cliché).
-   - Responsive di desktop dan mobile.
+- [x] **Hero Section:** Headline kuat, sub-headline, CTA ganda ("Mulai Misi Sekarang" -> `/signup`, "Jelajahi Quest" -> `/explore`).
+- [x] **Problem & Solution / Value Proposition:** Mengapa CodeQuest ada (belajar pemrograman dengan studi kasus nyata & bersaing sehat antar mahasiswa).
+- [x] **How It Works (3 Langkah Mudah):**
+   1. *Snatch Quest:* Pilih misi coding sesuai tingkat keahlianmu.
+   2. *Solve & Submit:* Kerjakan kode dan kirim bukti repository/deployment.
+   3. *Earn EXP & Badges:* Naikkan peringkatmu di leaderboard kampus.
+- [x] **Gamification Showcase:** Tampilan preview Badges, EXP, dan Rank tier.
+- [x] **Live Quest Snapshot:** Cuplikan 3 quest terpopuler/terbaru dari database.
+- [x] **Cyber University Identity & Community:** Kredensial kampus dan ajakan kolaborasi.
+- [x] **FAQ & Footer:** Jawaban atas pertanyaan umum seputar akun, poin, dan aturan main.
+- [x] **Implementasi UI:** Dibuat di `src/app/page.tsx` dengan estetika modern, responsive desktop dan mobile.
 
 ---
 
@@ -114,6 +110,6 @@
 - [x] **Batch 1:** Pola wildcard Vercel Blob, font self-hosted, 5 `<img>` migrated, dynamic charts.
 - [x] **Batch 2:** OWASP Security headers, target binary Linux Prisma, script build `prisma generate && next build`.
 - [x] **Batch 3:** Rute Quest Board termigrasi ke `/explore`, navigasi Header & auth redirect terintegrasi.
-- [ ] **Batch 4:** Landing Page CodeQuest di `/` selesai dibangun dan responsive.
+- [x] **Batch 4:** Landing Page CodeQuest di `/` selesai dibangun dan responsive.
 - [ ] **Batch 5:** Dynamic SEO metadata, `sitemap.ts`, `robots.ts`, dan admin sorting terpasang.
 - [ ] **Batch 6:** Verifikasi penuh (`tsc`, `lint`, `build`), push `master`, deploy Vercel & Supabase.
