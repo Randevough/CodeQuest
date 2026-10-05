@@ -21,24 +21,24 @@ export const authConfig = {
                 if (devRole === 'member') {
                     // Member restricted from admin routes
                     if (pathname.startsWith('/admin')) {
-                        return Response.redirect(new URL('/', nextUrl))
+                        return Response.redirect(new URL('/explore', nextUrl))
                     }
                     return true
                 }
                 // If devRole === 'none', fall through to normal production authorization checks
             }
 
-            // Auth routes (/login, /signup) — redirect logged-in users to home
+            // Auth routes (/login, /signup) — redirect logged-in users to /explore
             if (pathname.startsWith('/login') || pathname.startsWith('/signup')) {
-                if (isLoggedIn) return Response.redirect(new URL('/', nextUrl))
+                if (isLoggedIn) return Response.redirect(new URL('/explore', nextUrl))
                 return true
             }
 
             // Admin routes — Admin role required
             if (pathname.startsWith('/admin')) {
                 if (isLoggedIn && isAdmin) return true
-                // Logged in but not admin → redirect to home
-                if (isLoggedIn && !isAdmin) return Response.redirect(new URL('/', nextUrl))
+                // Logged in but not admin → redirect to /explore
+                if (isLoggedIn && !isAdmin) return Response.redirect(new URL('/explore', nextUrl))
                 // Not logged in → redirect to login (handled by NextAuth internally)
                 return false
             }

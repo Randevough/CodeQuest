@@ -47,7 +47,7 @@ export function Header({ activePage }: HeaderProps) {
 			<div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 h-full">
 				<div className="flex h-full items-center justify-between">
 					<div className="flex items-center gap-12">
-						<Link href="/" className="flex items-center gap-2">
+						<Link href={session?.user ? "/explore" : "/"} className="flex items-center gap-2">
 							<Image
 								src="/icon-big.png"
 								alt="CodeQuest Logo"
@@ -61,7 +61,7 @@ export function Header({ activePage }: HeaderProps) {
 						</Link>
 						{/* Desktop Nav */}
 						<nav className="hidden md:flex items-center gap-8">
-							<Link className={getLinkClass("explore")} href="/">
+							<Link className={getLinkClass("explore")} href="/explore">
 								Explore Quests
 							</Link>
 							<Link className={getLinkClass("leaderboard")} href="/leaderboard">
@@ -188,7 +188,7 @@ export function Header({ activePage }: HeaderProps) {
 					<div className="px-2 pt-2 pb-3 space-y-1">
 						<Link
 							className={getLinkClass("explore", true)}
-							href="/"
+							href="/explore"
 							onClick={() => setIsMenuOpen(false)}
 						>
 							Explore Quests

@@ -76,8 +76,8 @@ export function AdminSidebar({ memberCount = 0, submissionCount = 0, user }: Adm
                             Global Menu
                         </div>
                         {/* Reordered Menu: Explore, Leaderboard, Workspace */}
-                        <Link className={getLinkClass('/')} href="/" onClick={closeMobileSidebar}>
-                            <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname === '/' ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400 group-hover:text-primary dark:group-hover:text-white'}`}>explore</span>
+                        <Link className={getLinkClass('/explore')} href="/explore" onClick={closeMobileSidebar}>
+                            <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname === '/explore' ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400 group-hover:text-primary dark:group-hover:text-white'}`}>explore</span>
                             <span className="text-sm font-medium">Explore Quests</span>
                         </Link>
                         <Link className={getLinkClass('/leaderboard')} href="/leaderboard" onClick={closeMobileSidebar}>
