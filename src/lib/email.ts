@@ -5,7 +5,8 @@ const resend = new Resend(process.env.RESEND_API_KEY || 're_dummy_key');
 export async function sendVerificationEmail(email: string, token: string) {
     const confirmLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/verify?token=${token}`;
 
-    if (process.env.EMAIL_MODE === 'stub') {
+    const isStubMode = process.env.EMAIL_MODE === 'stub' || !process.env.RESEND_API_KEY || process.env.RESEND_API_KEY === 're_dummy_key';
+    if (isStubMode) {
         console.log(`[STUB EMAIL] Verification link for ${email}: ${confirmLink}`);
         return { success: true, stub: true };
     }

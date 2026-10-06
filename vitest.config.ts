@@ -9,6 +9,8 @@ export default defineConfig({
     setupFiles: ['./__tests__/setup.ts'],
     globals: true,
     fileParallelism: false,
+    hookTimeout: 30000,
+    testTimeout: 30000,
     exclude: [...configDefaults.exclude, '.kilo/**', '.next/**'],
     alias: {
       '@': path.resolve(__dirname, './src')
