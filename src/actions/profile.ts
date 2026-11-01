@@ -52,7 +52,7 @@ export async function uploadProfileImage(formData: FormData) {
 
 import { z } from 'zod'
 
-interface UpdateProfileData {
+export interface UpdateProfileData {
     name?: string
     bio?: string
     githubUrl?: string

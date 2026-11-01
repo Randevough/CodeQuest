@@ -4,7 +4,11 @@ import { prisma } from '@/lib/db'
 import { auth } from '@/auth'
 import { LeaderboardUser } from '@/types/user'
 
-export { updateProfile } from './profile'
+import { updateProfile as updateProfileInternal, type UpdateProfileData } from './profile'
+
+export async function updateProfile(data: UpdateProfileData) {
+    return await updateProfileInternal(data)
+}
 
 export async function getLeaderboardUsers(page: number = 1, pageSize: number = 20, query?: string): Promise<{ users: LeaderboardUser[]; total: number }> {
     const validPage = Number.isFinite(page) ? Math.max(1, Math.min(Math.floor(page), 10000)) : 1
