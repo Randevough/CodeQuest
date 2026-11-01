@@ -4,12 +4,14 @@ import { prisma } from '@/lib/db'
 import { auth } from '@/auth'
 import { LeaderboardUser } from '@/types/user'
 
+export { updateProfile } from './profile'
+
 export async function getLeaderboardUsers(page: number = 1, pageSize: number = 20, query?: string): Promise<{ users: LeaderboardUser[]; total: number }> {
-    const validPage = Math.max(1, page)
-    const validPageSize = Math.max(1, pageSize)
+    const validPage = Number.isFinite(page) ? Math.max(1, Math.min(Math.floor(page), 10000)) : 1
+    const validPageSize = Number.isFinite(pageSize) ? Math.max(1, Math.min(Math.floor(pageSize), 100)) : 20
     const skip = (validPage - 1) * validPageSize
 
-    const trimmed = query?.trim()
+    const trimmed = typeof query === 'string' ? query.trim().slice(0, 100) : undefined
     const where = trimmed
         ? {
             OR: [

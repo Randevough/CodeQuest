@@ -60,16 +60,25 @@ interface UpdateProfileData {
 }
 
 const profileSchema = z.object({
-    name: z.string().optional(),
-    bio: z.string().max(160).optional(),
-    githubUrl: z.string().url().refine(val => val.startsWith('https:'), { message: 'URL must use HTTPS' }).optional().or(z.literal('')),
-    linkedinUrl: z.string().url().refine(val => val.startsWith('https:'), { message: 'URL must use HTTPS' }).optional().or(z.literal(''))
-})
+    name: z.string().max(100, { message: 'Name must not exceed 100 characters' }).optional(),
+    bio: z.string().max(160, { message: 'Bio must not exceed 160 characters' }).optional(),
+    githubUrl: z.string().url({ message: 'Invalid URL format' }).max(255, { message: 'URL must not exceed 255 characters' }).refine(val => val.startsWith('https:'), { message: 'URL must use HTTPS' }).optional().or(z.literal('')),
+    linkedinUrl: z.string().url({ message: 'Invalid URL format' }).max(255, { message: 'URL must not exceed 255 characters' }).refine(val => val.startsWith('https:'), { message: 'URL must use HTTPS' }).optional().or(z.literal(''))
+}).strict()
 
 export async function updateProfile(data: UpdateProfileData) {
     const session = await auth()
     if (!session?.user?.id) {
         return { success: false, error: 'Unauthorized' }
+    }
+
+    if (!data || typeof data !== 'object') {
+        return { success: false, error: 'Invalid profile data' }
+    }
+
+    const untrusted = data as Record<string, unknown>
+    if ('role' in untrusted || 'points' in untrusted || 'completedQuests' in untrusted) {
+        return { success: false, error: 'Unauthorized field modification: role or points cannot be updated' }
     }
 
     const validated = profileSchema.safeParse(data);
@@ -102,8 +111,13 @@ export async function updateFeaturedBadges(badgeIds: string[]) {
         return { success: false, error: 'Unauthorized' }
     }
 
+    if (!Array.isArray(badgeIds)) {
+        return { success: false, error: 'Invalid badge IDs' }
+    }
+
     // Limit to 3 featured badges max
-    const limited = badgeIds.slice(0, 3)
+    const validBadgeIds = badgeIds.filter(id => typeof id === 'string' && id.trim().length > 0 && id.length <= 100)
+    const limited = validBadgeIds.slice(0, 3)
 
     try {
         const userId = session.user.id

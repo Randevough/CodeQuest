@@ -13,15 +13,27 @@ export type ActionState = {
     errors?: Record<string, string[]>;
 }
 
+function isValidId(id: unknown): id is string {
+    return typeof id === 'string' && id.trim().length > 0 && id.length <= 100
+}
+
 // Authentication helper
 async function getCurrentUser() {
     const session = await auth();
-    if (!session || !session.user || !session.user.email) return null;
+    if (!session || !session.user || (!session.user.email && !session.user.id)) return null;
 
     try {
-        const user = await prisma.user.findUnique({
-            where: { email: session.user.email }
-        });
+        let user = null;
+        if (session.user.email) {
+            user = await prisma.user.findUnique({
+                where: { email: session.user.email }
+            });
+        }
+        if (!user && session.user.id) {
+            user = await prisma.user.findUnique({
+                where: { id: session.user.id }
+            });
+        }
         if (user) return user;
     } catch (error) {
         console.error('getCurrentUser DB fetch notice (fallback used):', error);
@@ -32,7 +44,7 @@ async function getCurrentUser() {
         return {
             id: session.user.id || 'dev-admin-id',
             name: session.user.name || 'Admin Developer',
-            email: session.user.email,
+            email: session.user.email || 'codequest@cyber-univ.ac.id',
             role: session.user.role || 'Admin',
             points: session.user.points || 1337,
             avatar: session.user.image || 'https://api.dicebear.com/7.x/bottts/svg?seed=AdminDev',
@@ -53,6 +65,10 @@ async function getCurrentUser() {
 }
 
 export async function joinQuest(questId: string) {
+    if (!isValidId(questId)) {
+        return { success: false, error: "Invalid quest ID" };
+    }
+
     const user = await getCurrentUser();
 
     if (!user) redirect('/login');
@@ -249,6 +265,10 @@ export async function getWorkspaceQuests() {
 }
 
 export async function archiveQuest(questId: string) {
+    if (!isValidId(questId)) {
+        return { success: false, error: 'Invalid quest ID' };
+    }
+
     const user = await getCurrentUser();
     if (!user) return { success: false, error: 'Unauthorized' };
 
@@ -283,6 +303,10 @@ export async function archiveQuest(questId: string) {
 }
 
 export async function getQuestUserStatus(questId: string) {
+    if (!isValidId(questId)) {
+        return null;
+    }
+
     const user = await getCurrentUser();
     if (!user) return null;
 
@@ -306,8 +330,9 @@ export async function getQuestUserStatus(questId: string) {
 }
 
 export async function submitQuest(questId: string, submissionUrl: string) {
-    const user = await getCurrentUser();
-    if (!user) return { success: false, error: "Unauthorized" };
+    if (!isValidId(questId)) {
+        return { success: false, error: "Invalid quest ID" };
+    }
 
     // Strict URL Validation
     const urlSchema = z.string().url().max(255).refine(val => val.startsWith('https:'), { message: 'URL must use HTTPS' }); // Prevent DB overflow
@@ -315,6 +340,9 @@ export async function submitQuest(questId: string, submissionUrl: string) {
     if (!urlCheck.success) {
         return { success: false, error: "Please provide a valid URL (max 255 chars)" };
     }
+
+    const user = await getCurrentUser();
+    if (!user) return { success: false, error: "Unauthorized" };
 
     try {
         const result = await prisma.$transaction(async (tx) => {
@@ -391,6 +419,10 @@ export async function submitQuest(questId: string, submissionUrl: string) {
 }
 
 export async function dropQuest(questId: string) {
+    if (!isValidId(questId)) {
+        return { success: false, error: "Invalid quest ID" };
+    }
+
     const user = await getCurrentUser();
     if (!user) redirect('/login');
 
@@ -436,24 +468,43 @@ export async function dropQuest(questId: string) {
         return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
     }
 }
+
 import { z } from 'zod';
 import { requireAdmin } from '@/lib/auth-guard';
 
+function parseRequirements(raw: FormDataEntryValue | null): { success: true; data: string[] } | { success: false } {
+    if (!raw || typeof raw !== 'string' || raw.trim() === '') return { success: true, data: [] };
+    try {
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed) || !parsed.every(item => typeof item === 'string')) {
+            return { success: false };
+        }
+        return { success: true, data: parsed };
+    } catch {
+        return { success: false };
+    }
+}
+
 const QuestSchema = z.object({
-    title: z.string().min(3),
-    description: z.string().min(10),
-    category: z.string(),
-    difficulty: z.string(),
-    points: z.coerce.number().min(1),
-    maxSnatchers: z.coerce.number().min(1).optional(),
-    deadline: z.string().optional(), // Will convert to Date
-    requirements: z.array(z.string()).optional(),
-    resources: z.string().optional(),
+    title: z.string().min(3).max(100),
+    description: z.string().min(10).max(5000),
+    category: z.string().min(1).max(50),
+    difficulty: z.string().min(1).max(50),
+    points: z.coerce.number().min(1).max(100000),
+    maxSnatchers: z.coerce.number().min(1).max(1000).optional(),
+    deadline: z.string().max(100).optional(),
+    requirements: z.array(z.string().max(500)).max(50).optional(),
+    resources: z.string().max(2000).optional(),
 });
 
 export async function createQuest(prevState: ActionState | undefined, formData: FormData) {
     try { await requireAdmin() } catch (e) {
         return { success: false, message: e instanceof Error ? e.message : 'Forbidden' }
+    }
+
+    const reqParse = parseRequirements(formData.get('requirements'));
+    if (!reqParse.success) {
+        return { success: false, message: 'Invalid requirements format' };
     }
 
     const validatedResult = QuestSchema.safeParse({
@@ -464,7 +515,7 @@ export async function createQuest(prevState: ActionState | undefined, formData: 
         points: formData.get('points'),
         maxSnatchers: formData.get('maxSnatchers') || undefined,
         deadline: formData.get('deadline') || undefined,
-        requirements: formData.get('requirements') ? JSON.parse(formData.get('requirements') as string) : [],
+        requirements: reqParse.data,
         resources: formData.get('resources'),
     });
 
@@ -620,6 +671,10 @@ export async function updateQuestStatus(questId: string, newStatus: string) {
     try {
         await requireAdmin()
 
+        if (!isValidId(questId)) {
+            return { success: false, error: "Invalid quest ID" }
+        }
+
         const VALID_STATUSES = ['Active', 'Draft', 'Closed', 'Inactive']
         if (!VALID_STATUSES.includes(newStatus)) {
             return { success: false, error: "Invalid quest status" }
@@ -647,13 +702,17 @@ export async function updateQuestStatus(questId: string, newStatus: string) {
         return { success: true };
     } catch (error) {
         console.error("Failed to update quest status:", error);
-        return { success: false, error: "Failed to update status" };
+        return { success: false, error: error instanceof Error ? error.message : "Failed to update status" };
     }
 }
 
 export async function deleteQuest(questId: string) {
     try {
         await requireAdmin()
+
+        if (!isValidId(questId)) {
+            return { success: false, error: "Invalid quest ID" }
+        }
 
         const activeSnatchesCount = await prisma.snatch.count({
             where: {
@@ -676,13 +735,17 @@ export async function deleteQuest(questId: string) {
         return { success: true };
     } catch (error) {
         console.error("Failed to delete quest:", error);
-        return { success: false, error: "Failed to delete quest" };
+        return { success: false, error: error instanceof Error ? error.message : "Failed to delete quest" };
     }
 }
 
 export async function duplicateQuest(questId: string) {
     try {
         await requireAdmin()
+
+        if (!isValidId(questId)) {
+            return { success: false, error: "Invalid quest ID" }
+        }
 
         const original = await prisma.quest.findUnique({ where: { id: questId } });
         if (!original) throw new Error("Quest not found");
@@ -730,12 +793,16 @@ export async function duplicateQuest(questId: string) {
 
     } catch (error) {
         console.error("Failed to duplicate quest:", error);
-        return { success: false, error: "Failed to duplicate quest" };
+        return { success: false, error: error instanceof Error ? error.message : "Failed to duplicate quest" };
     }
 }
 
 export async function getQuestById(id: string) {
     try {
+        if (!isValidId(id)) {
+            return { success: false, error: 'Quest not found' };
+        }
+
         const quest = await prisma.quest.findUnique({
             where: { id },
         });
@@ -753,6 +820,15 @@ export async function updateQuest(questId: string, prevState: ActionState | unde
         return { success: false, message: e instanceof Error ? e.message : 'Forbidden' }
     }
 
+    if (!isValidId(questId)) {
+        return { success: false, message: "Invalid quest ID" };
+    }
+
+    const reqParse = parseRequirements(formData.get('requirements'));
+    if (!reqParse.success) {
+        return { success: false, message: 'Invalid requirements format' };
+    }
+
     const validatedResult = QuestSchema.safeParse({
         title: formData.get('title'),
         description: formData.get('description'),
@@ -761,7 +837,7 @@ export async function updateQuest(questId: string, prevState: ActionState | unde
         points: formData.get('points'),
         maxSnatchers: formData.get('maxSnatchers') || undefined,
         deadline: formData.get('deadline') || undefined,
-        requirements: formData.get('requirements') ? JSON.parse(formData.get('requirements') as string) : [],
+        requirements: reqParse.data,
         resources: formData.get('resources'),
     });
 

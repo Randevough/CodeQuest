@@ -4,9 +4,18 @@ import { prisma } from "@/lib/db"
 import { revalidatePath } from "next/cache"
 import { requireAdmin } from "@/lib/auth-guard"
 
+const VALID_ROLES = ['Admin', 'Member'] as const
+
+function isValidId(id: unknown): id is string {
+    return typeof id === 'string' && id.trim().length > 0 && id.length <= 100
+}
+
 export async function manualReset(userId: string) {
     try {
         await requireAdmin()
+        if (!isValidId(userId)) {
+            return { success: false, error: "Invalid user ID" }
+        }
         await prisma.penalty.deleteMany({
             where: { userId }
         })
@@ -21,6 +30,12 @@ export async function manualReset(userId: string) {
 export async function updateUserRole(userId: string, role: string) {
     try {
         await requireAdmin()
+        if (!isValidId(userId)) {
+            return { success: false, error: "Invalid user ID" }
+        }
+        if (!role || !VALID_ROLES.includes(role as typeof VALID_ROLES[number])) {
+            return { success: false, error: "Invalid role specified" }
+        }
         await prisma.user.update({
             where: { id: userId },
             data: { role }
@@ -36,6 +51,9 @@ export async function updateUserRole(userId: string, role: string) {
 export async function deactivateUser(userId: string) {
     try {
         await requireAdmin()
+        if (!isValidId(userId)) {
+            return { success: false, error: "Invalid user ID" }
+        }
         await prisma.penalty.create({
             data: {
                 userId,
@@ -54,6 +72,9 @@ export async function deactivateUser(userId: string) {
 export async function deleteUser(userId: string) {
     try {
         await requireAdmin()
+        if (!isValidId(userId)) {
+            return { success: false, error: "Invalid user ID" }
+        }
         await prisma.$transaction([
             prisma.snatch.deleteMany({ where: { userId } }),
             prisma.penalty.deleteMany({ where: { userId } }),
