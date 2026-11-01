@@ -4,9 +4,9 @@ import { QuestForm } from '@/components/admin/QuestForm';
 import { getQuestById } from '@/actions/quest';
 
 interface CreateQuestPageProps {
-    searchParams: {
+    searchParams: Promise<{
         id?: string;
-    };
+    }>;
 }
 
 export default async function CreateQuestPage({ searchParams }: CreateQuestPageProps) {

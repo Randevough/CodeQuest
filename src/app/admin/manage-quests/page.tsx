@@ -8,11 +8,11 @@ import { getQuests } from '@/actions/quest';
 import { Plus, Users, SearchX } from 'lucide-react';
 
 interface ManageQuestsPageProps {
-    searchParams: {
+    searchParams: Promise<{
         page?: string;
         status?: string;
         q?: string;
-    };
+    }>;
 }
 
 export default async function ManageQuestsPage({ searchParams }: ManageQuestsPageProps) {

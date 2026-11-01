@@ -40,7 +40,7 @@ async function getQuest(id: string) {
     return quest
 }
 
-export default async function QuestPage({ params }: { params: { id: string } }) {
+export default async function QuestPage({ params }: { params: Promise<{ id: string }> }) {
     // Next 15+ await params
     const resolvedParams = await params
     const quest = await getQuest(resolvedParams.id)

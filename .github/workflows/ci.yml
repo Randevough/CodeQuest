@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ "main", "master", "redesign/**" ]
+    branches: [ "main", "master", "redesign/**", "feature/**", "chore/**" ]
   pull_request:
     branches: [ "main", "master", "redesign/**" ]
 
@@ -29,6 +29,10 @@ jobs:
       DATABASE_URL_TEST: postgresql://postgres:password@localhost:5432/codequest_test?schema=public
       DATABASE_URL: postgresql://postgres:password@localhost:5432/codequest_test?schema=public
       DIRECT_URL: postgresql://postgres:password@localhost:5432/codequest_test?schema=public
+      AUTH_SECRET: ci-mock-auth-secret-minimum-32-characters-length
+      UPSTASH_REDIS_REST_URL: https://mock-redis.upstash.io
+      UPSTASH_REDIS_REST_TOKEN: mock-upstash-token
+      EMAIL_MODE: mock
 
     steps:
     - uses: actions/checkout@v4
