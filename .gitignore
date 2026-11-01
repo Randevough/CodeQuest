@@ -50,3 +50,10 @@ next-env.d.ts
 /.agent/
 /design_context
 prisma/dev.db
+
+# internal specs & plans
+/DESIGN.md
+/docs/CD_PLAN.md
+/docs/CREATIVE_SPECIFICATION.md
+/docs/DEPLOYMENT_GUIDE.md
+/docs/RELEASE_CHECKLIST.md
