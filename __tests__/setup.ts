@@ -2,6 +2,13 @@ import { beforeAll, beforeEach, afterAll, vi } from 'vitest'
 import { PrismaClient } from '@prisma/client'
 import { execSync } from 'child_process'
 
+// Provide default test environment variables if unset to pass src/env.ts schema validation
+process.env.DATABASE_URL = process.env.DATABASE_URL || process.env.DATABASE_URL_TEST || 'postgresql://mock:mock@localhost:5432/mock'
+process.env.DIRECT_URL = process.env.DIRECT_URL || process.env.DATABASE_URL_TEST || 'postgresql://mock:mock@localhost:5432/mock'
+process.env.AUTH_SECRET = process.env.AUTH_SECRET || 'mock-secret-key-for-test-isolation-min-32-chars'
+process.env.UPSTASH_REDIS_REST_URL = process.env.UPSTASH_REDIS_REST_URL || 'https://mock.upstash.io'
+process.env.UPSTASH_REDIS_REST_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN || 'mock-token'
+
 vi.mock('next/cache', () => ({
   revalidatePath: vi.fn(),
   revalidateTag: vi.fn(),
@@ -12,31 +19,60 @@ vi.mock('next/server', () => ({
   NextRequest: vi.fn(),
 }))
 
-vi.mock('next-auth', () => ({
-    AuthError: class AuthError extends Error {
+vi.mock('next-auth', () => {
+    class AuthError extends Error {
         type?: string;
         constructor(message?: string) {
             super(message);
         }
-    },
-    default: function () {
-        return {
-            handlers: {},
-            auth: vi.fn(),
-            signIn: vi.fn(),
-            signOut: vi.fn()
+    }
+    class CredentialsSignin extends AuthError {
+        code?: string;
+    }
+    return {
+        AuthError,
+        CredentialsSignin,
+        default: function () {
+            return {
+                handlers: {},
+                auth: vi.fn(),
+                signIn: vi.fn(),
+                signOut: vi.fn()
+            }
         }
     }
-}))
+})
 
 // We will use a separate Prisma client for tests pointing to the test DB
-const prisma = new PrismaClient({
-  datasources: {
-    db: {
-      url: process.env.DATABASE_URL_TEST
+const mockPrismaHandler: ProxyHandler<object> = {
+  get(_target, prop) {
+    if (prop === '$disconnect' || prop === '$connect') {
+      return () => Promise.resolve()
     }
+    if (prop === '$transaction') {
+      return (cb: unknown) => (typeof cb === 'function' ? cb(prisma) : Promise.resolve([]))
+    }
+    if (prop === '$queryRaw' || prop === '$executeRaw' || prop === '$executeRawUnsafe') {
+      return () => Promise.resolve([])
+    }
+    return new Proxy({}, {
+      get: () => () => Promise.resolve(null)
+    })
   }
-})
+}
+
+const prisma: PrismaClient = process.env.DATABASE_URL_TEST
+  ? new PrismaClient({
+      datasources: {
+        db: {
+          url: process.env.DATABASE_URL_TEST
+        }
+      }
+    })
+  : (new Proxy({}, mockPrismaHandler) as unknown as PrismaClient)
+
+// Also attach to globalThis so src/lib/db.ts reuses testPrisma
+;(globalThis as unknown as { prisma: PrismaClient }).prisma = prisma
 
 beforeAll(async () => {
   // Push the schema to the test database
@@ -65,7 +101,9 @@ beforeEach(async () => {
 })
 
 afterAll(async () => {
-  await prisma.$disconnect()
+  if (process.env.DATABASE_URL_TEST) {
+    await prisma.$disconnect()
+  }
 })
 
 export { prisma as testPrisma }
