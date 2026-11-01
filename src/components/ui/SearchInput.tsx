@@ -28,6 +28,12 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         const currentVal = isControlled ? value : internalVal;
         const hasValue = Boolean(currentVal);
 
+        React.useEffect(() => {
+            if (!isControlled && defaultValue !== undefined) {
+                setInternalVal(defaultValue);
+            }
+        }, [defaultValue, isControlled]);
+
         const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             if (!isControlled) {
                 setInternalVal(e.target.value);
@@ -71,8 +77,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
                 <input
                     ref={ref}
                     type="text"
-                    value={value}
-                    defaultValue={defaultValue}
+                    {...(isControlled ? { value } : { value: internalVal })}
                     onChange={handleInputChange}
                     disabled={disabled}
                     placeholder={placeholder}

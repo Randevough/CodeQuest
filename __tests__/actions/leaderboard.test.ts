@@ -308,6 +308,32 @@ describe('Leaderboard Server Actions', () => {
       )
     })
 
+    it('filters users by query when query is provided', async () => {
+      vi.mocked(prisma.user.findMany).mockResolvedValueOnce([])
+      vi.mocked(prisma.user.count).mockResolvedValueOnce(0)
+
+      await getLeaderboardUsers(1, 10, 'alice')
+
+      expect(prisma.user.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            OR: [
+              { name: { contains: 'alice', mode: 'insensitive' } },
+              { handle: { contains: 'alice', mode: 'insensitive' } }
+            ]
+          }
+        })
+      )
+      expect(prisma.user.count).toHaveBeenCalledWith({
+        where: {
+          OR: [
+            { name: { contains: 'alice', mode: 'insensitive' } },
+            { handle: { contains: 'alice', mode: 'insensitive' } }
+          ]
+        }
+      })
+    })
+
     it('returns empty array on database error in production/test', async () => {
       vi.mocked(prisma.user.findMany).mockRejectedValueOnce(new Error('DB failure'))
 

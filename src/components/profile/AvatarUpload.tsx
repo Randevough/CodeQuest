@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import { useRouter } from 'next/navigation'
 import { UserAvatar } from '@/components/ui/UserAvatar'
 import { uploadProfileImage } from '@/actions/profile'
 import { toast } from 'sonner'
@@ -14,6 +15,7 @@ interface AvatarUploadProps {
 }
 
 export function AvatarUpload({ currentAvatar, name, size = 128, editable = false }: AvatarUploadProps) {
+    const router = useRouter()
     const [isUploading, setIsUploading] = useState(false)
     const [feedback, setFeedback] = useState('')
     const fileInputRef = useRef<HTMLInputElement>(null)
@@ -41,6 +43,7 @@ export function AvatarUpload({ currentAvatar, name, size = 128, editable = false
             const result = await uploadProfileImage(formData)
             if (result.success) {
                 toast.success('Profile picture updated!')
+                router.refresh()
             } else {
                 setFeedback(result.error as string); toast.error(result.error as string)
             }
