@@ -12,9 +12,11 @@ export async function getLeaderboardUsers(page: number = 1, pageSize: number = 2
     try {
         const [usersData, total] = await Promise.all([
             prisma.user.findMany({
-                orderBy: {
-                    points: 'desc'
-                },
+                orderBy: [
+                    { points: 'desc' },
+                    { completedQuests: 'desc' },
+                    { createdAt: 'asc' }
+                ],
                 include: {
                     _count: {
                         select: {
@@ -93,21 +95,37 @@ export async function getLeaderboardStanding() {
         let currentUser = session.user.id
             ? await prisma.user.findUnique({
                 where: { id: session.user.id },
-                select: { id: true, points: true, avatar: true, name: true }
+                select: { id: true, points: true, avatar: true, name: true, completedQuests: true, createdAt: true }
             })
             : null;
 
         if (!currentUser && session.user.email) {
             currentUser = await prisma.user.findUnique({
                 where: { email: session.user.email },
-                select: { id: true, points: true, avatar: true, name: true }
+                select: { id: true, points: true, avatar: true, name: true, completedQuests: true, createdAt: true }
             });
         }
 
         if (currentUser) {
-            // Rank: Count users with strictly more points + 1
+            const completed = currentUser.completedQuests ?? 0;
+            const created = currentUser.createdAt ?? new Date(0);
+
+            // Tie-breaker: 1) points desc, 2) completedQuests desc, 3) createdAt asc
             const rank = await prisma.user.count({
-                where: { points: { gt: currentUser.points } }
+                where: {
+                    OR: [
+                        { points: { gt: currentUser.points } },
+                        {
+                            points: currentUser.points,
+                            completedQuests: { gt: completed }
+                        },
+                        {
+                            points: currentUser.points,
+                            completedQuests: completed,
+                            createdAt: { lt: created }
+                        }
+                    ]
+                }
             }) + 1;
 
             const isTop = rank === 1;
@@ -116,14 +134,31 @@ export async function getLeaderboardStanding() {
             const nextRankUser = isTop
                 ? null
                 : await prisma.user.findFirst({
-                    where: { points: { gt: currentUser.points } },
-                    orderBy: { points: 'asc' },
+                    where: {
+                        OR: [
+                            { points: { gt: currentUser.points } },
+                            {
+                                points: currentUser.points,
+                                completedQuests: { gt: completed }
+                            },
+                            {
+                                points: currentUser.points,
+                                completedQuests: completed,
+                                createdAt: { lt: created }
+                            }
+                        ]
+                    },
+                    orderBy: [
+                        { points: 'asc' },
+                        { completedQuests: 'asc' },
+                        { createdAt: 'desc' }
+                    ],
                     select: { points: true }
                 });
 
             const pointsToNext = isTop || !nextRankUser
                 ? 0
-                : Math.max(0, nextRankUser.points - currentUser.points + 1);
+                : Math.max(1, nextRankUser.points - currentUser.points + (nextRankUser.points > currentUser.points ? 1 : 0));
 
             return {
                 ...currentUser,
