@@ -5,6 +5,8 @@ import { useDebouncedCallback } from 'use-debounce'
 import { CustomDropdown, Option } from '@/components/ui/CustomDropdown'
 
 // --- Reusable Custom Select Component (Matches QuestSearch) ---
+import { SearchInput } from '@/components/ui/SearchInput'
+
 function CustomSelect({ value, onChange, options, icon }: {
     value: string, onChange: (value: string) => void, options: Option[], icon?: string
 }) {
@@ -57,15 +59,10 @@ export function LeaderboardFilters() {
 
     return (
         <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-            <div className="relative w-full sm:w-72 group">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center pointer-events-none material-symbols-outlined text-muted text-[20px]">
-                    search
-                </span>
-                <input
-                    className="block w-full pl-12 pr-4 py-2.5 border border-control-border rounded-[var(--radius-input)] break-words leading-5 bg-surface placeholder-muted focus:outline-none focus:ring-2 focus:ring-focus/30 focus:border-focus sm:text-sm transition-all duration-fast ease-in-out"
+            <div className="w-full sm:w-72">
+                <SearchInput
                     aria-label="Search members"
-                    placeholder="Search members..."
-                    type="text"
+                    placeholder="Search members"
                     defaultValue={query}
                     onChange={(e) => handleSearch(e.target.value)}
                 />

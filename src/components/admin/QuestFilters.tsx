@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTransition, useState, useEffect, useCallback } from 'react';
+import { SearchInput } from '@/components/ui/SearchInput';
 
 
 export function QuestFilters() {
@@ -46,16 +47,13 @@ export function QuestFilters() {
 
     return (
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div className="relative w-full sm:w-80 group">
-                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-warning pointer-events-none flex items-center justify-center transition-colors">
-                    <span aria-hidden="true" className="material-symbols-outlined text-[20px]">search</span>
-                </span>
-                <input
-                    className="w-full h-10 pl-11 pr-4 rounded-[var(--radius-input)] bg-surface border border-control-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-focus/30 focus:border-focus placeholder:text-muted shadow-sm transition-all"
-                    aria-label="Search quests" placeholder="Search quests..."
-                    type="text"
+            <div className="w-full sm:w-80">
+                <SearchInput
+                    aria-label="Search quests"
+                    placeholder="Search quests"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
+                    onClear={() => setSearch('')}
                 />
             </div>
             <div className="flex flex-wrap items-center gap-2">

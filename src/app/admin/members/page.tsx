@@ -4,6 +4,7 @@ import Link from "next/link"
 import { Pagination } from "@/components/Pagination"
 import { MemberActionMenu } from "@/components/admin/MemberActionMenu"
 import { MobileSidebarTrigger } from "@/components/admin/MobileSidebarTrigger"
+import { SearchInput } from "@/components/ui/SearchInput"
 import Image from "next/image"
 
 export default async function MemberDirectoryPage({
@@ -66,16 +67,12 @@ export default async function MemberDirectoryPage({
                     {/* Search and Filters */}
                     <div className="flex flex-col sm:flex-row justify-between items-end sm:items-center gap-4">
                         <div className="flex items-center gap-3 flex-1 w-full sm:w-auto">
-                            <form className="relative group w-full sm:max-w-xs">
-                                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-warning pointer-events-none flex items-center justify-center transition-colors">
-                                    <span aria-hidden="true" className="material-symbols-outlined text-[20px]">search</span>
-                                </span>
-                                <input
-                                    name="q" aria-label="Search members"
+                            <form className="w-full sm:max-w-xs">
+                                <SearchInput
+                                    name="q"
+                                    aria-label="Search members"
                                     defaultValue={query}
-                                    className="w-full h-10 pl-11 pr-4 rounded-[var(--radius-input)] bg-surface border border-control-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-focus/30 focus:border-focus hover:border-border placeholder:text-muted transition-all shadow-sm"
-                                    placeholder="Search members..."
-                                    type="text"
+                                    placeholder="Search members"
                                 />
                             </form>
                         </div>

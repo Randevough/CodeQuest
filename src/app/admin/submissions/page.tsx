@@ -6,6 +6,7 @@ import { SubmissionReviewModal } from '@/components/admin/submissions/Submission
 import { getSubmissions, type SubmissionItem } from '@/actions/submission';
 import { Pagination } from '@/components/Pagination';
 import { MobileSidebarTrigger } from '@/components/admin/MobileSidebarTrigger';
+import { SearchInput } from '@/components/ui/SearchInput';
 
 export default function SubmissionQueuePage() {
     const queueHeadingRef = useRef<HTMLHeadingElement>(null);
@@ -98,17 +99,13 @@ export default function SubmissionQueuePage() {
                     {loadError && <div role="alert" className="border border-control-border bg-surface p-3 text-danger">{loadError} <button onClick={fetchData} className="underline">Retry</button></div>}
                     {/* Filters and Search */}
                     <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-                        <div className="relative w-full sm:max-w-xs group">
-                            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-warning pointer-events-none flex items-center justify-center transition-colors">
-                                <span aria-hidden="true" className="material-symbols-outlined text-[20px]">search</span>
-                            </span>
-                            <input
-                                className="w-full h-10 pl-11 pr-4 rounded-[var(--radius-input)] bg-surface border border-control-border text-sm focus:outline-none focus:ring-2 focus:ring-focus/30 focus:border-focus hover:border-border placeholder:text-muted transition-all shadow-sm"
+                        <div className="w-full sm:max-w-xs">
+                            <SearchInput
                                 aria-label="Search student or quest"
-                                placeholder="Search student or quest..."
-                                type="text"
+                                placeholder="Search student or quest"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
+                                onClear={() => setSearchQuery('')}
                             />
                         </div>
                         <div className="flex flex-wrap bg-surface-raised p-1 rounded-card">
