@@ -5,7 +5,9 @@ import { auth } from '@/auth'
 import { LeaderboardUser } from '@/types/user'
 
 export async function getLeaderboardUsers(page: number = 1, pageSize: number = 20): Promise<{ users: LeaderboardUser[]; total: number }> {
-    const skip = (page - 1) * pageSize
+    const validPage = Math.max(1, page)
+    const validPageSize = Math.max(1, pageSize)
+    const skip = (validPage - 1) * validPageSize
 
     try {
         const [usersData, total] = await Promise.all([
@@ -23,7 +25,7 @@ export async function getLeaderboardUsers(page: number = 1, pageSize: number = 2
                     }
                 },
                 skip,
-                take: pageSize
+                take: validPageSize
             }),
             prisma.user.count()
         ])
@@ -83,36 +85,51 @@ export async function getLeaderboardUsers(page: number = 1, pageSize: number = 2
 
 export async function getLeaderboardStanding() {
     const session = await auth();
-    if (!session || !session.user || !session.user.email) {
+    if (!session?.user || (!session.user.email && !session.user.id)) {
         return null; // Or handle not logged in
     }
 
     try {
-        const currentUser = await prisma.user.findUnique({
-            where: { email: session.user.email },
-            select: { id: true, points: true, avatar: true, name: true }
-        });
+        let currentUser = session.user.id
+            ? await prisma.user.findUnique({
+                where: { id: session.user.id },
+                select: { id: true, points: true, avatar: true, name: true }
+            })
+            : null;
+
+        if (!currentUser && session.user.email) {
+            currentUser = await prisma.user.findUnique({
+                where: { email: session.user.email },
+                select: { id: true, points: true, avatar: true, name: true }
+            });
+        }
 
         if (currentUser) {
-            // Rank: Count users with more points
+            // Rank: Count users with strictly more points + 1
             const rank = await prisma.user.count({
                 where: { points: { gt: currentUser.points } }
             }) + 1;
 
-            // Next Rank User (The one just above)
-            const nextRankUser = await prisma.user.findFirst({
-                where: { points: { gt: currentUser.points } },
-                orderBy: { points: 'asc' },
-                select: { points: true }
-            });
+            const isTop = rank === 1;
 
-            const pointsToNext = nextRankUser ? (nextRankUser.points - currentUser.points + 1) : 0;
+            // Next Rank User (The one just above)
+            const nextRankUser = isTop
+                ? null
+                : await prisma.user.findFirst({
+                    where: { points: { gt: currentUser.points } },
+                    orderBy: { points: 'asc' },
+                    select: { points: true }
+                });
+
+            const pointsToNext = isTop || !nextRankUser
+                ? 0
+                : Math.max(0, nextRankUser.points - currentUser.points + 1);
 
             return {
                 ...currentUser,
                 rank,
                 pointsToNext,
-                isTop: rank === 1
+                isTop,
             };
         }
     } catch (error) {

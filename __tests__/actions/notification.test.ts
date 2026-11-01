@@ -64,6 +64,26 @@ describe('Notification Server Actions', () => {
     expect(count).toBe(3)
   })
 
+  it('returns 0 unread notifications when unauthenticated', async () => {
+    mockAuth.mockResolvedValueOnce(null)
+    const count = await getUnreadNotificationCount()
+    expect(count).toBe(0)
+  })
+
+  it('rejects unauthorized users from marking single notification as read', async () => {
+    mockAuth.mockResolvedValueOnce(null)
+    const result = await markNotificationRead('notif_1')
+    expect(result.success).toBe(false)
+    expect(result.error).toBe('Unauthorized')
+  })
+
+  it('rejects unauthorized users from marking all notifications as read', async () => {
+    mockAuth.mockResolvedValueOnce(null)
+    const result = await markAllNotificationsRead()
+    expect(result.success).toBe(false)
+    expect(result.error).toBe('Unauthorized')
+  })
+
   it('marks a single notification as read with ownership check', async () => {
     const mockUser = { id: 'user_123' }
     mockAuth.mockResolvedValueOnce({ user: mockUser })
