@@ -70,9 +70,9 @@ export function AdminSidebar({ memberCount = 0, submissionCount = 0, user }: Adm
                             Global Menu
                         </div>
                         {/* Reordered Menu: Explore, Leaderboard, Workspace */}
-                        <Link className={getLinkClass('/')} aria-current={pathname === '/' ? 'page' : undefined} href="/" onClick={closeMobileSidebar}>
-                            <span aria-hidden="true" className={`material-symbols-outlined text-[20px] transition-colors `}>explore</span>
-                            <span className="text-sm font-medium">Explore Quests</span>
+                        <Link className={getLinkClass('/explore')} aria-current={pathname === '/explore' ? 'page' : undefined} href="/explore" onClick={closeMobileSidebar}>
+                            <span className="material-symbols-outlined text-[20px]" aria-hidden="true">travel_explore</span>
+                            <span>Explore Quests</span>
                         </Link>
                         <Link className={getLinkClass('/leaderboard')} aria-current={pathname === '/leaderboard' ? 'page' : undefined} href="/leaderboard" onClick={closeMobileSidebar}>
                             <span aria-hidden="true" className={`material-symbols-outlined text-[20px] transition-colors `}>emoji_events</span>

@@ -1,668 +1,403 @@
 import Link from 'next/link'
-import { prisma } from '@/lib/db'
-import { QuestCard } from '@/components/QuestCard'
-import { QuestSearch } from '@/components/QuestSearch'
-import { getUserActiveSnatches, getAllUserQuestIds } from '@/actions/quest'
-import { LoginToast } from '@/components/LoginToast'
+import Image from 'next/image'
 import { Header } from '@/components/Header'
-import { Pagination } from '@/components/Pagination'
+import { prisma } from '@/lib/db'
+import type { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
 
-interface QuestItem {
+export const metadata: Metadata = {
+  title: 'CodeQuest — Gamified Coding Platform for Cyber University',
+  description: 'Level up your developer journey through real-world software quests, student squads, verified code reviews, and competitive campus leaderboards.',
+}
+
+interface QuestTeaser {
   id: string
   title: string
   description: string
+  difficulty: string
+  category: string
+  points: number
   maxSnatchers: number
-  difficulty?: string | null
-  category?: string | null
-  points?: number | null
-  deadline?: Date | string | null
-  _count: { snatches: number }
 }
 
-interface PlatformStats {
-  totalQuests: number
-  pointsAvailable: number
-  clubMembers: number
-  activeSnatches: number
-}
-
-interface PageProps {
-  searchParams: Promise<{
-    q?: string
-    difficulty?: string
-    sort?: string
-    page?: string
-  }>
-}
-
-// Fallback seed data for safe preview mode (REV-7)
-const DEMO_QUESTS: QuestItem[] = [
+const FALLBACK_TEASERS: QuestTeaser[] = [
   {
-    id: 'CQ-DEMO-001',
+    id: 'CQ-01',
     title: 'Full-Stack Task Runner',
-    description: 'Build a background task processing pipeline with webhooks and live worker status dashboard.',
+    description: 'Build a background task processing pipeline with webhooks and worker status monitoring',
     difficulty: 'Intermediate',
     category: 'Web',
     points: 250,
     maxSnatchers: 3,
-    deadline: new Date(Date.now() + 5 * 86400000).toISOString(),
-    _count: { snatches: 1 },
   },
   {
-    id: 'CQ-DEMO-002',
-    title: 'AI Prompt Evaluator',
-    description: 'Create an automated LLM benchmark suite evaluating response accuracy, token latencies, and regression suites.',
+    id: 'CQ-02',
+    title: 'AI Prompt Benchmark Suite',
+    description: 'Create an automated LLM evaluation harness checking token latency and accuracy scores',
     difficulty: 'Advanced',
     category: 'AI',
     points: 400,
     maxSnatchers: 2,
-    deadline: new Date(Date.now() + 8 * 86400000).toISOString(),
-    _count: { snatches: 1 },
   },
   {
-    id: 'CQ-DEMO-003',
-    title: 'Campus Event Mobile App',
-    description: 'Develop a lightweight campus event agenda app with offline QR ticketing and push alerts for club workshops.',
+    id: 'CQ-03',
+    title: 'Campus Agenda Scanner',
+    description: 'Develop a mobile event check-in tool with offline QR validation and alert sync',
     difficulty: 'Beginner',
     category: 'Mobile',
     points: 150,
     maxSnatchers: 4,
-    deadline: new Date(Date.now() + 3 * 86400000).toISOString(),
-    _count: { snatches: 2 },
-  },
-  {
-    id: 'CQ-DEMO-004',
-    title: 'Realtime Code Collab Canvas',
-    description: 'Construct a multiplayer scratchpad using WebSockets and CRDTs for sub-50ms synchronization.',
-    difficulty: 'Advanced',
-    category: 'Web',
-    points: 500,
-    maxSnatchers: 2,
-    deadline: new Date(Date.now() + 10 * 86400000).toISOString(),
-    _count: { snatches: 0 },
-  },
-  {
-    id: 'CQ-DEMO-005',
-    title: 'Cyber-Univ Bot Sentinel',
-    description: 'Deploy a Discord automation bot capable of triage, role sync, and daily coding challenge broadcasts.',
-    difficulty: 'Intermediate',
-    category: 'AI',
-    points: 300,
-    maxSnatchers: 3,
-    deadline: new Date(Date.now() + 6 * 86400000).toISOString(),
-    _count: { snatches: 1 },
-  },
-  {
-    id: 'CQ-DEMO-006',
-    title: 'Micro-Bounty Escrow Engine',
-    description: 'Design a points escrow and automated payout workflow with cryptographic audit logging and rate limiting.',
-    difficulty: 'Advanced',
-    category: 'Web',
-    points: 450,
-    maxSnatchers: 2,
-    deadline: new Date(Date.now() + 12 * 86400000).toISOString(),
-    _count: { snatches: 1 },
-  },
-  {
-    id: 'CQ-DEMO-007',
-    title: 'Interactive CLI Quest Runner',
-    description: 'Create a terminal CLI companion tool for developers to inspect available quests and push submissions.',
-    difficulty: 'Beginner',
-    category: 'Web',
-    points: 120,
-    maxSnatchers: 5,
-    deadline: new Date(Date.now() + 4 * 86400000).toISOString(),
-    _count: { snatches: 2 },
-  },
-  {
-    id: 'CQ-DEMO-008',
-    title: 'Student Portfolio Showcase',
-    description: 'Build an accessible, responsive personal portfolio showcasing CodeQuest achievements and verified badges.',
-    difficulty: 'Beginner',
-    category: 'Web',
-    points: 100,
-    maxSnatchers: 4,
-    deadline: new Date(Date.now() + 14 * 86400000).toISOString(),
-    _count: { snatches: 0 },
-  },
-  {
-    id: 'CQ-DEMO-009',
-    title: 'Mobile Attendance Scanner',
-    description: 'Build a cross-platform camera scanner that validates attendance QR tokens with instant offline verification.',
-    difficulty: 'Intermediate',
-    category: 'Mobile',
-    points: 280,
-    maxSnatchers: 3,
-    deadline: new Date(Date.now() + 9 * 86400000).toISOString(),
-    _count: { snatches: 1 },
-  },
-  {
-    id: 'CQ-DEMO-010',
-    title: 'Smart Contract Bounty Vault',
-    description: 'Implement a Solidity escrow vault for verification challenges with automated payout upon test suite clearance.',
-    difficulty: 'Advanced',
-    category: 'Web',
-    points: 480,
-    maxSnatchers: 2,
-    deadline: new Date(Date.now() + 11 * 86400000).toISOString(),
-    _count: { snatches: 0 },
-  },
-  {
-    id: 'CQ-DEMO-011',
-    title: 'Campus Food Order Bot',
-    description: 'Build an automated ordering bot for campus cafeterias supporting asynchronous group payments and receipts.',
-    difficulty: 'Beginner',
-    category: 'AI',
-    points: 160,
-    maxSnatchers: 4,
-    deadline: new Date(Date.now() + 7 * 86400000).toISOString(),
-    _count: { snatches: 1 },
-  },
-  {
-    id: 'CQ-DEMO-012',
-    title: 'Offline Note Sync Engine',
-    description: 'Engineer an SQLite-backed mobile markdown engine with bi-directional sync and conflict resolution strategies.',
-    difficulty: 'Intermediate',
-    category: 'Mobile',
-    points: 260,
-    maxSnatchers: 3,
-    deadline: new Date(Date.now() + 13 * 86400000).toISOString(),
-    _count: { snatches: 2 },
   },
 ]
 
-function getDemoQuests(searchParams: { q?: string; difficulty?: string; sort?: string; page?: string }) {
-  const page = Math.max(1, parseInt(searchParams.page || '1', 10) || 1)
-  const limit = 9
-  let filtered = [...DEMO_QUESTS]
-
-  if (searchParams.q) {
-    const q = searchParams.q.toLowerCase().trim()
-    filtered = filtered.filter(
-      (quest) =>
-        quest.title.toLowerCase().includes(q) ||
-        quest.description.toLowerCase().includes(q) ||
-        quest.category?.toLowerCase().includes(q)
-    )
-  }
-
-  if (searchParams.difficulty && searchParams.difficulty !== 'All') {
-    filtered = filtered.filter(
-      (quest) => quest.difficulty?.toLowerCase() === searchParams.difficulty?.toLowerCase()
-    )
-  }
-
-  if (searchParams.sort === 'Oldest') {
-    filtered.reverse()
-  } else if (searchParams.sort === 'Points (High-Low)') {
-    filtered.sort((a, b) => (b.points || 0) - (a.points || 0))
-  } else if (searchParams.sort === 'Points (Low-High)') {
-    filtered.sort((a, b) => (a.points || 0) - (b.points || 0))
-  }
-
-  const total = filtered.length
-  const offset = (page - 1) * limit
-  const quests = filtered.slice(offset, offset + limit)
-
-  return { quests, total, page, limit }
-}
-
-async function getQuests(
-  searchParams: { q?: string; difficulty?: string; sort?: string; page?: string },
-  excludedIds: string[]
-): Promise<{ quests: QuestItem[]; total: number; page: number; limit: number; error: boolean }> {
-  const page = Math.max(1, parseInt(searchParams.page || '1', 10) || 1)
-  const limit = 9
-  const offset = (page - 1) * limit
-
+async function getFeaturedQuests(): Promise<QuestTeaser[]> {
   try {
-    const { Prisma } = await import('@prisma/client')
-    let whereClause = Prisma.sql`WHERE 1=1`
-
-    if (searchParams.q) {
-      whereClause = Prisma.sql`${whereClause} AND ("title" LIKE ${`%${searchParams.q}%`} OR "description" LIKE ${`%${searchParams.q}%`})`
-    }
-
-    if (searchParams.difficulty && searchParams.difficulty !== 'All') {
-      whereClause = Prisma.sql`${whereClause} AND "difficulty" = ${searchParams.difficulty}`
-    }
-
-    if (excludedIds.length > 0) {
-      whereClause = Prisma.sql`${whereClause} AND "id" NOT IN (${Prisma.join(excludedIds)})`
-    }
-
-    whereClause = Prisma.sql`${whereClause} AND "status" = 'Active' AND (
-      SELECT COUNT(*) FROM "Snatch"
-      WHERE "Snatch"."questId" = "Quest"."id"
-      AND "Snatch"."status" IN ('ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED', 'ARCHIVED')
-    ) < "maxSnatchers"`
-
-    let orderBy = Prisma.sql`ORDER BY "createdAt" DESC`
-    if (searchParams.sort === 'Oldest') {
-      orderBy = Prisma.sql`ORDER BY "createdAt" ASC`
-    } else if (searchParams.sort === 'Points (High-Low)') {
-      orderBy = Prisma.sql`ORDER BY "points" DESC`
-    } else if (searchParams.sort === 'Points (Low-High)') {
-      orderBy = Prisma.sql`ORDER BY "points" ASC`
-    }
-
-    const countQuery = Prisma.sql`SELECT COUNT(*) as count FROM "Quest" ${whereClause}`
-    const totalResult = await prisma.$queryRaw<[{ count: bigint | number }]>(countQuery)
-    const total = Number(totalResult[0]?.count ?? 0)
-
-    const idsQuery = Prisma.sql`SELECT "id" FROM "Quest" ${whereClause} ${orderBy} LIMIT ${limit} OFFSET ${offset}`
-    const validIdsResult = await prisma.$queryRaw<{ id: string }[]>(idsQuery)
-    const validIds = validIdsResult.map((r) => r.id)
-
-    if (validIds.length === 0) {
-      return { quests: [], total, page, limit, error: false }
-    }
-
     const quests = await prisma.quest.findMany({
-      where: {
-        id: { in: validIds },
-      },
+      where: { status: 'Active' },
+      take: 3,
+      orderBy: { points: 'desc' },
       select: {
         id: true,
         title: true,
         description: true,
-        maxSnatchers: true,
         difficulty: true,
         category: true,
         points: true,
-        deadline: true,
-        _count: {
-          select: {
-            snatches: {
-              where: {
-                status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED'] },
-              },
-            },
-          },
-        },
-      },
-    })
-
-    const questsMap = new Map(quests.map((q) => [q.id, q]))
-    const sortedQuests: QuestItem[] = validIds
-      .map((id) => questsMap.get(id))
-      .filter((q): q is NonNullable<typeof q> => q != null)
-
-    return { quests: sortedQuests, total, page, limit, error: false }
-  } catch (error) {
-    console.error('getQuests DB fetch notice (fallback used):', error)
-    return { quests: [], total: 0, page, limit, error: true }
-  }
-}
-
-async function getMyActiveQuests(): Promise<QuestItem[]> {
-  try {
-    const activeIds = await getUserActiveSnatches()
-    if (activeIds.length === 0) return []
-
-    const quests = await prisma.quest.findMany({
-      where: {
-        id: { in: activeIds },
-      },
-      select: {
-        id: true,
-        title: true,
-        description: true,
         maxSnatchers: true,
-        difficulty: true,
-        category: true,
-        points: true,
-        deadline: true,
-        _count: {
-          select: {
-            snatches: {
-              where: {
-                status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED', 'COMPLETED', 'ACCEPTED'] },
-              },
-            },
-          },
-        },
       },
     })
-    return quests
-  } catch (error) {
-    console.error('getMyActiveQuests DB fetch notice (fallback used):', error)
-    return []
-  }
-}
 
-async function getPlatformStats(isFallback: boolean): Promise<PlatformStats> {
-  const fallbackStats: PlatformStats = {
-    totalQuests: DEMO_QUESTS.length,
-    pointsAvailable: DEMO_QUESTS.reduce((sum, q) => sum + (q.points || 0), 0),
-    clubMembers: 142,
-    activeSnatches: DEMO_QUESTS.reduce((sum, q) => sum + q._count.snatches, 0),
-  }
-
-  if (isFallback) {
-    return fallbackStats
-  }
-
-  try {
-    const [questsCount, pointsAggregate, usersCount, snatchesCount] = await Promise.all([
-      prisma.quest.count({ where: { status: 'Active' } }),
-      prisma.quest.aggregate({
-        _sum: { points: true },
-        where: { status: 'Active' },
-      }),
-      prisma.user.count(),
-      prisma.snatch.count({
-        where: { status: { in: ['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED'] } },
-      }),
-    ]);
-
-    return {
-      totalQuests: questsCount || fallbackStats.totalQuests,
-      pointsAvailable: pointsAggregate._sum.points || fallbackStats.pointsAvailable,
-      clubMembers: usersCount || fallbackStats.clubMembers,
-      activeSnatches: snatchesCount || fallbackStats.activeSnatches,
+    if (quests.length > 0) {
+      return quests.map((q) => ({
+        id: q.id,
+        title: q.title,
+        description: q.description,
+        difficulty: q.difficulty,
+        category: q.category,
+        points: q.points,
+        maxSnatchers: q.maxSnatchers,
+      }))
     }
   } catch {
-    return fallbackStats
+    // Database offline or query error, use authentic fallbacks
   }
+  return FALLBACK_TEASERS
 }
 
-export default async function Home({ searchParams }: PageProps) {
-  const params = await searchParams
-
-  const myActiveQuests = await getMyActiveQuests()
-  const allExcludedIds = await getAllUserQuestIds()
-
-  const dbResult = await getQuests(params, allExcludedIds)
-
-  let isFallback = false
-  let availableQuests: QuestItem[] = dbResult.quests
-  let total = dbResult.total
-  let limit = dbResult.limit
-
-  if (dbResult.error) {
-    isFallback = true
-  } else if (dbResult.quests.length === 0) {
-    let hasDbQuests = false
-    try {
-      const activeCount = await prisma.quest.count({ where: { status: 'Active' } })
-      hasDbQuests = activeCount > 0
-    } catch {
-      hasDbQuests = false
-    }
-
-    if (!hasDbQuests) {
-      isFallback = true
-    }
-  }
-
-  if (isFallback) {
-    const demoResult = getDemoQuests(params)
-    availableQuests = demoResult.quests
-    total = demoResult.total
-    limit = demoResult.limit
-  }
-
-  const totalPages = Math.ceil(total / limit)
-  const stats = await getPlatformStats(isFallback)
+export default async function LandingPage() {
+  const featuredQuests = await getFeaturedQuests()
 
   return (
     <div className="min-h-screen flex flex-col relative text-foreground [overflow-x:clip]">
       <div className="relative z-10 flex flex-col min-h-screen">
-        <Header activePage="explore" />
+        <Header />
 
-        <main className="page-container flex-grow py-8 space-y-8">
-          <LoginToast />
+        <main className="flex-grow space-y-16 sm:space-y-24 py-8 sm:py-12">
+          {/* ── HERO SECTION ── */}
+          <section className="page-container" aria-label="Hero">
+            <div className="arcade-grid-bg rounded-card border border-border p-6 sm:p-12 md:p-16 bg-surface/70 relative overflow-hidden">
+              {/* Ambient glows */}
+              <div
+                className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-secondary/20 blur-3xl pointer-events-none"
+                aria-hidden="true"
+              />
+              <div
+                className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-primary/15 blur-3xl pointer-events-none"
+                aria-hidden="true"
+              />
 
-          {/* ── ARCADE HERO SECTION (REV-1) ── */}
-          <section
-            aria-label="Platform introduction"
-            className="arcade-grid-bg rounded-card border border-border p-6 sm:p-10 md:p-12 bg-surface/70 relative overflow-hidden"
-          >
-            <div className="max-w-3xl relative z-10">
-              {/* Arcade badges */}
-              <div className="flex flex-wrap items-center gap-2.5 mb-5">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider bg-primary/15 text-foreground border border-primary/40 shadow-sm">
-                  <span className="material-symbols-outlined text-[15px] text-primary" aria-hidden="true">
-                    sports_esports
+              <div className="max-w-3xl relative z-10">
+                {/* Status Badges */}
+                <div className="flex flex-wrap items-center gap-2.5 mb-6">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider bg-primary/15 text-foreground border border-primary/40 shadow-sm">
+                    <span className="material-symbols-outlined text-[15px] text-primary" aria-hidden="true">
+                      sports_esports
+                    </span>
+                    SEASON 1 ACTIVE
                   </span>
-                  SEASON 1 ACTIVE
-                </span>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider bg-surface-raised text-muted border border-border shadow-sm">
-                  <span className="material-symbols-outlined text-[15px] text-focus" aria-hidden="true">
-                    verified_user
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider bg-surface-raised text-muted border border-border shadow-sm">
+                    <span className="material-symbols-outlined text-[15px] text-focus" aria-hidden="true">
+                      school
+                    </span>
+                    CYBER UNIVERSITY CODING CLUB
                   </span>
-                  CYBER-UNIV PROTOCOL
-                </span>
+                </div>
+
+                {/* Main Headline */}
+                <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-foreground uppercase tracking-tight mb-6 leading-none">
+                  LEVEL UP YOUR CODE
+                </h1>
+
+                {/* Direct, human subheadline */}
+                <p className="text-base sm:text-xl text-muted font-medium mb-8 max-w-2xl leading-relaxed">
+                  The internal quest platform for student developers. Claim real campus software bounties, build in collaborative squads, and earn verified guild points.
+                </p>
+
+                {/* Primary CTAs */}
+                <div className="flex flex-wrap items-center gap-4">
+                  <Link
+                    href="/explore"
+                    className="button-primary text-sm uppercase tracking-wider"
+                  >
+                    <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
+                      explore
+                    </span>
+                    Explore Quests
+                  </Link>
+
+                  <Link
+                    href="/signup"
+                    className="button-secondary text-sm uppercase tracking-wider"
+                  >
+                    <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
+                      person_add
+                    </span>
+                    Join CodeQuest
+                  </Link>
+
+                  <Link
+                    href="/leaderboard"
+                    className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-button border border-control-border bg-surface px-5 py-2.5 text-sm font-bold uppercase tracking-wider text-foreground hover:bg-surface-raised transition-all"
+                  >
+                    <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
+                      leaderboard
+                    </span>
+                    Leaderboard
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ── HOW CODEQUEST WORKS (3 REAL STEPS) ── */}
+          <section className="page-container" aria-labelledby="workflow-heading">
+            <div className="text-center max-w-2xl mx-auto mb-12">
+              <span className="inline-block text-xs font-mono font-bold uppercase tracking-wider text-primary mb-2">
+                MISSION PIPELINE
+              </span>
+              <h2 id="workflow-heading" className="text-2xl sm:text-4xl font-black text-foreground uppercase">
+                How CodeQuest Works
+              </h2>
+              <p className="text-muted mt-2">
+                Three straightforward steps from selecting a challenge to shipping verified code
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Step 1 */}
+              <div className="arcade-panel rounded-card p-6 bg-surface flex flex-col justify-between">
+                <div>
+                  <div className="w-10 h-10 rounded-button bg-primary/20 border border-primary/40 flex items-center justify-center text-primary font-mono font-black text-lg mb-4">
+                    01
+                  </div>
+                  <h3 className="text-lg font-bold text-foreground mb-2">Snatch a Quest</h3>
+                  <p className="text-sm text-muted leading-relaxed">
+                    Browse active bounties across Web, AI, and Mobile tracks. Review requirements, deadline, and points before claiming your slot.
+                  </p>
+                </div>
+                <div className="mt-6 pt-4 border-t border-border flex items-center text-xs font-mono text-muted">
+                  <span className="material-symbols-outlined text-[16px] text-focus mr-1.5" aria-hidden="true">
+                    touch_app
+                  </span>
+                  Single or multi-slot squads
+                </div>
               </div>
 
-              {/* Bold typography headline */}
-              <h1 className="text-3xl sm:text-5xl font-black text-foreground uppercase tracking-tight mb-4 leading-none">
-                LEVEL UP YOUR CODE
-              </h1>
+              {/* Step 2 */}
+              <div className="arcade-panel rounded-card p-6 bg-surface flex flex-col justify-between">
+                <div>
+                  <div className="w-10 h-10 rounded-button bg-secondary/30 border border-secondary/50 flex items-center justify-center text-secondary-foreground font-mono font-black text-lg mb-4">
+                    02
+                  </div>
+                  <h3 className="text-lg font-bold text-foreground mb-2">Build &amp; Submit</h3>
+                  <p className="text-sm text-muted leading-relaxed">
+                    Collaborate with squad peers or fly solo. Implement the feature on GitHub, write automated tests, and submit your pull request link.
+                  </p>
+                </div>
+                <div className="mt-6 pt-4 border-t border-border flex items-center text-xs font-mono text-muted">
+                  <span className="material-symbols-outlined text-[16px] text-warning mr-1.5" aria-hidden="true">
+                    code
+                  </span>
+                  Git repository workflow
+                </div>
+              </div>
 
-              {/* Subtitle */}
-              <p className="text-base sm:text-lg text-muted font-medium mb-8 max-w-2xl leading-relaxed">
-                The internal quest engine for Cyber University Coding Club. Claim real software bounties, ship code in squads, and climb the verified guild ranks.
+              {/* Step 3 */}
+              <div className="arcade-panel rounded-card p-6 bg-surface flex flex-col justify-between">
+                <div>
+                  <div className="w-10 h-10 rounded-button bg-success/20 border border-success/40 flex items-center justify-center text-success font-mono font-black text-lg mb-4">
+                    03
+                  </div>
+                  <h3 className="text-lg font-bold text-foreground mb-2">Earn EXP &amp; Badges</h3>
+                  <p className="text-sm text-muted leading-relaxed">
+                    Club mentors review code quality and acceptance criteria. Approved submissions yield points, unlock badges, and elevate your standing.
+                  </p>
+                </div>
+                <div className="mt-6 pt-4 border-t border-border flex items-center text-xs font-mono text-muted">
+                  <span className="material-symbols-outlined text-[16px] text-success mr-1.5" aria-hidden="true">
+                    verified
+                  </span>
+                  Peer-reviewed verification
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ── QUEST DISCOVERY TEASER ── */}
+          <section className="page-container" aria-labelledby="featured-quests-heading">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+              <div>
+                <span className="inline-block text-xs font-mono font-bold uppercase tracking-wider text-focus mb-1">
+                  LIVE BOUNTY TEASER
+                </span>
+                <h2 id="featured-quests-heading" className="text-2xl sm:text-3xl font-black uppercase text-foreground">
+                  Featured Quests
+                </h2>
+                <p className="text-sm text-muted mt-1">
+                  A glimpse of software bounties waiting on the board
+                </p>
+              </div>
+
+              <Link
+                href="/explore"
+                className="inline-flex min-h-[44px] items-center gap-2 text-sm font-bold text-primary hover:text-primary-hover transition-colors font-mono uppercase"
+              >
+                View all quests
+                <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
+                  arrow_forward
+                </span>
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {featuredQuests.map((quest) => (
+                <div
+                  key={quest.id}
+                  className="rounded-card border border-border bg-surface p-6 flex flex-col justify-between hover:border-control-border transition-all"
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-mono font-bold uppercase bg-surface-raised border border-border text-muted">
+                        {quest.category}
+                      </span>
+                      <span className="text-sm font-black text-primary font-mono tabular-nums">
+                        +{quest.points} PTS
+                      </span>
+                    </div>
+
+                    <h3 className="text-lg font-bold text-foreground mb-2">
+                      {quest.title}
+                    </h3>
+                    <p className="text-sm text-muted line-clamp-2 leading-relaxed">
+                      {quest.description}
+                    </p>
+                  </div>
+
+                  <div className="mt-6 pt-4 border-t border-border flex items-center justify-between">
+                    <span className="text-xs font-mono text-muted">
+                      Difficulty: {quest.difficulty}
+                    </span>
+                    <Link
+                      href={`/quests/${quest.id}`}
+                      className="text-xs font-bold text-focus hover:underline"
+                    >
+                      Inspect Quest
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* ── SQUAD COLLABORATION SPOTLIGHT ── */}
+          <section className="page-container" aria-labelledby="collaboration-heading">
+            <div className="rounded-card border border-border bg-surface-raised p-8 sm:p-12 relative overflow-hidden">
+              <div className="max-w-2xl relative z-10 space-y-4">
+                <span className="inline-block text-xs font-mono font-bold uppercase tracking-wider text-warning">
+                  MULTIPLAYER SQUADS
+                </span>
+                <h2 id="collaboration-heading" className="text-2xl sm:text-4xl font-black text-foreground uppercase">
+                  Code Together in Real Squads
+                </h2>
+                <p className="text-muted text-base leading-relaxed">
+                  Real software engineering is collaborative. CodeQuest quests feature multi-snatcher capacity, enabling squads of up to 5 developers to tackle complex architectures, divide components, and ship together.
+                </p>
+                <div className="flex flex-wrap gap-4 pt-2">
+                  <div className="flex items-center gap-2 text-xs font-mono text-muted">
+                    <span className="material-symbols-outlined text-[18px] text-success" aria-hidden="true">
+                      check_circle
+                    </span>
+                    Shared Git repositories
+                  </div>
+                  <div className="flex items-center gap-2 text-xs font-mono text-muted">
+                    <span className="material-symbols-outlined text-[18px] text-success" aria-hidden="true">
+                      check_circle
+                    </span>
+                    Distributed task ownership
+                  </div>
+                  <div className="flex items-center gap-2 text-xs font-mono text-muted">
+                    <span className="material-symbols-outlined text-[18px] text-success" aria-hidden="true">
+                      check_circle
+                    </span>
+                    Equal point distribution upon approval
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ── FINAL CALL TO ACTION ── */}
+          <section className="page-container text-center py-6 sm:py-12" aria-label="Get started">
+            <div className="max-w-xl mx-auto space-y-6">
+              <h2 className="text-3xl sm:text-4xl font-black text-foreground uppercase">
+                Ready to Join the Guild?
+              </h2>
+              <p className="text-muted leading-relaxed">
+                Register with your Cyber University student email to snatch available coding missions, join developer squads, and climb the verified leaderboard.
               </p>
-
-              {/* Quick CTA jump buttons */}
-              <div className="flex flex-wrap items-center gap-3">
-                <a
-                  href="#explore-board"
+              <div className="flex flex-wrap items-center justify-center gap-4">
+                <Link
+                  href="/signup"
                   className="button-primary text-sm uppercase tracking-wider"
                 >
-                  <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
-                    explore
-                  </span>
-                  Browse Quests
-                </a>
+                  Create Student Account
+                </Link>
                 <Link
-                  href="/workspace"
+                  href="/login"
                   className="button-secondary text-sm uppercase tracking-wider"
                 >
-                  <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
-                    terminal
-                  </span>
-                  Open Workspace
-                </Link>
-                <Link
-                  href="/leaderboard"
-                  className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-button border border-control-border bg-surface px-5 py-2.5 text-sm font-bold uppercase tracking-wider text-foreground hover:bg-surface-raised transition-all"
-                >
-                  <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
-                    leaderboard
-                  </span>
-                  View Leaderboard
+                  Sign In
                 </Link>
               </div>
-            </div>
-          </section>
-
-          {/* ── ARCADE STATS BANNER TICKER (REV-1) ── */}
-          <section
-            aria-label="Club platform statistics"
-            className="arcade-panel rounded-card p-4 sm:p-6"
-          >
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-              <div className="flex items-center gap-3 p-2">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center text-primary shrink-0">
-                  <span className="material-symbols-outlined text-[20px]" aria-hidden="true">
-                    assignment
-                  </span>
-                </div>
-                <div>
-                  <p className="text-xs uppercase tracking-wider font-semibold text-muted">Total Quests</p>
-                  <p className="font-mono text-xl sm:text-2xl font-black text-foreground tabular-nums">
-                    {stats.totalQuests}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 p-2 border-t sm:border-t-0 sm:border-l border-border">
-                <div className="w-10 h-10 rounded-lg bg-focus/10 border border-focus/30 flex items-center justify-center text-focus shrink-0">
-                  <span className="material-symbols-outlined text-[20px]" aria-hidden="true">
-                    stars
-                  </span>
-                </div>
-                <div>
-                  <p className="text-xs uppercase tracking-wider font-semibold text-muted">Points Available</p>
-                  <p className="font-mono text-xl sm:text-2xl font-black text-foreground tabular-nums">
-                    {stats.pointsAvailable.toLocaleString()}{' '}
-                    <span className="text-xs text-muted font-sans font-normal">PTS</span>
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 p-2 border-t lg:border-t-0 lg:border-l border-border">
-                <div className="w-10 h-10 rounded-lg bg-secondary/15 border border-secondary/30 flex items-center justify-center text-secondary-foreground shrink-0">
-                  <span className="material-symbols-outlined text-[20px]" aria-hidden="true">
-                    group
-                  </span>
-                </div>
-                <div>
-                  <p className="text-xs uppercase tracking-wider font-semibold text-muted">Club Members</p>
-                  <p className="font-mono text-xl sm:text-2xl font-black text-foreground tabular-nums">
-                    {stats.clubMembers}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 p-2 border-t sm:border-t-0 sm:border-l border-border">
-                <div className="w-10 h-10 rounded-lg bg-warning/10 border border-warning/30 flex items-center justify-center text-warning shrink-0">
-                  <span className="material-symbols-outlined text-[20px]" aria-hidden="true">
-                    bolt
-                  </span>
-                </div>
-                <div>
-                  <p className="text-xs uppercase tracking-wider font-semibold text-muted">Active Snatches</p>
-                  <p className="font-mono text-xl sm:text-2xl font-black text-foreground tabular-nums">
-                    {stats.activeSnatches}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* ── 3-STEP GAMIFIED WORKFLOW CARDS (REV-1) ── */}
-          <section aria-label="Quest workflow">
-            <div className="flex items-center gap-2 mb-4">
-              <span className="material-symbols-outlined text-primary text-xl" aria-hidden="true">
-                route
-              </span>
-              <h2 className="text-xs font-mono font-bold uppercase tracking-[0.2em] text-muted">
-                How It Works
-              </h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="arcade-panel rounded-card p-6 flex flex-col justify-between relative overflow-hidden transition-all duration-fast hover:border-control-border">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="font-mono text-2xl font-black text-primary">01</span>
-                  <span className="material-symbols-outlined text-muted text-2xl" aria-hidden="true">
-                    travel_explore
-                  </span>
-                </div>
-                <div>
-                  <h3 className="text-base font-bold text-foreground mb-1">Select Mission</h3>
-                  <p className="text-sm text-muted">Filter by difficulty, scope &amp; bounty.</p>
-                </div>
-              </div>
-
-              <div className="arcade-panel rounded-card p-6 flex flex-col justify-between relative overflow-hidden transition-all duration-fast hover:border-control-border">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="font-mono text-2xl font-black text-focus">02</span>
-                  <span className="material-symbols-outlined text-muted text-2xl" aria-hidden="true">
-                    terminal
-                  </span>
-                </div>
-                <div>
-                  <h3 className="text-base font-bold text-foreground mb-1">Squad Up &amp; Code</h3>
-                  <p className="text-sm text-muted">Solo or team up in squads, commit your repo.</p>
-                </div>
-              </div>
-
-              <div className="arcade-panel rounded-card p-6 flex flex-col justify-between relative overflow-hidden transition-all duration-fast hover:border-control-border">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="font-mono text-2xl font-black text-warning">03</span>
-                  <span className="material-symbols-outlined text-muted text-2xl" aria-hidden="true">
-                    military_tech
-                  </span>
-                </div>
-                <div>
-                  <h3 className="text-base font-bold text-foreground mb-1">Submit &amp; Rank Up</h3>
-                  <p className="text-sm text-muted">Review by club leads, earn points, climb the leaderboard.</p>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* ── LIVE QUEST BOARD ANCHOR (REV-1 & REV-7) ── */}
-          <section id="explore-board" className="scroll-mt-8 space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-border pb-4">
-              <div>
-                <h2 className="text-2xl font-bold text-foreground">Mission Board</h2>
-                <p className="text-sm text-muted">Find a project to build. Filter by difficulty or search the requirements.</p>
-              </div>
-              {isFallback && (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-mono font-semibold bg-surface-raised text-muted border border-border">
-                  <span className="material-symbols-outlined text-[14px]" aria-hidden="true">
-                    info
-                  </span>
-                  Safe Preview Mode
-                </span>
-              )}
-            </div>
-
-            <QuestSearch />
-
-            {/* Active Missions (if user has active snatches) */}
-            {myActiveQuests.length > 0 && (
-              <section className="relative">
-                <div className="bg-surface border border-border rounded-card break-words p-1">
-                  <div className="bg-surface rounded-lg p-6 md:p-8 border border-border">
-                    <div className="flex items-center gap-2 mb-6 text-muted">
-                      <span aria-hidden="true" className="material-symbols-outlined text-[18px]">
-                        bolt
-                      </span>
-                      <span className="text-sm font-mono uppercase tracking-[0.2em] font-bold">
-                        Active Missions ({myActiveQuests.length})
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {myActiveQuests.map((quest) => (
-                        <div key={quest.id} className="min-w-0">
-                          <QuestCard quest={quest} isSnatched={true} />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </section>
-            )}
-
-            {/* Available Quests Grid */}
-            <div>
-              {availableQuests.length === 0 ? (
-                <div className="text-center py-20 border border-dashed border-border rounded-3xl bg-surface">
-                  <p className="text-muted">No available quests match these filters. Try another search or difficulty.</p>
-                </div>
-              ) : (
-                <>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {availableQuests.map((quest) => (
-                      <QuestCard key={quest.id} quest={quest} isSnatched={false} />
-                    ))}
-                  </div>
-                  <div className="mt-6">
-                    <Pagination totalPages={totalPages} />
-                  </div>
-                </>
-              )}
             </div>
           </section>
         </main>
+
+        {/* ── FOOTER ── */}
+        <footer className="border-t border-border bg-surface py-8 text-sm text-muted">
+          <div className="page-container flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <Image src="/icon-big.png" alt="" width={24} height={24} />
+              <span className="font-display text-base text-foreground">CodeQuest</span>
+              <span className="text-xs text-muted ml-2">Cyber University Coding Club</span>
+            </div>
+            <div className="flex items-center gap-6 text-xs font-medium">
+              <Link href="/explore" className="hover:text-foreground transition-colors">
+                Explore Quests
+              </Link>
+              <Link href="/leaderboard" className="hover:text-foreground transition-colors">
+                Leaderboard
+              </Link>
+              <Link href="/about" className="hover:text-foreground transition-colors">
+                About
+              </Link>
+              <Link href="/login" className="hover:text-foreground transition-colors">
+                Sign In
+              </Link>
+            </div>
+          </div>
+        </footer>
       </div>
     </div>
   )

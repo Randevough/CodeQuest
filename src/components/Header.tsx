@@ -7,7 +7,7 @@ import { useSession, signOut } from "next-auth/react";
 import { ThemeToggle } from "./ThemeToggle";
 
 interface HeaderProps { activePage?: "explore" | "leaderboard" | "workspace" }
-const links = [ ["explore", "/", "Explore Quests"], ["leaderboard", "/leaderboard", "Leaderboard"], ["workspace", "/workspace", "My Workspace"]] as const;
+const links = [ ["explore", "/explore", "Explore Quests"], ["leaderboard", "/leaderboard", "Leaderboard"], ["workspace", "/workspace", "My Workspace"]] as const;
 
 export function Header({ activePage }: HeaderProps) {
     const [open, setOpen] = useState(false);

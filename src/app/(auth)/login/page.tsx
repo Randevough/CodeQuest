@@ -20,7 +20,7 @@ export default function LoginPage() {
     useEffect(() => { if (errorMessage) toast.error(errorMessage); }, [errorMessage]);
     return <>
         <h1 className="mb-3">Welcome back</h1>
-        <p className="mb-8 text-muted">Sign in to manage your quests and submissions.</p>
+        <p className="mb-8 text-muted">Sign in to manage your quests and submissions</p>
         {notice && <p role="status" className="mb-6 rounded-input border border-border bg-surface-raised p-4 text-success">{notice}</p>}
         <form action={dispatch} className="flex flex-col gap-5" aria-describedby={errorMessage ? "auth-error" : undefined}>
                 <div><label htmlFor="email">Email address</label><input id="email" name="email" type="email" autoComplete="email" required maxLength={255} placeholder="example@cyber-univ.ac.id" value={values.email} onChange={event => setValues({ ...values, email: event.target.value })} /></div>

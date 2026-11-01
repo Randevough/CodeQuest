@@ -14,7 +14,7 @@ export default function QuestNotFound() {
                 <p className="text-muted mb-8 leading-relaxed">
                     The requested quest module could not be located. It may have been archived by the administrators or never existed.
                 </p>
-                <Link href="/" className="button-secondary">
+                <Link href="/explore" className="button-secondary">
                     Return to Available Quests
                 </Link>
             </div>

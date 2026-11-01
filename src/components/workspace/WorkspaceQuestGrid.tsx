@@ -47,7 +47,7 @@ export async function WorkspaceQuestGrid() {
             {/* Empty Slots */}
             {Array.from({ length: emptySlots }).map((_, i) => (
                 <article key={`empty-${i}`} className="flex flex-col items-center justify-center gap-4 h-[240px] border-2 border-dashed border-border rounded-card break-words bg-surface dark:bg-surface-dark/30 hover:bg-surface-raised dark:hover:bg-surface-dark/50 transition-colors">
-                    <Link href="/" aria-label="Browse new quests" className="min-h-11 group/icon h-12 w-12 rounded-full bg-surface dark:bg-surface-dark border border-border flex items-center justify-center hover:border-border transition-all">
+                    <Link href="/explore" aria-label="Browse new quests" className="min-h-11 group/icon h-12 w-12 rounded-full bg-surface dark:bg-surface-dark border border-border flex items-center justify-center hover:border-border transition-all">
                         <span aria-hidden="true" className="material-symbols-outlined text-muted group-hover/icon:text-foreground transition-colors">add_circle</span>
                     </Link>
                     <div className="text-center">
@@ -56,7 +56,7 @@ export async function WorkspaceQuestGrid() {
                             Ready for more? Find a new quest to add to your list.
                         </p>
                     </div>
-                    <Link href="/" className="min-h-11 text-sm font-bold text-foreground hover:text-foreground transition-colors flex items-center gap-1">
+                    <Link href="/explore" className="min-h-11 text-sm font-bold text-foreground hover:text-foreground transition-colors flex items-center gap-1">
                         Browse New Quests <span aria-hidden="true" className="material-symbols-outlined text-sm">arrow_forward</span>
                     </Link>
                 </article>

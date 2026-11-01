@@ -12,7 +12,7 @@ export default function SignupPage() {
     useEffect(() => { if (errorMessage) toast.error(errorMessage); }, [errorMessage]);
     return <>
         <h1 className="mb-3">Create an account</h1>
-        <p className="mb-8 text-muted">Use your @cyber-univ.ac.id email to register.</p>
+        <p className="mb-8 text-muted">Use your @cyber-univ.ac.id email to register</p>
         <form action={dispatch} className="flex flex-col gap-5" aria-describedby={errorMessage ? "auth-error" : undefined}>
                 <div><label htmlFor="name">Nickname</label><input id="name" name="name" type="text" autoComplete="nickname" maxLength={50} value={values.name} onChange={event => setValues({ ...values, name: event.target.value })} /></div>
                 <div><label htmlFor="email">Email address</label><input id="email" name="email" type="email" autoComplete="email" required maxLength={255} placeholder="example@cyber-univ.ac.id" value={values.email} onChange={event => setValues({ ...values, email: event.target.value })} /></div>

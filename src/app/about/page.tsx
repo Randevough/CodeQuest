@@ -8,7 +8,7 @@ export default function AboutPage() {
             <div className="max-w-3xl">
                 <h1 className="mb-6">Build something with CodeQuest.</h1>
                 <p className="text-lg text-muted mb-8">The internal quest board for Cyber University&apos;s Coding Club. Pick a club project, submit your work, and track approved contributions.</p>
-                <Link href="/" className="min-h-11 button-primary">Browse quests</Link>
+                <Link href="/explore" className="min-h-11 button-primary">Browse quests</Link>
                 <section className="mt-16 border-t border-border pt-8">
                     <h2 className="mb-6">From quest to contribution</h2>
                     <dl className="space-y-8">

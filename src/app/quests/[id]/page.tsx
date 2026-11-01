@@ -99,7 +99,7 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                                 <div className="p-4 sm:p-6 pb-6 border-b border-border">
                                     <div className="flex flex-col gap-6">
                                         {/* Back Navigation */}
-                                        <Link href="/" className="min-h-11 inline-flex items-center gap-1 text-sm font-medium text-muted hover:text-foreground transition-colors font-sans mb-[-10px]">
+                                        <Link href="/explore" className="min-h-11 inline-flex items-center gap-1 text-sm font-medium text-muted hover:text-foreground transition-colors font-sans mb-[-10px]">
                                             <span aria-hidden="true" className="material-symbols-outlined text-[20px]">chevron_left</span>
                                             Back to Quests
                                         </Link>
