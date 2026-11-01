@@ -88,6 +88,36 @@ describe('Leaderboard Server Actions', () => {
       expect(result?.pointsToNext).toBe(0)
     })
 
+    it('calculates standing with tie-breaker when points are tied', async () => {
+      mockAuth.mockResolvedValueOnce({
+        user: { id: 'tied-user', email: 'tied@cyber-univ.ac.id' }
+      })
+
+      const now = new Date()
+      vi.mocked(prisma.user.findUnique).mockResolvedValueOnce({
+        id: 'tied-user',
+        name: 'Tied User',
+        points: 500,
+        completedQuests: 3,
+        createdAt: now,
+      } as unknown as User)
+
+      // Count returns 2 users ahead (either more points or same points with better tie-breaker)
+      vi.mocked(prisma.user.count).mockResolvedValueOnce(2)
+
+      // Next user above has same points (500), but more completed quests
+      vi.mocked(prisma.user.findFirst).mockResolvedValueOnce({
+        points: 500,
+      } as unknown as User)
+
+      const result = await getLeaderboardStanding()
+
+      expect(result?.rank).toBe(3)
+      expect(result?.isTop).toBe(false)
+      // Needs at least 1 point to pass tied user above
+      expect(result?.pointsToNext).toBe(1)
+    })
+
     it('calculates standing and pointsToNext accurately for non-top rank user', async () => {
       mockAuth.mockResolvedValueOnce({
         user: { id: 'user-2', email: 'second@cyber-univ.ac.id' }
@@ -257,6 +287,23 @@ describe('Leaderboard Server Actions', () => {
         expect.objectContaining({
           skip: 0,
           take: 10
+        })
+      )
+    })
+
+    it('orders users with tie-breaker: points desc, completedQuests desc, createdAt asc', async () => {
+      vi.mocked(prisma.user.findMany).mockResolvedValueOnce([])
+      vi.mocked(prisma.user.count).mockResolvedValueOnce(0)
+
+      await getLeaderboardUsers(1, 10)
+
+      expect(prisma.user.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          orderBy: [
+            { points: 'desc' },
+            { completedQuests: 'desc' },
+            { createdAt: 'asc' }
+          ]
         })
       )
     })

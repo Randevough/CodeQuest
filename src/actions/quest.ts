@@ -83,7 +83,12 @@ export async function joinQuest(questId: string) {
             });
 
             if (existingSnatch) {
-                throw new Error("You have already snatched this quest");
+                if (['ACTIVE', 'SUBMITTED', 'REVISION_NEEDED'].includes(existingSnatch.status)) {
+                    throw new Error("You have already snatched this quest");
+                }
+                if (['ACCEPTED', 'ARCHIVED'].includes(existingSnatch.status)) {
+                    throw new Error("You have already completed this quest");
+                }
             }
 
             // 3. Check quest limits
@@ -98,7 +103,7 @@ export async function joinQuest(questId: string) {
                 where: { id: questId }
             });
 
-            if (quest.status === 'Closed' || quest.status === 'Inactive') {
+            if (quest.status !== 'Active') {
                 throw new Error("This quest is no longer available (Closed/Inactive).");
             }
 
@@ -122,7 +127,18 @@ export async function joinQuest(questId: string) {
                 throw new Error("Mission capacity reached. Finish an active quest to snatch more.");
             }
 
-            // 4. Create snatch
+            // 5. Handle existing snatch (reactivate if dropped/rejected)
+            if (existingSnatch) {
+                return await tx.snatch.update({
+                    where: { id: existingSnatch.id },
+                    data: {
+                        status: 'ACTIVE',
+                        squadId: null,
+                    }
+                });
+            }
+
+            // 6. Create snatch
             return await tx.snatch.create({
                 data: {
                     userId: user.id,
@@ -310,6 +326,11 @@ export async function submitQuest(questId: string, submissionUrl: string) {
 
             if (!quest) throw new Error("Quest not found");
 
+            // 1.5 Active Status Check
+            if (quest.status !== 'Active') {
+                throw new Error("Quest is no longer active.");
+            }
+
             // 2. Deadline Check (The Late Hero)
             if (quest.deadline && new Date() > quest.deadline) {
                 throw new Error("Mission Deadline Exceeded. Submission Rejected.");
@@ -327,8 +348,12 @@ export async function submitQuest(questId: string, submissionUrl: string) {
 
             if (!activeSnatch) throw new Error("You have not joined this quest.");
 
-            if (['ACCEPTED'].includes(activeSnatch.status)) {
+            if (['ACCEPTED', 'ARCHIVED'].includes(activeSnatch.status)) {
                 throw new Error("Mission already completed. No further submissions allowed.");
+            }
+
+            if (['DROPPED', 'REJECTED'].includes(activeSnatch.status)) {
+                throw new Error("Cannot submit a quest that is dropped or rejected.");
             }
 
             // 4. Update
@@ -381,18 +406,27 @@ export async function dropQuest(questId: string) {
                 }
             });
 
-            if (!snatch || snatch.status !== 'ACTIVE') {
+            if (!snatch || !['ACTIVE', 'REVISION_NEEDED'].includes(snatch.status)) {
                 throw new Error("You do not have an active snatch for this quest.");
             }
 
             // 2. Update status
             await tx.snatch.update({
                 where: { id: snatch.id },
-                data: { status: 'DROPPED' }
+                data: { status: 'DROPPED', squadId: null }
             });
 
-            // 3. (Penalty system removed)
-            return { count: 0 }; // dummy return
+            // 3. Clean up squad if empty
+            if (snatch.squadId) {
+                const remaining = await tx.snatch.count({
+                    where: { squadId: snatch.squadId, status: { notIn: ['DROPPED', 'REJECTED'] } }
+                });
+                if (remaining === 0) {
+                    await tx.squad.delete({ where: { id: snatch.squadId } });
+                }
+            }
+
+            return { count: 0 };
         });
 
         revalidatePath('/');
@@ -586,6 +620,11 @@ export async function updateQuestStatus(questId: string, newStatus: string) {
     try {
         await requireAdmin()
 
+        const VALID_STATUSES = ['Active', 'Draft', 'Closed', 'Inactive']
+        if (!VALID_STATUSES.includes(newStatus)) {
+            return { success: false, error: "Invalid quest status" }
+        }
+
         if (newStatus === 'Draft') {
             const activeSnatchesCount = await prisma.snatch.count({
                 where: {
@@ -627,8 +666,11 @@ export async function deleteQuest(questId: string) {
             return { success: false, error: "Cannot delete quest: Quest has active members." };
         }
 
-        await prisma.snatch.deleteMany({ where: { questId } }); // Clean up DROPPED or ARCHIVED snatches
-        await prisma.quest.delete({ where: { id: questId } });
+        await prisma.$transaction([
+            prisma.squad.deleteMany({ where: { questId } }),
+            prisma.snatch.deleteMany({ where: { questId } }),
+            prisma.quest.delete({ where: { id: questId } })
+        ]);
 
         revalidatePath('/admin/manage-quests');
         return { success: true };
