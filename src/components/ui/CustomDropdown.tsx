@@ -82,7 +82,7 @@ export function CustomDropdown({
         if (isOpen && focusedIndex >= 0 && listboxRef.current) {
             const items = listboxRef.current.children;
             if (items[focusedIndex]) {
-                (items[focusedIndex] as HTMLElement).scrollIntoView({
+                (items[focusedIndex] as HTMLElement).scrollIntoView?.({
                     block: "nearest",
                 });
             }

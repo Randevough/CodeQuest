@@ -4,14 +4,25 @@ import { prisma } from '@/lib/db'
 import { auth } from '@/auth'
 import { LeaderboardUser } from '@/types/user'
 
-export async function getLeaderboardUsers(page: number = 1, pageSize: number = 20): Promise<{ users: LeaderboardUser[]; total: number }> {
+export async function getLeaderboardUsers(page: number = 1, pageSize: number = 20, query?: string): Promise<{ users: LeaderboardUser[]; total: number }> {
     const validPage = Math.max(1, page)
     const validPageSize = Math.max(1, pageSize)
     const skip = (validPage - 1) * validPageSize
 
+    const trimmed = query?.trim()
+    const where = trimmed
+        ? {
+            OR: [
+                { name: { contains: trimmed, mode: 'insensitive' as const } },
+                { handle: { contains: trimmed, mode: 'insensitive' as const } }
+            ]
+        }
+        : undefined
+
     try {
         const [usersData, total] = await Promise.all([
             prisma.user.findMany({
+                ...(where ? { where } : {}),
                 orderBy: {
                     points: 'desc'
                 },
@@ -27,7 +38,7 @@ export async function getLeaderboardUsers(page: number = 1, pageSize: number = 2
                 skip,
                 take: validPageSize
             }),
-            prisma.user.count()
+            prisma.user.count(where ? { where } : undefined)
         ])
 
         const users: LeaderboardUser[] = usersData.map(user => ({
@@ -77,7 +88,13 @@ export async function getLeaderboardUsers(page: number = 1, pageSize: number = 2
                     completedQuests: 4,
                 }
             ]
-            return { users: mockUsers, total: mockUsers.length }
+            const filtered = trimmed
+                ? mockUsers.filter(u =>
+                    (u.name?.toLowerCase().includes(trimmed.toLowerCase()) ?? false) ||
+                    u.handle.toLowerCase().includes(trimmed.toLowerCase())
+                )
+                : mockUsers
+            return { users: filtered, total: filtered.length }
         }
         return { users: [], total: 0 }
     }

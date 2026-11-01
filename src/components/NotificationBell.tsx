@@ -129,7 +129,7 @@ export function NotificationBell() {
                 </svg>
 
                 {unreadCount > 0 && (
-                    <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 font-mono text-[11px] font-bold text-on-primary shadow-sm animate-pulse">
+                    <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 font-mono text-[11px] font-bold text-on-primary shadow-sm">
                         {unreadCount > 99 ? "99+" : unreadCount}
                     </span>
                 )}

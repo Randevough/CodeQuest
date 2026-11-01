@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { CustomDropdown, Option } from '@/components/ui/CustomDropdown'
 
 import { SearchInput } from '@/components/ui/SearchInput'
@@ -23,6 +23,7 @@ function CustomSelect({ value, onChange, options, icon }: {
 
 export function QuestSearch() {
     const router = useRouter()
+    const pathname = usePathname()
     const searchParams = useSearchParams()
 
     const handleSearch = (formData: FormData) => {
@@ -35,7 +36,7 @@ export function QuestSearch() {
             if (q) params.set('q', q)
             else params.delete('q')
         }
-        router.push(`/?${params.toString()}`)
+        router.push(`${pathname}?${params.toString()}`)
     }
 
     const updateFilter = (key: string, value: string) => {
@@ -48,7 +49,7 @@ export function QuestSearch() {
         } else {
             params.delete(key)
         }
-        router.push(`/?${params.toString()}`)
+        router.push(`${pathname}?${params.toString()}`)
     }
 
     // Options Data

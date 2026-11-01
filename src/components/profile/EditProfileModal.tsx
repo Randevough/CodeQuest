@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Dialog } from '@/components/ui/Dialog'
 import { updateProfile, updateFeaturedBadges } from '@/actions/profile'
@@ -31,6 +32,7 @@ interface EditProfileModalProps {
 const MAX_FEATURED = 3
 
 export function EditProfileModal({ isOpen, onClose, user, badges = [] }: EditProfileModalProps) {
+    const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
     const [feedback, setFeedback] = useState('')
     const [name, setName] = useState(user.name || '')
@@ -84,6 +86,7 @@ export function EditProfileModal({ isOpen, onClose, user, badges = [] }: EditPro
                 setFeedback((badgesResult as { error?: string }).error || 'Failed to update badges'); toast.error((badgesResult as { error?: string }).error || 'Failed to update badges')
             } else {
                 toast.success('Profile updated successfully')
+                router.refresh()
                 onClose()
             }
         } catch {

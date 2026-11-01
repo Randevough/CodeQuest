@@ -28,6 +28,7 @@ export function QuestAction({
     const [loading, setLoading] = useState(false)
     const [feedback, setFeedback] = useState('')
     const [showJoinModal, setShowJoinModal] = useState(false)
+    const [submissionUrl, setSubmissionUrl] = useState(userStatus?.submissionUrl || '')
     const router = useRouter()
 
     const handleJoin = async () => {
@@ -51,18 +52,28 @@ export function QuestAction({
     }
 
     const handleSubmit = async () => {
-        const input = document.getElementById('repo-url') as HTMLInputElement
-        const url = input?.value
+        const trimmedUrl = submissionUrl.trim()
+        if (!trimmedUrl) {
+            setFeedback('Please enter a URL')
+            toast.error('Please enter a URL')
+            return
+        }
 
-        if (!url) {
-            setFeedback('Please enter a URL'); toast.error('Please enter a URL')
+        try {
+            const parsed = new URL(trimmedUrl)
+            if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+                throw new Error()
+            }
+        } catch {
+            setFeedback('Please enter a valid HTTP/HTTPS URL')
+            toast.error('Please enter a valid HTTP/HTTPS URL')
             return
         }
 
         setFeedback('')
         setLoading(true)
         try {
-            const result = await submitQuest(questId, url)
+            const result = await submitQuest(questId, trimmedUrl)
             if (result.success) {
                 toast.success('Quest Submitted! Retrieval Drones dispatched.')
                 router.refresh()
@@ -125,7 +136,8 @@ export function QuestAction({
                                         id="repo-url"
                                         placeholder="https://your-project-link.com"
                                         type="url"
-                                        defaultValue={userStatus?.submissionUrl || ''}
+                                        value={submissionUrl}
+                                        onChange={(e) => setSubmissionUrl(e.target.value)}
                                         disabled={isPending}
                                     />
                                 </div>

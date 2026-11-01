@@ -31,15 +31,16 @@ export function LeaderboardFilters() {
 
     // Get current filters
     const timeframe = searchParams.get('timeframe') || 'all'
-    const query = searchParams.get('query') || ''
+    const q = searchParams.get('q') || searchParams.get('query') || ''
 
     const handleSearch = useDebouncedCallback((term: string) => {
         const params = new URLSearchParams(searchParams)
         params.set('page', '1') // Reset page on filter change
+        params.delete('query')
         if (term) {
-            params.set('query', term)
+            params.set('q', term)
         } else {
-            params.delete('query')
+            params.delete('q')
         }
         replace(`${pathname}?${params.toString()}`)
     }, 300)
@@ -63,8 +64,9 @@ export function LeaderboardFilters() {
                 <SearchInput
                     aria-label="Search members"
                     placeholder="Search members"
-                    defaultValue={query}
+                    defaultValue={q}
                     onChange={(e) => handleSearch(e.target.value)}
+                    onClear={() => handleSearch('')}
                 />
             </div>
             <div className="w-full sm:w-auto">

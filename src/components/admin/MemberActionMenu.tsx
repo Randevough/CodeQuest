@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { updateUserRole, deactivateUser, manualReset, deleteUser } from '@/actions/admin'
 import { assignQuest, getActiveQuestsForAssignment } from '@/actions/assignment'
 import { Dialog } from '@/components/ui/Dialog'
@@ -16,6 +17,7 @@ type UserProp = {
 }
 
 export function MemberActionMenu({ user }: { user: UserProp }) {
+    const router = useRouter()
     const [message, setMessage] = useState('')
     const [isPending, setIsPending] = useState(false)
     const [isOpen, setIsOpen] = useState(false)
@@ -100,6 +102,7 @@ export function MemberActionMenu({ user }: { user: UserProp }) {
                 setMessage(success)
                 setModal('none')
                 setIsOpen(false)
+                router.refresh()
             } else {
                 setMessage(result.error || 'Could not save changes. Try again.')
             }
@@ -137,6 +140,7 @@ export function MemberActionMenu({ user }: { user: UserProp }) {
             toast.success(`Quest assigned to ${user.name || 'User'}!`)
             setModal('none')
             setIsOpen(false)
+            router.refresh()
         } else if (res.error === 'CAPACITY_EXCEEDED') {
             const confirmForce = window.confirm(`${res.message}\n\nDo you want to override the capacity and assign anyway?`)
             if (confirmForce) {

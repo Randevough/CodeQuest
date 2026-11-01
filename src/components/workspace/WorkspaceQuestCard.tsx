@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Dialog } from '@/components/ui/Dialog'
 import Link from 'next/link'
 import { archiveQuest } from '@/actions/quest'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { toast } from 'sonner'
 import { useSession } from 'next-auth/react'
@@ -34,6 +35,7 @@ type SnatchWithQuest = {
 }
 
 export function WorkspaceQuestCard({ snatch }: { snatch: SnatchWithQuest }) {
+    const router = useRouter()
     const [loading, setLoading] = useState(false)
     const [feedback, setFeedback] = useState('')
     const [showArchiveConfirm, setShowArchiveConfirm] = useState(false)
@@ -54,6 +56,7 @@ export function WorkspaceQuestCard({ snatch }: { snatch: SnatchWithQuest }) {
                 setFeedback(result.error as string || 'Failed to archive quest'); toast.error(result.error as string || 'Failed to archive quest')
             } else {
                 toast.success('Quest archived successfully')
+                router.refresh()
             }
         } catch {
             setFeedback('Archive failed'); toast.error('Archive failed')

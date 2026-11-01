@@ -8,11 +8,14 @@ import { LeaderboardFilters } from '@/components/leaderboard/LeaderboardFilters'
 // Force dynamic to ensure we get latest data
 export const dynamic = 'force-dynamic'
 
-export default async function LeaderboardPage(props: { searchParams: Promise<{ page?: string; timeframe?: string }> }) {
+export default async function LeaderboardPage(props: {
+    searchParams: Promise<{ page?: string; timeframe?: string; q?: string; query?: string }>
+}) {
     const searchParams = await props.searchParams
     const page = Number(searchParams.page) || 1
     const pageSize = 10
-    const { users, total } = await getLeaderboardUsers(page, pageSize)
+    const q = (searchParams.q || searchParams.query || '').trim()
+    const { users, total } = await getLeaderboardUsers(page, pageSize, q)
 
 
 
@@ -34,7 +37,12 @@ export default async function LeaderboardPage(props: { searchParams: Promise<{ p
                 <div className="mb-6"><LeaderboardFilters /></div>
                 {users.length === 0 ? (
                     <div className="text-center py-20 border-2 border-dashed border-border rounded-card break-words">
-                        <p className="text-muted mb-6">No ranked members to show yet.</p>
+                        <p className="text-muted mb-6">
+                            {q
+                                ? `No adventurers found matching '${q}'`
+                                : 'No ranked members to show yet.'
+                            }
+                        </p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
