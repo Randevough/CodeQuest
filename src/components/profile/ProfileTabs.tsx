@@ -5,6 +5,7 @@ import Link from 'next/link'
 
 import { formatDistanceToNow } from 'date-fns'
 import Image from 'next/image'
+import { UserAvatar } from '@/components/ui/UserAvatar'
 
 // Quick interfaces for props
 interface Quest {
@@ -160,13 +161,11 @@ export function ProfileTabs({ activeSnatches, portfolioSnatches = [], user, isOw
                                     <div className="mt-2 pt-4 border-t border-border flex flex-col sm:flex-row gap-4 items-center justify-between">
                                         {/* Left: User Avatar + Relative Time */}
                                         <div className="flex items-center gap-3 w-full sm:w-auto">
-                                            {user?.avatar ? (
-                                                <Image src={user.avatar as string} alt={user.name || 'User'} width={32} height={32} className="size-8 rounded-full object-cover border border-border" />
-                                            ) : (
-                                                <div className="size-8 rounded-full bg-surface border border-border flex items-center justify-center text-sm font-bold text-muted">
-                                                    {user?.name?.[0]?.toUpperCase() || 'U'}
-                                                </div>
-                                            )}
+                                            <UserAvatar
+                                                src={user?.avatar}
+                                                name={user?.name}
+                                                size={32}
+                                            />
                                             <div className="flex flex-col">
                                                 <span className="text-sm font-bold text-foreground">
                                                     {user?.name || 'Snatcher'}

@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { LeaderboardUser } from '@/types/user'
 import Image from 'next/image'
+import { UserAvatar } from '@/components/ui/UserAvatar'
+import { TrophyIcon, MedalIcon, PremiumBadgeIcon } from '@/components/ui/ArcadeIcons'
 
 interface LeaderboardTableProps {
     users: LeaderboardUser[]
@@ -35,21 +37,21 @@ export function LeaderboardTable({ users, page, pageSize }: LeaderboardTableProp
                         if (rank === 1) {
                             rankBadge = (
                                 <div className="flex items-center gap-2">
-                                    <span aria-hidden="true" className="material-symbols-outlined text-warning text-xl icon-filled">emoji_events</span>
+                                    <TrophyIcon className="w-5 h-5 text-warning shrink-0" />
                                     <span className="font-mono text-base font-bold text-warning">01</span>
                                 </div>
                             )
                         } else if (rank === 2) {
                             rankBadge = (
                                 <div className="flex items-center gap-2">
-                                    <span aria-hidden="true" className="material-symbols-outlined text-muted text-xl icon-filled">military_tech</span>
+                                    <MedalIcon className="w-5 h-5 text-muted shrink-0" />
                                     <span className="font-mono text-base font-bold text-muted">02</span>
                                 </div>
                             )
                         } else if (rank === 3) {
                             rankBadge = (
                                 <div className="flex items-center gap-2">
-                                    <span aria-hidden="true" className="material-symbols-outlined text-foreground text-xl icon-filled">workspace_premium</span>
+                                    <PremiumBadgeIcon className="w-5 h-5 text-foreground shrink-0" />
                                     <span className="font-mono text-base font-bold text-foreground">03</span>
                                 </div>
                             )
@@ -62,8 +64,14 @@ export function LeaderboardTable({ users, page, pageSize }: LeaderboardTableProp
                                 </td>
                                 <td className="px-4 py-4 min-w-[180px] break-words">
                                     <Link href={`/profile/${user.id}`} className="min-h-11 flex items-center group/user hover:opacity-80 transition-opacity">
-                                        <div className={`flex-shrink-0 ${rank <= 3 ? 'size-10 ring-2' : 'size-9'} rounded-full overflow-hidden ${rank === 1 ? 'ring-focus' : rank === 2 ? 'ring-focus' : rank === 3 ? 'ring-focus' : 'bg-surface'}`}>
-                                            <Image alt="Member Avatar" width={40} height={40} className="h-full w-full object-cover" src={user.avatar || "https://api.dicebear.com/9.x/avataaars/svg?seed=fallback"} />
+                                        <div className="flex-shrink-0">
+                                            <UserAvatar
+                                                src={user.avatar}
+                                                name={user.name}
+                                                alt={`${user.name}'s avatar`}
+                                                size={rank <= 3 ? 40 : 36}
+                                                className={rank <= 3 ? 'ring-2 ring-focus' : ''}
+                                            />
                                         </div>
                                         <div className="ml-4">
                                             <div className={`text-sm ${rank <= 3 ? 'font-bold' : 'font-medium'} text-foreground group-hover/user:text-foreground transition-colors`}>
