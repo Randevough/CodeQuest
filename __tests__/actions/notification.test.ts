@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { getNotifications, getUnreadNotificationCount, markNotificationRead, markAllNotificationsRead } from '@/actions/notification'
 import { prisma } from '@/lib/db'
 import { auth } from '@/auth'
+import type { Notification } from '@prisma/client'
 
 vi.mock('@/auth', () => ({
   auth: vi.fn(),
@@ -19,13 +20,15 @@ vi.mock('@/lib/db', () => ({
   },
 }))
 
+const mockAuth = auth as unknown as ReturnType<typeof vi.fn>
+
 describe('Notification Server Actions', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
   it('rejects unauthorized users from fetching notifications', async () => {
-    vi.mocked(auth as any).mockResolvedValueOnce(null)
+    mockAuth.mockResolvedValueOnce(null)
     const result = await getNotifications()
     expect(result.success).toBe(false)
     expect(result.error).toBe('Unauthorized')
@@ -33,7 +36,7 @@ describe('Notification Server Actions', () => {
 
   it('returns user notifications when authorized', async () => {
     const mockUser = { id: 'user_123', email: 'test@example.com' }
-    vi.mocked(auth).mockResolvedValueOnce({ user: mockUser } as any)
+    mockAuth.mockResolvedValueOnce({ user: mockUser })
     vi.mocked(prisma.notification.findMany).mockResolvedValueOnce([
       {
         id: 'notif_1',
@@ -44,7 +47,7 @@ describe('Notification Server Actions', () => {
         link: '/workspace',
         createdAt: new Date(),
       },
-    ] as any)
+    ] as unknown as Notification[])
 
     const result = await getNotifications()
     expect(result.success).toBe(true)
@@ -54,7 +57,7 @@ describe('Notification Server Actions', () => {
 
   it('returns unread notification count', async () => {
     const mockUser = { id: 'user_123' }
-    vi.mocked(auth).mockResolvedValueOnce({ user: mockUser } as any)
+    mockAuth.mockResolvedValueOnce({ user: mockUser })
     vi.mocked(prisma.notification.count).mockResolvedValueOnce(3)
 
     const count = await getUnreadNotificationCount()
@@ -63,17 +66,17 @@ describe('Notification Server Actions', () => {
 
   it('marks a single notification as read with ownership check', async () => {
     const mockUser = { id: 'user_123' }
-    vi.mocked(auth).mockResolvedValueOnce({ user: mockUser } as any)
+    mockAuth.mockResolvedValueOnce({ user: mockUser })
     vi.mocked(prisma.notification.findUnique).mockResolvedValueOnce({
       id: 'notif_1',
       userId: 'user_123',
       read: false,
-    } as any)
+    } as unknown as Notification)
     vi.mocked(prisma.notification.update).mockResolvedValueOnce({
       id: 'notif_1',
       userId: 'user_123',
       read: true,
-    } as any)
+    } as unknown as Notification)
 
     const result = await markNotificationRead('notif_1')
     expect(result.success).toBe(true)
@@ -85,12 +88,12 @@ describe('Notification Server Actions', () => {
 
   it('prevents marking notifications owned by other users', async () => {
     const mockUser = { id: 'user_123' }
-    vi.mocked(auth).mockResolvedValueOnce({ user: mockUser } as any)
+    mockAuth.mockResolvedValueOnce({ user: mockUser })
     vi.mocked(prisma.notification.findUnique).mockResolvedValueOnce({
       id: 'notif_999',
       userId: 'other_user',
       read: false,
-    } as any)
+    } as unknown as Notification)
 
     const result = await markNotificationRead('notif_999')
     expect(result.success).toBe(false)
@@ -99,8 +102,8 @@ describe('Notification Server Actions', () => {
 
   it('marks all user notifications as read', async () => {
     const mockUser = { id: 'user_123' }
-    vi.mocked(auth).mockResolvedValueOnce({ user: mockUser } as any)
-    vi.mocked(prisma.notification.updateMany).mockResolvedValueOnce({ count: 5 } as any)
+    mockAuth.mockResolvedValueOnce({ user: mockUser })
+    vi.mocked(prisma.notification.updateMany).mockResolvedValueOnce({ count: 5 })
 
     const result = await markAllNotificationsRead()
     expect(result.success).toBe(true)
