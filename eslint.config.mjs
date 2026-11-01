@@ -14,6 +14,7 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     "claude-skills/**",
     ".kilo/**",
+    ".agent/**",
   ]),
   {
     files: ["**/*.cjs"],
