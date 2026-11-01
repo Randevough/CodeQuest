@@ -23,7 +23,24 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         },
         ref
     ) => {
-        const hasValue = value !== undefined ? Boolean(value) : false;
+        const [internalVal, setInternalVal] = React.useState(defaultValue ?? "");
+        const isControlled = value !== undefined;
+        const currentVal = isControlled ? value : internalVal;
+        const hasValue = Boolean(currentVal);
+
+        const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            if (!isControlled) {
+                setInternalVal(e.target.value);
+            }
+            onChange?.(e);
+        };
+
+        const handleClear = () => {
+            if (!isControlled) {
+                setInternalVal("");
+            }
+            onClear?.();
+        };
 
         return (
             <div
@@ -35,7 +52,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
                     aria-hidden="true"
                 >
                     <svg
-                        className="w-4 h-4"
+                        className="w-4 h-4 shrink-0"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -50,18 +67,20 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
                     </svg>
                 </div>
 
-                {/* Input with explicit generous padding to guarantee no overlap */}
+                {/* Input with guaranteed non-colliding padding */}
                 <input
                     ref={ref}
                     type="text"
                     value={value}
                     defaultValue={defaultValue}
-                    onChange={onChange}
+                    onChange={handleInputChange}
                     disabled={disabled}
                     placeholder={placeholder}
                     autoComplete="off"
                     spellCheck={false}
-                    className={`w-full h-10 sm:h-11 pl-11 pr-9 py-2 bg-surface text-foreground placeholder:text-muted rounded-[var(--radius-input)] border border-control-border text-sm font-medium transition-all duration-fast hover:border-border focus:border-focus focus:outline-none focus:ring-2 focus:ring-focus/30 disabled:opacity-60 disabled:cursor-not-allowed shadow-sm ${className}`}
+                    className={`w-full h-10 sm:h-11 pl-11 ${
+                        onClear ? "pr-11" : "pr-4"
+                    } py-2 bg-surface text-foreground placeholder:text-muted rounded-[var(--radius-input)] border border-control-border text-sm font-medium transition-all duration-fast hover:border-border focus:border-focus focus:outline-none focus:ring-2 focus:ring-focus/30 disabled:opacity-60 disabled:cursor-not-allowed shadow-sm ${className}`}
                     {...props}
                 />
 
@@ -69,12 +88,12 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
                 {onClear && hasValue && (
                     <button
                         type="button"
-                        onClick={onClear}
+                        onClick={handleClear}
                         aria-label="Clear search query"
-                        className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-muted hover:text-foreground transition-colors rounded-button focus:outline-none focus:ring-1 focus:ring-focus"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-muted hover:text-foreground transition-colors rounded-button focus:outline-none focus:ring-1 focus:ring-focus z-10"
                     >
                         <svg
-                            className="w-4 h-4"
+                            className="w-4 h-4 shrink-0"
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 20 20"
                             fill="currentColor"

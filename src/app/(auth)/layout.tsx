@@ -51,9 +51,9 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                     {/* Mission Terminal Header */}
                     <div className="flex items-center justify-between px-1">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider bg-primary/15 text-foreground border border-primary/40">
-                            <span className="material-symbols-outlined text-[14px] text-primary" aria-hidden="true">
-                                sports_esports
-                            </span>
+                            <svg className="w-3.5 h-3.5 text-primary" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4-3c-.83 0-1.5-.67-1.5-1.5S20.17 9 21 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" />
+                            </svg>
                             GUILD DISPATCH ONLINE
                         </div>
                         <span className="text-xs font-mono text-muted tracking-wider">PORTAL v2.4</span>
@@ -77,15 +77,15 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
                         <div className="flex items-center gap-4 text-xs font-mono text-muted border-t border-border pt-3">
                             <span className="flex items-center gap-1.5">
-                                <span className="material-symbols-outlined text-[16px] text-focus" aria-hidden="true">
-                                    groups
-                                </span>
+                                <svg className="w-4 h-4 text-focus" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
                                 Squad: 2/3 Devs
                             </span>
                             <span className="flex items-center gap-1.5">
-                                <span className="material-symbols-outlined text-[16px] text-warning" aria-hidden="true">
-                                    schedule
-                                </span>
+                                <svg className="w-4 h-4 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
                                 4 Days Left
                             </span>
                             <span className="ml-auto inline-block text-[10px] uppercase font-bold text-success">
@@ -121,23 +121,23 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                     {/* Feature highlights bar */}
                     <div className="grid grid-cols-3 gap-3 text-center">
                         <div className="p-3 rounded-button border border-border bg-surface/60">
-                            <span className="material-symbols-outlined text-[20px] text-primary block mb-1" aria-hidden="true">
-                                verified
-                            </span>
+                            <svg className="w-5 h-5 text-primary mx-auto mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
                             <span className="text-xs font-bold block text-foreground">Real Tasks</span>
                             <span className="text-[11px] text-muted block">Campus software</span>
                         </div>
                         <div className="p-3 rounded-button border border-border bg-surface/60">
-                            <span className="material-symbols-outlined text-[20px] text-focus block mb-1" aria-hidden="true">
-                                group_add
-                            </span>
+                            <svg className="w-5 h-5 text-focus mx-auto mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                            </svg>
                             <span className="text-xs font-bold block text-foreground">Dev Squads</span>
                             <span className="text-[11px] text-muted block">Peer review</span>
                         </div>
                         <div className="p-3 rounded-button border border-border bg-surface/60">
-                            <span className="material-symbols-outlined text-[20px] text-warning block mb-1" aria-hidden="true">
-                                military_tech
-                            </span>
+                            <svg className="w-5 h-5 text-warning mx-auto mb-1" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M19 4h-3V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v1H5a2 2 0 0 0-2 2v2a5 5 0 0 0 4.5 4.96A6 6 0 0 0 11 16.91V19H8a1 1 0 0 0 0 2h8a1 1 0 0 0 0-2h-3v-2.09a6 6 0 0 0 3.5-2.95A5 5 0 0 0 21 8V6a2 2 0 0 0-2-2zM5 8V6h3v4.61A3.01 3.01 0 0 1 5 8zm14 0a3.01 3.01 0 0 1-3 2.61V6h3v2z" />
+                            </svg>
                             <span className="text-xs font-bold block text-foreground">Leaderboard</span>
                             <span className="text-[11px] text-muted block">Earn EXP ranks</span>
                         </div>

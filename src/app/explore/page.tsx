@@ -350,9 +350,9 @@ export default async function ExplorePage({ searchParams }: PageProps) {
               className="arcade-panel rounded-card p-6 bg-surface/80"
             >
               <div className="flex items-center gap-2 mb-4">
-                <span className="material-symbols-outlined text-primary text-[20px]" aria-hidden="true">
-                  bolt
-                </span>
+                <svg className="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="m11 21-1-7H5.5L13 3l1 7h4.5L11 21z" />
+                </svg>
                 <h2 className="text-sm font-mono font-bold uppercase tracking-wider text-muted">
                   Active Missions ({myActiveQuests.length})
                 </h2>
@@ -391,9 +391,9 @@ export default async function ExplorePage({ searchParams }: PageProps) {
 
             {availableQuests.length === 0 ? (
               <div className="text-center py-16 px-4 border border-dashed border-border rounded-card bg-surface/40">
-                <span className="material-symbols-outlined text-[40px] text-muted block mb-3" aria-hidden="true">
-                  search_off
-                </span>
+                <svg className="w-10 h-10 text-muted mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM3 3l18 18" />
+                </svg>
                 <h3 className="text-lg font-bold text-foreground mb-1">No quests match your search</h3>
                 <p className="text-sm text-muted max-w-md mx-auto">
                   Try adjusting difficulty filters or clear the search query to see all available coding missions
