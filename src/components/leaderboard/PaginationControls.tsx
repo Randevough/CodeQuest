@@ -42,20 +42,21 @@ export function PaginationControls({ page, pageSize, total }: PaginationControls
     }
 
     return (
-        <div className="px-6 py-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
-            <p className="text-sm text-slate-500 hidden sm:block">
-                Showing <span className="font-medium text-slate-900 dark:text-white">{Math.min((page - 1) * pageSize + 1, total)}</span> to <span className="font-medium text-slate-900 dark:text-white">{Math.min(page * pageSize, total)}</span> of <span className="font-medium text-slate-900 dark:text-white">{total}</span>
+        <div className="px-6 py-4 border-t border-border flex items-center justify-between">
+            <p className="text-sm text-muted hidden sm:block">
+                Showing <span className="font-medium text-foreground">{Math.min((page - 1) * pageSize + 1, total)}</span> to <span className="font-medium text-foreground">{Math.min(page * pageSize, total)}</span> of <span className="font-medium text-foreground">{total}</span>
             </p>
 
             <div className="flex items-center gap-2 justify-center w-full sm:w-auto">
                 <Link
                     href={`/leaderboard?page=${page - 1}`}
-                    className={`px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-700 rounded-lg transition-colors
+                    className={`inline-flex min-h-11 items-center px-3 py-1.5 text-sm border border-border rounded-lg transition-colors
                         ${!hasPrev
-                            ? 'bg-slate-50 dark:bg-zinc-800 opacity-50 cursor-not-allowed pointer-events-none'
-                            : 'hover:bg-slate-50 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-slate-300'
+                            ? 'bg-surface  cursor-not-allowed pointer-events-none'
+                            : 'bg-surface hover:bg-surface-raised text-foreground'
                         }`}
                     aria-disabled={!hasPrev}
+                    tabIndex={hasPrev ? 0 : -1}
                 >
                     Previous
                 </Link>
@@ -63,15 +64,16 @@ export function PaginationControls({ page, pageSize, total }: PaginationControls
                 <div className="hidden sm:flex items-center gap-1">
                     {getPageNumbers().map((p, i) => (
                         p === '...' ? (
-                            <span key={`ellipsis-${i}`} className="px-2 text-slate-400">...</span>
+                            <span key={`ellipsis-${i}`} className="px-2 text-muted">...</span>
                         ) : (
                             <Link
                                 key={p}
+                                aria-current={Number(p) === page ? 'page' : undefined}
                                 href={`/leaderboard?page=${p}`}
-                                className={`min-w-[32px] h-[32px] flex items-center justify-center text-sm font-medium rounded-lg transition-colors
+                                className={`min-w-11 min-h-11 flex items-center justify-center text-sm font-medium rounded-lg transition-colors
                                     ${Number(p) === page
-                                        ? 'bg-orange-500 text-white shadow-md shadow-orange-500/20'
-                                        : 'bg-white dark:bg-zinc-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-zinc-700'
+                                        ? 'bg-secondary text-secondary-foreground  '
+                                        : 'bg-surface text-muted border border-border hover:bg-surface-raised'
                                     }`}
                             >
                                 {p}
@@ -82,12 +84,13 @@ export function PaginationControls({ page, pageSize, total }: PaginationControls
 
                 <Link
                     href={`/leaderboard?page=${page + 1}`}
-                    className={`px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-700 rounded-lg transition-colors
+                    className={`inline-flex min-h-11 items-center px-3 py-1.5 text-sm border border-border rounded-lg transition-colors
                         ${!hasNext
-                            ? 'bg-slate-50 dark:bg-zinc-800 opacity-50 cursor-not-allowed pointer-events-none'
-                            : 'hover:bg-slate-50 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-slate-300'
+                            ? 'bg-surface  cursor-not-allowed pointer-events-none'
+                            : 'bg-surface hover:bg-surface-raised text-foreground'
                         }`}
                     aria-disabled={!hasNext}
+                    tabIndex={hasNext ? 0 : -1}
                 >
                     Next
                 </Link>

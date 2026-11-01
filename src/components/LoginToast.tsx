@@ -13,7 +13,7 @@ export function LoginToast() {
         if (toasted.current) return;
 
         if (searchParams.get('loggedIn')) {
-            toast.success("Welcome aboard! Ready to forge your legacy?");
+            toast.success("Signed in successfully.");
             toasted.current = true;
             // Clean up the URL
             const newParams = new URLSearchParams(searchParams);

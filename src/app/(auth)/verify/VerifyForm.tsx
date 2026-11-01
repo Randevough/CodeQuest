@@ -15,6 +15,7 @@ export function VerifyForm() {
     const [errorMsg, setErrorMsg] = useState('');
 
     const handleVerify = async () => {
+        if (loading || success) return;
         if (!token) {
             setErrorMsg('Missing token');
             return;
@@ -35,7 +36,7 @@ export function VerifyForm() {
                 setErrorMsg(res.error || 'Verification failed');
             }
         } catch {
-            setErrorMsg('Something went wrong');
+            setErrorMsg('Email verification could not complete. Try again.');
         } finally {
             setLoading(false);
         }
@@ -43,7 +44,7 @@ export function VerifyForm() {
 
     if (!token) {
         return (
-            <div className="w-full text-center p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-md">
+            <div role="alert" className="w-full rounded-input border border-danger bg-surface p-4 text-danger">
                 No verification token found in the URL.
             </div>
         );
@@ -51,7 +52,7 @@ export function VerifyForm() {
 
     if (success) {
         return (
-            <div className="w-full text-center p-6 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-md font-bold">
+            <div role="status" className="w-full rounded-input border border-border bg-surface p-6 text-success">
                 Verification successful! Redirecting to login...
             </div>
         );
@@ -62,13 +63,12 @@ export function VerifyForm() {
             <button
                 onClick={handleVerify}
                 disabled={loading}
-                className="w-full py-3 px-4 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-bold transition-colors shadow-md flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                aria-busy={loading} className="button-primary w-full"
             >
-                {loading && <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>}
-                Confirm Verification
+                {loading ? "Verifying..." : "Verify email"}
             </button>
             {errorMsg && (
-                <div className="w-full text-center p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm rounded-md">
+                <div role="alert" className="w-full rounded-input border border-danger bg-surface p-4 text-danger">
                     {errorMsg}
                 </div>
             )}

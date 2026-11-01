@@ -14,6 +14,7 @@ interface AvatarUploadProps {
 
 export function AvatarUpload({ currentAvatar, name, size = 128, editable = false }: AvatarUploadProps) {
     const [isUploading, setIsUploading] = useState(false)
+    const [feedback, setFeedback] = useState('')
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,15 +22,16 @@ export function AvatarUpload({ currentAvatar, name, size = 128, editable = false
         if (!file) return
 
         if (file.size > 2 * 1024 * 1024) {
-            toast.error('File size must be less than 2MB')
+            setFeedback('File size must be less than 2MB'); toast.error('File size must be less than 2MB')
             return
         }
 
         if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-            toast.error('Only JPEG, PNG, and WebP images are allowed')
+            setFeedback('Only JPEG, PNG, and WebP images are allowed'); toast.error('Only JPEG, PNG, and WebP images are allowed')
             return
         }
 
+        setFeedback('')
         setIsUploading(true)
         const formData = new FormData()
         formData.set('file', file)
@@ -39,10 +41,10 @@ export function AvatarUpload({ currentAvatar, name, size = 128, editable = false
             if (result.success) {
                 toast.success('Profile picture updated!')
             } else {
-                toast.error(result.error as string)
+                setFeedback(result.error as string); toast.error(result.error as string)
             }
         } catch {
-            toast.error('Upload failed')
+            setFeedback('Upload failed'); toast.error('Upload failed')
         } finally {
             setIsUploading(false)
             // Clear input
@@ -68,7 +70,8 @@ export function AvatarUpload({ currentAvatar, name, size = 128, editable = false
         : 'U'
 
     return (
-        <div className={`relative flex-shrink-0 rounded-full transition-all hover:ring-2 hover:ring-orange-400 hover:ring-offset-1 ${editable ? 'group cursor-pointer' : ''}`} style={{ width: size, height: size }} onClick={editable ? handleClick : undefined}>
+        <div>
+        <div className={`relative flex-shrink-0 rounded-full transition-all hover:ring-2 hover:ring-focus hover:ring-offset-1 ${editable ? 'group cursor-pointer' : ''}`} style={{ width: size, height: size }}>
             <input
                 type="file"
                 ref={fileInputRef}
@@ -78,34 +81,36 @@ export function AvatarUpload({ currentAvatar, name, size = 128, editable = false
                 disabled={isUploading || !editable}
             />
 
+            {editable && <button type="button" onClick={handleClick} disabled={isUploading} aria-label={isUploading ? "Uploading profile picture" : "Change profile picture"} className="absolute inset-0 z-10 rounded-full" />}
             <div
-                className={`w-full h-full rounded-full overflow-hidden border-2 border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm relative transition-all ${editable ? 'group-hover:border-orange-500' : ''}`}
+                className={`w-full h-full rounded-full overflow-hidden border-2 border-border bg-surface  relative transition-all ${editable ? 'group-hover:border-border' : ''}`}
             >
                 {currentAvatar ? (
                     <img
                         src={currentAvatar}
                         alt={name || 'Profile'}
-                        className={`w-full h-full object-cover transition-opacity ${isUploading ? 'opacity-50' : 'opacity-100'}`}
+                        className={`w-full h-full object-cover transition-opacity ${isUploading ? '' : 'opacity-100'}`}
                     />
                 ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 font-bold text-4xl">
+                    <div className="w-full h-full flex items-center justify-center bg-surface text-foreground font-bold text-4xl">
                         {initials}
                     </div>
                 )}
 
                 {/* Overlay for hover/loading */}
                 {editable && (
-                    <div className={`absolute inset-0 flex items-center justify-center bg-black/40 transition-opacity ${isUploading ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                    <div className={`absolute inset-0 flex items-center justify-center bg-surface transition-opacity ${isUploading ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
                         {isUploading ? (
-                            <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            <div className="w-8 h-8 border-2 border-border border-t-transparent rounded-full animate-spin"></div>
                         ) : (
-                            <span className="material-symbols-outlined text-white text-3xl">photo_camera</span>
+                            <span aria-hidden="true" className="material-symbols-outlined text-foreground text-3xl">photo_camera</span>
                         )}
                     </div>
                 )}
             </div>
 
-            <div className={`absolute bottom-1 right-1 size-4 rounded-full border-2 border-white dark:border-slate-800 ${isUploading ? 'bg-yellow-400' : 'bg-green-500'}`} title={isUploading ? "Uploading..." : "Online"}></div>
+        </div>
+            {feedback && <p role="alert" className="mt-2 text-sm text-danger">{feedback}</p>}
         </div>
     )
 }

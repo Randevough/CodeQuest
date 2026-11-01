@@ -18,57 +18,30 @@ export default async function LeaderboardPage(props: { searchParams: Promise<{ p
 
     return (
         <div
-            className="min-h-screen bg-slate-50 dark:bg-black text-[#171717] dark:text-white flex flex-col antialiased relative"
+            className="min-h-screen bg-surface text-foreground flex flex-col antialiased relative"
         >
-            {/* Fixed dot-pattern */}
-            <div className="fixed inset-0 pointer-events-none z-0">
-                <div className="absolute inset-0 opacity-50 dark:hidden" style={{
-                    backgroundImage: 'radial-gradient(circle, #64748b 1.25px, transparent 1.25px)',
-                    backgroundSize: '24px 24px',
-                }} />
-                <div className="absolute inset-0 opacity-40 hidden dark:block" style={{
-                    backgroundImage: 'radial-gradient(circle, #94a3b8 1px, transparent 1px)',
-                    backgroundSize: '24px 24px',
-                }} />
-            </div>
             <Header activePage="leaderboard" />
 
-            <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
-
-                {/* Mesh Aura — Burnt Orange top-left */}
-                <div
-                    aria-hidden="true"
-                    className="pointer-events-none absolute -top-24 -left-24 w-[480px] h-[480px] rounded-full opacity-[0.05] blur-3xl"
-                    style={{ background: '#EA580C' }}
-                />
+            <main className="page-container flex-1 py-8 relative">
 
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl mb-2">Global Leaderboard</h1>
-                    <p className="text-lg text-slate-500 dark:text-slate-400 max-w-2xl">Top contributors and quest masters battling for coding supremacy.</p>
+                    <h1 className="tracking-tight text-foreground mb-2">Global Leaderboard</h1>
+                    <p className="text-lg text-muted max-w-2xl">Club members ranked by approved quest points.</p>
                 </div>
 
 
 
+                <div className="mb-6"><LeaderboardFilters /></div>
                 {users.length === 0 ? (
-                    <div className="text-center py-20 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-2xl">
-                        <p className="text-slate-500 mb-6">No heroes have risen yet.</p>
+                    <div className="text-center py-20 border-2 border-dashed border-border rounded-card break-words">
+                        <p className="text-muted mb-6">No ranked members to show yet.</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
-                        <div className="lg:col-span-3 space-y-6">
-
-                            <LeaderboardFilters />
-
-                            {/* Table container with corner + markers */}
+                        <div className="lg:col-span-3 min-w-0 space-y-6">
                             <div className="relative">
-                                {/* Corner + markers */}
-                                <div aria-hidden="true" className="pointer-events-none absolute -top-3 -left-3 text-slate-300 text-xl font-light select-none z-10">+</div>
-                                <div aria-hidden="true" className="pointer-events-none absolute -top-3 -right-3 text-slate-300 text-xl font-light select-none z-10">+</div>
-                                <div aria-hidden="true" className="pointer-events-none absolute -bottom-3 -left-3 text-slate-300 text-xl font-light select-none z-10">+</div>
-                                <div aria-hidden="true" className="pointer-events-none absolute -bottom-3 -right-3 text-slate-300 text-xl font-light select-none z-10">+</div>
-
                                 <div
-                                    className="bg-white dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
+                                    className="bg-surface dark:bg-surface-dark rounded-card break-words border border-border overflow-hidden"
                                     suppressHydrationWarning
                                 >
                                     <LeaderboardTable users={users} page={page} pageSize={pageSize} />

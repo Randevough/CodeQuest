@@ -47,24 +47,27 @@ export function QuestFilters() {
     return (
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="relative w-full sm:w-80 group">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-orange-600 material-symbols-outlined text-[20px] transition-colors">search</span>
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-warning pointer-events-none flex items-center justify-center transition-colors">
+                    <span aria-hidden="true" className="material-symbols-outlined text-[20px]">search</span>
+                </span>
                 <input
-                    className="w-full h-9 pl-10 pr-4 rounded-md bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 placeholder:text-slate-400 shadow-sm transition-all"
-                    placeholder="Search quests..."
+                    className="w-full h-10 pl-11 pr-4 rounded-[var(--radius-input)] bg-surface border border-control-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-focus/30 focus:border-focus placeholder:text-muted shadow-sm transition-all"
+                    aria-label="Search quests" placeholder="Search quests..."
                     type="text"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                 />
             </div>
             <div className="flex flex-wrap items-center gap-2">
-                <div className="flex items-center bg-white dark:bg-surface-dark rounded-md p-1 border border-slate-200 dark:border-border-dark shadow-sm h-9">
+                <div className="flex items-center bg-surface rounded-md p-1 border border-border shadow-sm min-h-11">
                     {['All', 'Active', 'Draft'].map((s) => (
                         <button
                             key={s}
+                            aria-pressed={status === s}
                             onClick={() => handleStatusChange(s)}
                             className={`px-3 h-full text-xs font-medium rounded transition-colors ${status === s
-                                ? 'text-slate-900 dark:text-white bg-slate-100 dark:bg-white/10'
-                                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5'
+                                ? 'text-foreground  bg-surface-raised '
+                                : 'text-muted  hover:text-foreground  hover:bg-surface '
                                 }`}
                         >
                             {s}

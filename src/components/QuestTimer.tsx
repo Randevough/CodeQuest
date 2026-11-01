@@ -31,35 +31,35 @@ export function QuestTimer({ deadline }: { deadline: Date | null }) {
     if (!deadline) {
         return (
             <div className="text-center py-2">
-                <p className="font-mono text-xl font-bold text-slate-300 dark:text-slate-600 tracking-widest">-- : -- : --</p>
-                <p className="text-xs text-slate-400 mt-1.5 tracking-wide">No deadline set</p>
+                <p className="font-mono text-xl font-bold text-muted tracking-widest">-- : -- : --</p>
+                <p className="text-sm text-muted mt-1.5 tracking-wide">No deadline set</p>
             </div>
         );
     }
 
-    if (!timeLeft) return null; // Loading state
+    if (!timeLeft) return <p role="status" className="min-h-24 text-muted">Loading time remaining…</p>;
 
     return (
-        <div className="flex gap-2">
-            <div className="flex-1 bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3 text-center border border-slate-100 dark:border-slate-800">
-                <span className="block text-2xl font-mono font-bold text-slate-900 dark:text-white">
+        <div role="timer" aria-label={`${timeLeft.days} days, ${timeLeft.hours} hours, ${timeLeft.minutes} minutes remaining`} className="flex gap-2 tabular-nums">
+            <div className="flex-1 bg-surface rounded-lg p-3 text-center border border-border">
+                <span className="block text-2xl font-mono font-bold text-foreground">
                     {timeLeft.days.toString().padStart(2, '0')}
                 </span>
-                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Days</span>
+                <span className="text-sm uppercase font-bold text-muted tracking-wider">Days</span>
             </div>
-            <div className="flex items-center text-slate-300 dark:text-slate-600 text-xl font-bold">:</div>
-            <div className="flex-1 bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3 text-center border border-slate-100 dark:border-slate-800">
-                <span className="block text-2xl font-mono font-bold text-slate-900 dark:text-white">
+            <div className="flex items-center text-muted text-xl font-bold">:</div>
+            <div className="flex-1 bg-surface rounded-lg p-3 text-center border border-border">
+                <span className="block text-2xl font-mono font-bold text-foreground">
                     {timeLeft.hours.toString().padStart(2, '0')}
                 </span>
-                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Hrs</span>
+                <span className="text-sm uppercase font-bold text-muted tracking-wider">Hrs</span>
             </div>
-            <div className="flex items-center text-slate-300 dark:text-slate-600 text-xl font-bold">:</div>
-            <div className="flex-1 bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3 text-center border border-slate-100 dark:border-slate-800">
-                <span className="block text-2xl font-mono font-bold text-slate-900 dark:text-white">
+            <div className="flex items-center text-muted text-xl font-bold">:</div>
+            <div className="flex-1 bg-surface rounded-lg p-3 text-center border border-border">
+                <span className="block text-2xl font-mono font-bold text-foreground">
                     {timeLeft.minutes.toString().padStart(2, '0')}
                 </span>
-                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Mins</span>
+                <span className="text-sm uppercase font-bold text-muted tracking-wider">Mins</span>
             </div>
         </div>
     );

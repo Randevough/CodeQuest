@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { createPortal } from 'react-dom'
+import { Dialog } from '@/components/ui/Dialog'
 import { updateProfile, updateFeaturedBadges } from '@/actions/profile'
 import { toast } from 'sonner'
 
@@ -31,7 +31,7 @@ const MAX_FEATURED = 3
 
 export function EditProfileModal({ isOpen, onClose, user, badges = [] }: EditProfileModalProps) {
     const [isLoading, setIsLoading] = useState(false)
-    const [mounted, setMounted] = useState(false)
+    const [feedback, setFeedback] = useState('')
     const [name, setName] = useState(user.name || '')
     const [bio, setBio] = useState(user.bio || '')
     const [githubUrl, setGithubUrl] = useState(user.githubUrl || '')
@@ -42,10 +42,6 @@ export function EditProfileModal({ isOpen, onClose, user, badges = [] }: EditPro
         badges.filter(b => b.isFeatured).map(b => b.id)
     )
 
-    useEffect(() => {
-        setMounted(true)
-        return () => setMounted(false)
-    }, [])
 
     // Re-sync when the modal is freshly opened
     useEffect(() => {
@@ -58,7 +54,7 @@ export function EditProfileModal({ isOpen, onClose, user, badges = [] }: EditPro
         }
     }, [isOpen])
 
-    if (!isOpen || !mounted) return null
+    if (!isOpen) return null
 
     function toggleBadge(badgeId: string) {
         setFeaturedIds(prev => {
@@ -72,6 +68,7 @@ export function EditProfileModal({ isOpen, onClose, user, badges = [] }: EditPro
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
+        setFeedback('')
         setIsLoading(true)
 
         try {
@@ -81,47 +78,37 @@ export function EditProfileModal({ isOpen, onClose, user, badges = [] }: EditPro
             ])
 
             if (!profileResult.success) {
-                toast.error(profileResult.error as string)
+                setFeedback(profileResult.error as string); toast.error(profileResult.error as string)
             } else if (badges.length > 0 && !badgesResult.success) {
-                toast.error((badgesResult as { error?: string }).error || 'Failed to update badges')
+                setFeedback((badgesResult as { error?: string }).error || 'Failed to update badges'); toast.error((badgesResult as { error?: string }).error || 'Failed to update badges')
             } else {
                 toast.success('Profile updated successfully')
                 onClose()
             }
         } catch {
-            toast.error('Failed to update profile')
+            setFeedback('Failed to update profile'); toast.error('Failed to update profile')
         } finally {
             setIsLoading(false)
         }
     }
 
-    const modalContent = (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onClose}>
-            <div
-                className="bg-white dark:bg-surface-dark rounded-xl shadow-xl max-w-xl w-full border border-slate-100 dark:border-slate-800 transform transition-all flex flex-col max-h-[90vh]"
-                onClick={(e) => e.stopPropagation()}
-            >
-                {/* Header */}
-                <div className="flex justify-between items-center px-6 pt-6 pb-4 shrink-0">
-                    <h3 className="text-xl font-bold text-slate-900 dark:text-white">Edit Profile</h3>
-                    <button onClick={onClose} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
-                        <span className="material-symbols-outlined">close</span>
-                    </button>
-                </div>
-
+    return (
+        <Dialog open={isOpen} onClose={onClose} pending={isLoading} title="Edit Profile">
+            {feedback && <p role="alert" className="text-danger mb-4">{feedback}</p>}
                 {/* Scrollable body */}
-                <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
-                    <div className="px-6 pb-4 overflow-y-auto space-y-4 flex-1">
+                <form onSubmit={handleSubmit} className="flex flex-col flex-1">
+                    <div className="px-0 pb-4 space-y-4 flex-1">
                         {/* Display Name */}
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                            <label htmlFor="profile-name" className="block text-sm font-medium text-foreground mb-1">
                                 Display Name
                             </label>
                             <input
                                 type="text"
+                                id="profile-name"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
-                                className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all"
+                                className="w-full px-3 py-2 border border-control-border rounded-lg bg-surface text-foreground focus:ring-2 focus:ring-focus focus:border-focus outline-none transition-all"
                                 placeholder="Your Name"
                                 maxLength={50}
                             />
@@ -129,50 +116,53 @@ export function EditProfileModal({ isOpen, onClose, user, badges = [] }: EditPro
 
                         {/* Bio */}
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                            <label htmlFor="profile-bio" className="block text-sm font-medium text-foreground mb-1">
                                 Bio
                             </label>
                             <textarea
+                                id="profile-bio"
                                 value={bio}
                                 onChange={(e) => setBio(e.target.value)}
-                                className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all h-24 resize-none"
+                                className="w-full px-3 py-2 border border-control-border rounded-lg bg-surface text-foreground focus:ring-2 focus:ring-focus focus:border-focus outline-none transition-all h-24 resize-none"
                                 placeholder="Tell us about yourself..."
                                 maxLength={160}
                             />
                             <div className="flex justify-end mt-1">
-                                <span className="text-xs text-slate-400">{bio.length}/160</span>
+                                <span className="text-sm text-muted">{bio.length}/160</span>
                             </div>
                         </div>
 
                         {/* Social Links */}
                         <div className="grid grid-cols-1 gap-4">
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                                    GitHub URL
+                                <label htmlFor="profile-githubUrl" className="block text-sm font-medium text-foreground mb-1">
+                                GitHub URL
                                 </label>
                                 <div className="relative">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined text-[18px]">code</span>
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted material-symbols-outlined text-[18px]">code</span>
                                     <input
                                         type="url"
-                                        value={githubUrl}
+                                        id="profile-githubUrl"
+                                value={githubUrl}
                                         onChange={(e) => setGithubUrl(e.target.value)}
-                                        className="w-full pl-10 pr-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all"
+                                        className="w-full pl-10 pr-3 py-2 border border-control-border rounded-lg bg-surface text-foreground focus:ring-2 focus:ring-focus focus:border-focus outline-none transition-all"
                                         placeholder="https://github.com/..."
                                     />
                                 </div>
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                                    LinkedIn URL
+                                <label htmlFor="profile-linkedinUrl" className="block text-sm font-medium text-foreground mb-1">
+                                LinkedIn URL
                                 </label>
                                 <div className="relative">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined text-[18px]">work</span>
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted material-symbols-outlined text-[18px]">work</span>
                                     <input
                                         type="url"
-                                        value={linkedinUrl}
+                                        id="profile-linkedinUrl"
+                                value={linkedinUrl}
                                         onChange={(e) => setLinkedinUrl(e.target.value)}
-                                        className="w-full pl-10 pr-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all"
+                                        className="w-full pl-10 pr-3 py-2 border border-control-border rounded-lg bg-surface text-foreground focus:ring-2 focus:ring-focus focus:border-focus outline-none transition-all"
                                         placeholder="https://linkedin.com/in/..."
                                     />
                                 </div>
@@ -183,14 +173,14 @@ export function EditProfileModal({ isOpen, onClose, user, badges = [] }: EditPro
                         {badges.length > 0 && (
                             <div className="pt-2">
                                 <div className="flex items-center justify-between mb-3">
-                                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                    <label className="block text-sm font-medium text-foreground">
                                         Featured Badges
                                     </label>
-                                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${featuredIds.length >= MAX_FEATURED ? 'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'}`}>
+                                    <span className={`text-sm font-semibold px-2 py-0.5 rounded-full ${featuredIds.length >= MAX_FEATURED ? 'bg-surface text-foreground' : 'bg-surface text-muted'}`}>
                                         {featuredIds.length}/{MAX_FEATURED}
                                     </span>
                                 </div>
-                                <p className="text-xs text-slate-400 mb-3">Choose up to {MAX_FEATURED} badges to showcase on your profile card.</p>
+                                <p className="text-sm text-muted mb-3">Choose up to {MAX_FEATURED} badges to showcase on your profile card.</p>
                                 <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                                     {badges.map((badge) => {
                                         const isSelected = featuredIds.includes(badge.id)
@@ -200,20 +190,21 @@ export function EditProfileModal({ isOpen, onClose, user, badges = [] }: EditPro
                                                 key={badge.id}
                                                 type="button"
                                                 onClick={() => toggleBadge(badge.id)}
+                                                aria-pressed={isSelected}
                                                 disabled={isDisabled}
                                                 title={badge.description}
-                                                className={`relative flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all text-center
+                                                className={`relative flex flex-col items-center gap-1.5 p-3 rounded-card break-words border-2 transition-all text-center
                                                     ${isSelected
-                                                        ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20 shadow-sm shadow-orange-500/10'
+                                                        ? 'border-border bg-surface  '
                                                         : isDisabled
-                                                            ? 'border-slate-100 dark:border-slate-800 opacity-40 cursor-not-allowed'
-                                                            : 'border-slate-200 dark:border-slate-700 hover:border-orange-300 dark:hover:border-orange-700 bg-white dark:bg-slate-900 cursor-pointer'
+                                                            ? 'border-border  cursor-not-allowed'
+                                                            : 'border-border hover:border-border bg-surface cursor-pointer'
                                                     }`}
                                             >
                                                 {/* Check mark */}
                                                 {isSelected && (
-                                                    <div className="absolute top-1.5 right-1.5 w-4 h-4 bg-orange-500 rounded-full flex items-center justify-center">
-                                                        <span className="material-symbols-outlined text-white text-[12px]">check</span>
+                                                    <div className="absolute top-1.5 right-1.5 w-4 h-4 bg-secondary rounded-full flex items-center justify-center text-secondary-foreground">
+                                                        <span aria-hidden="true" className="material-symbols-outlined text-foreground text-[12px]">check</span>
                                                     </div>
                                                 )}
 
@@ -222,11 +213,11 @@ export function EditProfileModal({ isOpen, onClose, user, badges = [] }: EditPro
                                                     {badge.imageUrl ? (
                                                         <Image src={badge.imageUrl} alt={badge.name} width={40} height={40} className="object-contain" />
                                                     ) : (
-                                                        <span className="material-symbols-outlined text-orange-500 text-[28px]">verified</span>
+                                                        <span aria-hidden="true" className="material-symbols-outlined text-foreground text-[28px]">verified</span>
                                                     )}
                                                 </div>
 
-                                                <span className="text-[10px] font-semibold text-slate-600 dark:text-slate-300 leading-tight line-clamp-2">
+                                                <span className="text-sm font-semibold text-muted leading-tight">
                                                     {badge.name}
                                                 </span>
                                             </button>
@@ -238,27 +229,25 @@ export function EditProfileModal({ isOpen, onClose, user, badges = [] }: EditPro
                     </div>
 
                     {/* Footer */}
-                    <div className="flex justify-end gap-3 px-6 py-4 border-t border-slate-100 dark:border-slate-800 shrink-0">
+                    <div className="flex justify-end gap-3 px-0 py-4 border-t border-border shrink-0">
                         <button
                             type="button"
+                            disabled={isLoading}
                             onClick={onClose}
-                            className="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 transition-colors"
+                            className="px-4 py-2 text-sm font-medium text-foreground bg-surface rounded-lg hover:bg-surface-raised transition-colors"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="px-6 py-2 text-sm font-bold text-white bg-orange-600 rounded-lg hover:bg-orange-700 transition-colors shadow-lg shadow-orange-500/20 flex items-center gap-2"
+                            className="button-primary gap-2"
                         >
-                            {isLoading && <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>}
-                            Save Changes
+                            {isLoading && <span className="w-4 h-4 border-2 border-border border-t-transparent rounded-full animate-spin"></span>}
+                            {isLoading ? 'Saving…' : 'Save Changes'}
                         </button>
                     </div>
                 </form>
-            </div>
-        </div>
+        </Dialog>
     )
-
-    return createPortal(modalContent, document.body)
 }

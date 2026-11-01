@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { Dialog } from '@/components/ui/Dialog'
 import { joinQuest, submitQuest } from '@/actions/quest'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
@@ -24,10 +25,12 @@ export function QuestAction({
     isCompleted?: boolean
 }) {
     const [loading, setLoading] = useState(false)
+    const [feedback, setFeedback] = useState('')
     const [showJoinModal, setShowJoinModal] = useState(false)
     const router = useRouter()
 
     const handleJoin = async () => {
+        setFeedback('')
         setLoading(true)
         try {
             const result = await joinQuest(questId)
@@ -37,10 +40,10 @@ export function QuestAction({
                 router.refresh()
                 setShowJoinModal(false)
             } else {
-                toast.error(result.error as string)
+                setFeedback(result.error as string); toast.error(result.error as string)
             }
         } catch {
-            toast.error('Action failed')
+            setFeedback('Action failed'); toast.error('Action failed')
         } finally {
             setLoading(false)
         }
@@ -51,10 +54,11 @@ export function QuestAction({
         const url = input?.value
 
         if (!url) {
-            toast.error('Please enter a URL')
+            setFeedback('Please enter a URL'); toast.error('Please enter a URL')
             return
         }
 
+        setFeedback('')
         setLoading(true)
         try {
             const result = await submitQuest(questId, url)
@@ -62,10 +66,10 @@ export function QuestAction({
                 toast.success('Quest Submitted! Retrieval Drones dispatched.')
                 router.refresh()
             } else {
-                toast.error((result as { error?: string }).error || 'Error')
+                setFeedback((result as { error?: string }).error || 'Error'); toast.error((result as { error?: string }).error || 'Error')
             }
         } catch {
-            toast.error('Submission failed')
+            setFeedback('Submission failed'); toast.error('Submission failed')
         } finally {
             setLoading(false)
         }
@@ -77,13 +81,13 @@ export function QuestAction({
 
     if (isCompleted) {
         return (
-            <div className="p-6 bg-green-50 dark:bg-green-900/10 rounded-xl border border-green-100 dark:border-green-900/30 text-center">
+            <div className="p-6 bg-surface rounded-card break-words border border-border text-center">
                 <div className="flex flex-col items-center gap-2">
-                    <div className="size-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400 mb-2">
-                        <span className="material-symbols-outlined text-[24px]">trophy</span>
+                    <div className="size-12 rounded-full bg-surface flex items-center justify-center text-success mb-2">
+                        <span aria-hidden="true" className="material-symbols-outlined text-[24px]">trophy</span>
                     </div>
-                    <h3 className="text-lg font-bold text-green-800 dark:text-green-300">Mission Accomplished!</h3>
-                    <p className="text-green-700 dark:text-green-400 mb-2">
+                    <h3 className="text-lg font-bold text-success">Mission Accomplished!</h3>
+                    <p className="text-success mb-2">
                         You have successfully completed this quest.
                     </p>
                     {userStatus?.submissionUrl && (
@@ -91,9 +95,9 @@ export function QuestAction({
                             href={userStatus.submissionUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-xs font-medium text-green-600 dark:text-green-400 hover:underline flex items-center gap-1"
+                            className="text-sm font-medium text-success hover:underline flex items-center gap-1"
                         >
-                            View your submission <span className="material-symbols-outlined text-[14px]">open_in_new</span>
+                            View your submission <span aria-hidden="true" className="material-symbols-outlined text-[14px]">open_in_new</span>
                         </a>
                     )}
                 </div>
@@ -103,19 +107,20 @@ export function QuestAction({
 
     return (
         <>
+            {feedback && <p role="alert" className="text-danger mb-4">{feedback}</p>}
             {/* If Snatched, show Submission Form (Mocked) */}
             {isSnatched ? (
                 <div className="grid grid-cols-1 gap-6">
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5" htmlFor="repo-url">Project Repository URL</label>
+                            <label className="block text-sm font-medium text-foreground mb-1.5" htmlFor="repo-url">Project Repository URL</label>
                             <div className="flex flex-col gap-3 mb-4">
                                 <div className="relative w-full">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none flex items-center justify-center">
-                                        <span className="material-symbols-outlined icon-filled text-[20px]">link</span>
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none flex items-center justify-center">
+                                        <span aria-hidden="true" className="material-symbols-outlined icon-filled text-[20px]">link</span>
                                     </span>
                                     <input
-                                        className="block w-full pl-10 pr-3 py-2.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-400 shadow-sm focus:ring-0 focus:border-orange-500 focus:outline-none transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                                        className="block w-full pl-10 pr-3 py-2.5 bg-surface border border-control-border rounded-lg text-sm text-foreground placeholder-muted focus:border-focus transition-all disabled:cursor-not-allowed"
                                         id="repo-url"
                                         placeholder="https://your-project-link.com"
                                         type="url"
@@ -126,19 +131,19 @@ export function QuestAction({
                                 <button
                                     onClick={handleSubmit}
                                     disabled={loading || isPending}
-                                    className={`w-full font-medium py-2.5 px-6 rounded-lg transition-all flex items-center justify-center gap-2 ${isPending
-                                        ? 'bg-slate-300 dark:bg-slate-700 text-slate-500 cursor-not-allowed'
-                                        : 'bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/20 active:scale-95'
+                                    className={`w-full gap-2 ${isPending
+                                        ? 'font-medium py-2.5 px-6 rounded-button flex items-center justify-center bg-surface text-muted cursor-not-allowed'
+                                        : 'button-primary'
                                         }`}
                                 >
                                     {isPending ? (
                                         <>
-                                            <span className="material-symbols-outlined text-[20px]">hourglass_empty</span>
+                                            <span aria-hidden="true" className="material-symbols-outlined text-[20px]">hourglass_empty</span>
                                             Awaiting Evaluation
                                         </>
                                     ) : (
                                         <>
-                                            <span className="material-symbols-outlined text-[20px]">send</span>
+                                            <span aria-hidden="true" className="material-symbols-outlined text-[20px]">send</span>
                                             {loading ? 'Submitting...' : 'Submit Quest'}
                                         </>
                                     )}
@@ -146,7 +151,7 @@ export function QuestAction({
                             </div>
                         </div>
                     </div>
-                    <p className="text-xs text-slate-500 text-center sm:text-left">
+                    <p className="text-sm text-muted text-center sm:text-left">
                         {isPending
                             ? "Your solution is currently being evaluated by the Admin Command Center. You will be notified once the review is complete."
                             : "Submissions are manually reviewed by our Admin team. Ensure all requirements are met before deployment."
@@ -154,11 +159,11 @@ export function QuestAction({
                     </p>
                 </div>
             ) : (
-                <div className="p-4 bg-slate-50 dark:bg-slate-900/30 rounded-lg text-center">
-                    <p className="text-slate-600 dark:text-slate-400 mb-4">Join this quest to start working on it.</p>
+                <div className="p-4 bg-surface rounded-lg text-center">
+                    <p className="text-muted mb-4">Join this quest to start working on it.</p>
                     <button
                         onClick={() => setShowJoinModal(true)}
-                        className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-4 rounded-lg shadow-lg shadow-orange-500/20 hover:shadow-orange-500/30 transition-all duration-200"
+                        className="button-primary w-full"
                     >
                         Join Quest
                     </button>
@@ -167,29 +172,28 @@ export function QuestAction({
 
             {/* Join Confirmation Modal */}
             {showJoinModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                    <div className="bg-white dark:bg-surface-dark rounded-xl shadow-xl max-w-sm w-full p-6 border border-slate-100 dark:border-slate-800 transform transition-all">
-                        <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Join this Quest?</h3>
-                        <p className="text-sm text-slate-500 dark:text-gray-400 mb-6">
+                <Dialog open={showJoinModal} onClose={() => setShowJoinModal(false)} pending={loading} title="Join this Quest?">
+                        {feedback && <p role="alert" className="text-danger mb-4">{feedback}</p>}
+                        <p className="text-sm text-muted mb-6">
                             Are you sure you want to start this quest? It will be added to your active quests.
                         </p>
                         <div className="flex gap-3">
                             <button
+                                disabled={loading}
                                 onClick={() => setShowJoinModal(false)}
-                                className="flex-1 px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 transition-colors"
+                                className="flex-1 px-4 py-2 text-sm font-medium text-foreground bg-surface rounded-lg hover:bg-surface-raised transition-colors"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={handleJoin}
                                 disabled={loading}
-                                className="flex-1 px-4 py-2 text-sm font-bold text-white bg-orange-500 rounded-lg hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/20"
+                                className="flex-1 button-secondary"
                             >
                                 {loading ? 'Joining...' : 'Confirm Join'}
                             </button>
                         </div>
-                    </div>
-                </div>
+                </Dialog>
             )}
         </>
     )

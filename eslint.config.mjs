@@ -16,6 +16,11 @@ const eslintConfig = defineConfig([
     ".kilo/**",
   ]),
   {
+    files: ["**/*.cjs"],
+    rules: { "@typescript-eslint/no-require-imports": "warn" }
+  },
+  {
+    files: ["**/*.{ts,tsx,js,jsx,mjs}"],
     rules: {
       "react/no-unescaped-entities": "warn",
       "@typescript-eslint/no-require-imports": "warn",

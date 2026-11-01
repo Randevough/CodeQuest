@@ -1,3 +1,4 @@
+import { MobileSidebarTrigger } from '@/components/admin/MobileSidebarTrigger';
 import Link from 'next/link';
 import { getAdminDashboardStats } from '@/actions/admin-dashboard';
 import { StatsGrid, LeaderboardPreview } from '@/components/admin/AdminStats';
@@ -22,20 +23,22 @@ export default async function AdminOverviewPage() {
 
     return (
         <>
-            <header className="h-16 flex-shrink-0 bg-background-light dark:bg-background-dark border-b border-border-light dark:border-border-dark flex items-center justify-between px-8 z-10 transition-colors">
-                <div className="flex flex-col justify-center">
-                    <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Dashboard Overview</h1>
+            <header className="min-h-16 py-3 gap-3 flex-wrap flex-shrink-0 bg-background border-b border-border flex items-center justify-between px-4 sm:px-6 lg:px-8 z-10 transition-colors">
+                <div className="flex items-center gap-3">
+                    <MobileSidebarTrigger className="md:hidden" />
+                    <h1 className="text-2xl sm:text-3xl text-foreground">Dashboard Overview</h1>
                 </div>
                 <div className="flex items-center gap-4">
-                    <div className="text-sm text-slate-500 flex items-center gap-2">
-                        <span className="material-symbols-outlined text-[18px]">calendar_today</span>
+                    <div className="text-sm text-muted flex items-center gap-2">
+                        <span aria-hidden="true" className="material-symbols-outlined text-[18px]">calendar_today</span>
                         <span>Last 30 Days</span>
                     </div>
                 </div>
             </header>
 
-            <div className="flex-1 overflow-y-auto p-8 bg-background-light dark:bg-background-dark transition-colors">
-                <div className="mx-auto max-w-7xl flex flex-col gap-6">
+            <div className="min-w-0 flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-background transition-colors">
+                <div className="mx-auto max-w-content flex flex-col gap-6">
+                    {!statsResult.success && <p role="alert" className="border border-control-border bg-surface p-4 text-danger">Dashboard data could not load. Counts below use fallback values. Refresh to retry.</p>}
                     {/* Stats Grid */}
                     <StatsGrid
                         stats={{
@@ -49,28 +52,28 @@ export default async function AdminOverviewPage() {
                     {/* Charts Row */}
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         {/* Productivity Trend */}
-                        <div className="lg:col-span-2 bg-surface-light dark:bg-surface-dark p-6 rounded-lg border border-border-light dark:border-border-dark shadow-sm">
+                        <div className="lg:col-span-2 bg-surface p-6 rounded-card border border-border shadow-sm">
                             <div className="flex justify-between items-center mb-6">
-                                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Monthly Productivity Trend</h3>
-                                <div className="text-xs text-slate-400 font-medium">Last 30 Days</div>
+                                <h3 className="text-lg font-bold text-foreground">Monthly Productivity Trend</h3>
+                                <div className="text-xs text-muted font-medium">Last 30 Days</div>
                             </div>
                             {stats.activityTrend.length > 0 ? (
                                 <ActivityTrendChart data={stats.activityTrend} />
                             ) : (
-                                <div className="h-64 flex items-center justify-center text-slate-400 text-sm">
+                                <div className="h-64 flex items-center justify-center text-muted text-sm">
                                     No activity data available
                                 </div>
                             )}
                         </div>
 
                         {/* Difficulty Distribution */}
-                        <div className="bg-surface-light dark:bg-surface-dark p-6 rounded-lg border border-border-light dark:border-border-dark shadow-sm flex flex-col">
-                            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-6">Difficulty Distribution</h3>
+                        <div className="bg-surface p-6 rounded-card border border-border shadow-sm flex flex-col">
+                            <h3 className="text-lg font-bold text-foreground mb-6">Difficulty Distribution</h3>
                             <div className="flex-1 flex items-center justify-center relative">
                                 {stats.difficultyDistribution.length > 0 ? (
                                     <DifficultyDistributionChart data={stats.difficultyDistribution} />
                                 ) : (
-                                    <div className="h-48 flex items-center justify-center text-slate-400 text-sm">
+                                    <div className="h-48 flex items-center justify-center text-muted text-sm">
                                         No active quests
                                     </div>
                                 )}
@@ -86,36 +89,36 @@ export default async function AdminOverviewPage() {
                         </div>
 
                         {/* Quick Actions */}
-                        <div className="bg-surface-light dark:bg-surface-dark rounded-lg border border-border-light dark:border-border-dark shadow-sm flex flex-col">
-                            <div className="px-6 py-4 border-b border-border-light dark:border-border-dark">
-                                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Quick Actions</h3>
+                        <div className="bg-surface rounded-card border border-border shadow-sm flex flex-col">
+                            <div className="px-6 py-4 border-b border-border">
+                                <h3 className="text-lg font-bold text-foreground">Quick Actions</h3>
                             </div>
                             <div className="p-6 grid grid-cols-1 gap-4 flex-1">
-                                <Link href="/admin/manage-quests/create" className="group flex items-center gap-4 p-4 rounded-lg border border-border-light dark:border-border-dark hover:border-accent hover:bg-orange-50/50 dark:hover:bg-orange-900/10 transition-all text-left">
-                                    <div className="h-10 w-10 rounded-full bg-orange-500 text-white flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
-                                        <span className="material-symbols-outlined">add_circle</span>
+                                <Link href="/admin/manage-quests/create" className="group flex items-center gap-4 p-4 rounded-card border border-control-border hover:border-control-border hover:bg-surface transition-all text-left">
+                                    <div className="h-10 w-10 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center flex-shrink-0  transition-transform shadow-sm text-secondary-foreground">
+                                        <span aria-hidden="true" className="material-symbols-outlined">add_circle</span>
                                     </div>
                                     <div className="flex flex-col">
-                                        <span className="font-bold text-slate-900 dark:text-slate-100 group-hover:text-accent transition-colors">Create Quest</span>
-                                        <span className="text-xs text-slate-500">Draft new challenge</span>
+                                        <span className="font-bold text-foreground group-hover:text-foreground transition-colors">Create Quest</span>
+                                        <span className="text-xs text-muted">Draft new challenge</span>
                                     </div>
                                 </Link>
-                                <Link href="/admin/submissions" className="group flex items-center gap-4 p-4 rounded-lg border border-border-light dark:border-border-dark hover:border-accent hover:bg-orange-50/50 dark:hover:bg-orange-900/10 transition-all text-left">
-                                    <div className="h-10 w-10 rounded-full bg-orange-500 text-white flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
-                                        <span className="material-symbols-outlined">rate_review</span>
+                                <Link href="/admin/submissions" className="group flex items-center gap-4 p-4 rounded-card border border-control-border hover:border-control-border hover:bg-surface transition-all text-left">
+                                    <div className="h-10 w-10 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center flex-shrink-0  transition-transform shadow-sm text-secondary-foreground">
+                                        <span aria-hidden="true" className="material-symbols-outlined">rate_review</span>
                                     </div>
                                     <div className="flex flex-col">
-                                        <span className="font-bold text-slate-900 dark:text-slate-100 group-hover:text-accent transition-colors">Review Submissions</span>
-                                        <span className="text-xs text-slate-500">{stats.pendingReviews} Pending items</span>
+                                        <span className="font-bold text-foreground group-hover:text-foreground transition-colors">Review Submissions</span>
+                                        <span className="text-xs text-muted">{stats.pendingReviews} Pending items</span>
                                     </div>
                                 </Link>
-                                <Link href="/admin/members" className="group flex items-center gap-4 p-4 rounded-lg border border-border-light dark:border-border-dark hover:border-accent hover:bg-orange-50/50 dark:hover:bg-orange-900/10 transition-all text-left">
-                                    <div className="h-10 w-10 rounded-full bg-orange-500 text-white flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
-                                        <span className="material-symbols-outlined">manage_accounts</span>
+                                <Link href="/admin/members" className="group flex items-center gap-4 p-4 rounded-card border border-control-border hover:border-control-border hover:bg-surface transition-all text-left">
+                                    <div className="h-10 w-10 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center flex-shrink-0  transition-transform shadow-sm text-secondary-foreground">
+                                        <span aria-hidden="true" className="material-symbols-outlined">manage_accounts</span>
                                     </div>
                                     <div className="flex flex-col">
-                                        <span className="font-bold text-slate-900 dark:text-slate-100 group-hover:text-accent transition-colors">Manage Members</span>
-                                        <span className="text-xs text-slate-500">View user directory</span>
+                                        <span className="font-bold text-foreground group-hover:text-foreground transition-colors">Manage Members</span>
+                                        <span className="text-xs text-muted">View user directory</span>
                                     </div>
                                 </Link>
                             </div>

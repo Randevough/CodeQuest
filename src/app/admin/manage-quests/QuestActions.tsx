@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useId } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { duplicateQuest, deleteQuest, updateQuestStatus } from '@/actions/quest';
@@ -14,58 +14,75 @@ interface QuestActionsProps {
 }
 
 export function QuestActions({ questId, status, activeSnatchesCount }: QuestActionsProps) {
+    const [message, setMessage] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const menuRef = useRef<HTMLDivElement>(null);
+    const menuId = useId();
     const router = useRouter();
 
     useEffect(() => {
-        function handleClickOutside(event: MouseEvent) {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-                setIsOpen(false);
-            }
-        }
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
+        const menu = menuRef.current;
+        const trigger = dropdownRef.current?.querySelector('button');
+        if (!menu || !trigger) return;
+        if (!isOpen) { menu.hidePopover(); return; }
+        menu.showPopover();
+        const rect = trigger.getBoundingClientRect();
+        menu.style.left = `${Math.max(8, Math.min(rect.right - menu.offsetWidth, window.innerWidth - menu.offsetWidth - 8))}px`;
+        menu.style.top = `${Math.max(8, Math.min(rect.bottom + 4, window.innerHeight - menu.offsetHeight - 8))}px`;
+        menu.querySelector('a')?.focus();
+        const closeMenu = (event: Event) => {
+            if (event.target instanceof Node && menu.contains(event.target)) return;
+            setIsOpen(false);
         };
-    }, []);
+        window.addEventListener('scroll', closeMenu, true);
+        window.addEventListener('resize', closeMenu);
+        return () => {
+            window.removeEventListener('scroll', closeMenu, true);
+            window.removeEventListener('resize', closeMenu);
+        };
+    }, [isOpen]);
 
     const handleDuplicate = async () => {
+        if (isLoading) return;
+        setMessage('');
         setIsLoading(true);
         setIsOpen(false);
         try {
             const res = await duplicateQuest(questId);
             if (res.success) {
-                toast.success("Quest duplicated successfully");
+                setMessage("Quest duplicated successfully"); toast.success("Quest duplicated successfully");
                 router.refresh();
             } else {
-                toast.error(res.error || "Failed to duplicate quest");
+                setMessage(res.error || "Failed to duplicate quest"); toast.error(res.error || "Failed to duplicate quest");
             }
         } catch (error) {
             console.error("Failed to duplicate", error);
-            toast.error("Failed to duplicate quest");
+            setMessage("Failed to duplicate quest"); toast.error("Failed to duplicate quest");
         } finally {
             setIsLoading(false);
         }
     };
 
     const handleStatusUpdate = async (newStatus: string) => {
+        if (isLoading) return;
+        setMessage('');
         setIsLoading(true);
         setIsOpen(false);
         try {
             const res = await updateQuestStatus(questId, newStatus);
             if (res.success) {
-                toast.success(newStatus === 'Active' ? "Quest published successfully" : "Quest reverted to draft");
+                setMessage(newStatus === 'Active' ? "Quest published successfully" : "Quest reverted to draft"); toast.success(newStatus === 'Active' ? "Quest published successfully" : "Quest reverted to draft");
                 router.refresh();
             } else {
-                toast.error(res.error || "Failed to update quest status");
+                setMessage(res.error || "Failed to update quest status"); toast.error(res.error || "Failed to update quest status");
             }
         } catch (error) {
             console.error("Failed to update status", error);
-            toast.error("Failed to update quest status");
+            setMessage("Failed to update quest status"); toast.error("Failed to update quest status");
         } finally {
             setIsLoading(false);
         }
@@ -73,51 +90,60 @@ export function QuestActions({ questId, status, activeSnatchesCount }: QuestActi
 
     const handleDelete = async () => {
         // Just open the modal
+        dropdownRef.current?.querySelector('button')?.focus();
+        setMessage('');
         setIsDeleteModalOpen(true);
         setIsOpen(false);
     };
 
     const confirmDelete = async () => {
+        if (isLoading) return;
+        setMessage('');
         setIsLoading(true);
         try {
             const res = await deleteQuest(questId);
             if (res.success) {
-                toast.success("Quest deleted successfully");
+                setIsDeleteModalOpen(false);
+                setMessage("Quest deleted successfully"); toast.success("Quest deleted successfully");
                 router.refresh();
             } else {
-                toast.error(res.error || "Failed to delete quest");
+                setMessage(res.error || "Failed to delete quest"); toast.error(res.error || "Failed to delete quest");
             }
         } catch (error) {
             console.error("Failed to delete", error);
-            toast.error("Failed to delete quest");
+            setMessage("Failed to delete quest"); toast.error("Failed to delete quest");
         } finally {
             setIsLoading(false);
-            setIsDeleteModalOpen(false);
         }
     };
 
     return (
         <>
-            <div className="relative" ref={dropdownRef}>
+            <div className="relative" ref={dropdownRef} onKeyDown={event => { if (event.key === 'Escape') { setIsOpen(false); (event.currentTarget.querySelector('button') as HTMLButtonElement)?.focus(); } }}>
+                {message && <p role="status" className="max-w-xs text-sm text-foreground">{message}</p>}
                 <button
-                    onClick={() => setIsOpen(!isOpen)}
+                    popoverTarget={menuId}
+                    aria-label="Quest actions"
+                    aria-expanded={isOpen}
+                    aria-controls={menuId}
                     disabled={isLoading}
-                    className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-orange-600 dark:hover:text-orange-500 rounded hover:bg-orange-50 dark:hover:bg-orange-900/10 hover:border hover:border-orange-200 dark:hover:border-orange-900/50 transition-all disabled:opacity-50"
+                    className="w-8 h-8 flex items-center justify-center text-muted hover:text-warning rounded hover:bg-surface hover:border hover:border-border transition-all disabled:opacity-50"
                 >
-                    <span className="material-symbols-outlined text-[20px]">
+                    <span aria-hidden="true" className="material-symbols-outlined text-[20px]">
                         {isLoading ? 'hourglass_empty' : 'more_vert'}
                     </span>
                 </button>
 
-                {isOpen && (
-                    <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-slate-800 rounded-md shadow-lg border border-slate-200 dark:border-slate-700 z-50 py-1 origin-top-right animate-in fade-in zoom-in-95 duration-100">
+                <div ref={menuRef} id={menuId} popover="auto"
+                    onToggle={event => setIsOpen(event.currentTarget.matches(':popover-open'))}
+                    className="fixed inset-auto m-0 w-48 max-w-[calc(100vw-1rem)] max-h-[calc(100dvh-1rem)] overflow-y-auto bg-surface rounded-md shadow-lg border border-control-border py-1">
                         <Link
                             href={`/admin/manage-quests/create?id=${questId}`}
-                            className="flex items-center px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 w-full text-left gap-2"
+                            className="flex items-center px-4 py-2 text-sm text-foreground hover:bg-surface-raised w-full text-left gap-2"
                             onClick={() => setIsOpen(false)}
                         >
 
-                            <span className="material-symbols-outlined text-[18px]">edit</span>
+                            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">edit</span>
                             Edit Quest
                         </Link>
                         {status === 'Active' ? (
@@ -127,45 +153,44 @@ export function QuestActions({ questId, status, activeSnatchesCount }: QuestActi
                                 title={activeSnatchesCount > 0 ? "Cannot revert to draft with active members" : ""}
                                 className={`flex items-center px-4 py-2 text-sm w-full text-left gap-2 ${
                                     activeSnatchesCount > 0 
-                                      ? 'text-slate-400 dark:text-slate-600 bg-slate-50 dark:bg-slate-800/50 cursor-not-allowed'
-                                      : 'text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20'
+                                      ? 'text-muted  bg-surface  cursor-not-allowed'
+                                      : 'text-warning  hover:bg-surface '
                                 }`}
                             >
-                                <span className="material-symbols-outlined text-[18px]">unpublished</span>
+                                <span aria-hidden="true" className="material-symbols-outlined text-[18px]">unpublished</span>
                                 Back to Draft
                             </button>
                         ) : (
                             <button
                                 onClick={() => handleStatusUpdate('Active')}
-                                className="flex items-center px-4 py-2 text-sm text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 w-full text-left gap-2"
+                                className="flex items-center px-4 py-2 text-sm text-success hover:bg-surface w-full text-left gap-2"
                             >
-                                <span className="material-symbols-outlined text-[18px]">publish</span>
+                                <span aria-hidden="true" className="material-symbols-outlined text-[18px]">publish</span>
                                 Publish
                             </button>
                         )}
                         <button
                             onClick={handleDuplicate}
-                            className="flex items-center px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 w-full text-left gap-2"
+                            className="flex items-center px-4 py-2 text-sm text-foreground hover:bg-surface-raised w-full text-left gap-2"
                         >
-                            <span className="material-symbols-outlined text-[18px]">content_copy</span>
+                            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">content_copy</span>
                             Duplicate
                         </button>
-                        <div className="h-px bg-slate-200 dark:bg-slate-700 my-1 font-medium"></div>
+                        <div className="h-px bg-surface-raised my-1 font-medium"></div>
                         <button
                             onClick={handleDelete}
                             disabled={activeSnatchesCount > 0}
                             title={activeSnatchesCount > 0 ? "Cannot delete quest with active members" : ""}
                             className={`flex items-center px-4 py-2 text-sm w-full text-left gap-2 ${
                                 activeSnatchesCount > 0 
-                                  ? 'text-slate-400 dark:text-slate-600 bg-slate-50 dark:bg-slate-800/50 cursor-not-allowed'
-                                  : 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20'
+                                  ? 'text-muted  bg-surface  cursor-not-allowed'
+                                  : 'text-danger  hover:bg-surface '
                             }`}
                         >
-                            <span className="material-symbols-outlined text-[18px]">delete</span>
+                            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">delete</span>
                             Delete
                         </button>
-                    </div>
-                )}
+                </div>
             </div>
 
             <DeleteQuestModal
@@ -173,6 +198,7 @@ export function QuestActions({ questId, status, activeSnatchesCount }: QuestActi
                 onClose={() => setIsDeleteModalOpen(false)}
                 onConfirm={confirmDelete}
                 isLoading={isLoading}
+                description={message || "Are you sure you want to delete this quest? This action cannot be undone."}
             />
         </>
     );

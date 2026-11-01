@@ -1,32 +1,4 @@
-import { Header } from '@/components/Header'
-
+import { Header } from "@/components/Header";
 export default function Loading() {
-    return (
-        <div className="min-h-screen bg-slate-50 dark:bg-black text-[#171717] dark:text-white flex flex-col antialiased relative font-['Plus_Jakarta_Sans']" role="status" aria-busy="true">
-            <Header activePage="explore" />
-            <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
-                {/* Hero / Filter Section Skeleton */}
-                <div className="mb-8 flex flex-col gap-4">
-                    <div className="h-10 w-64 bg-slate-200 dark:bg-slate-800 rounded animate-pulse"></div>
-                    <div className="h-6 w-96 bg-slate-100 dark:bg-slate-800/50 rounded animate-pulse"></div>
-                </div>
-
-                {/* Grid Skeleton */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {[...Array(6)].map((_, i) => (
-                        <div key={i} className="bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 rounded-xl p-6 h-[250px] flex flex-col gap-4 shadow-sm animate-pulse">
-                            <div className="flex justify-between items-start">
-                                <div className="h-4 w-16 bg-slate-200 dark:bg-slate-700 rounded-full"></div>
-                                <div className="h-6 w-16 bg-slate-200 dark:bg-slate-700 rounded-full"></div>
-                            </div>
-                            <div className="h-6 w-3/4 bg-slate-200 dark:bg-slate-700 rounded"></div>
-                            <div className="h-4 w-full bg-slate-100 dark:bg-slate-800 rounded mt-2"></div>
-                            <div className="h-4 w-5/6 bg-slate-100 dark:bg-slate-800 rounded"></div>
-                            <div className="mt-auto h-10 w-full bg-slate-200 dark:bg-slate-700 rounded-lg"></div>
-                        </div>
-                    ))}
-                </div>
-            </main>
-        </div>
-    )
+    return <div className="min-h-screen bg-background text-foreground"><Header activePage="explore" /><main className="page-container py-8" aria-busy="true" aria-label="Loading quests"><p role="status" className="mb-6 text-muted">Loading quests...</p><div aria-hidden="true" className="mb-8 space-y-4"><div className="h-10 w-64 max-w-full rounded-input bg-surface-raised" /><div className="h-6 w-96 max-w-full rounded-input bg-surface-raised" /></div><div aria-hidden="true" className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">{Array.from({ length: 6 }, (_, index) => <div key={index} className="flex h-64 flex-col gap-4 rounded-card border border-border bg-surface p-6"><div className="h-5 w-20 rounded-input bg-surface-raised" /><div className="h-7 w-3/4 rounded-input bg-surface-raised" /><div className="h-4 rounded-input bg-surface-raised" /><div className="h-4 w-5/6 rounded-input bg-surface-raised" /><div className="mt-auto h-11 rounded-button bg-surface-raised" /></div>)}</div></main></div>;
 }

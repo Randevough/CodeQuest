@@ -22,6 +22,7 @@ export default async function AdminLayout({
     let memberCount = 0;
     let submissionCount = 0;
     let adminUser = null;
+    let loadFailed = false;
 
     try {
         memberCount = await prisma.user.count();
@@ -49,6 +50,7 @@ export default async function AdminLayout({
             });
         }
     } catch (error) {
+        loadFailed = true;
         console.error('AdminLayout database fetch notice (fallback used):', error);
     }
 
@@ -64,11 +66,11 @@ export default async function AdminLayout({
 
     return (
         <AdminSidebarProvider>
-            <div className="flex h-screen w-full bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-sans">
+            <div className="flex h-dvh w-full bg-background text-foreground font-sans">
                 {/* Material Symbols support - ensure it's loaded in root layout or here */}
-                <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
                 <AdminSidebar memberCount={memberCount} submissionCount={submissionCount} user={effectiveAdminUser} />
-                <main className="flex-1 flex flex-col h-full overflow-hidden relative">
+                <main className="min-w-0 flex-1 flex flex-col h-full overflow-hidden relative">
+                    {loadFailed && <p role="alert" className="border-b border-control-border bg-surface px-4 py-3 text-warning">Some admin data could not load. Sidebar counts and profile may show fallback values. Refresh to retry.</p>}
                     {children}
                 </main>
             </div>

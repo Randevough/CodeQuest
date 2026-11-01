@@ -51,29 +51,29 @@ export default async function MemberDirectoryPage({
     const totalPages = Math.ceil(total / limit)
 
     return (
-        <div className="flex-1 flex flex-col h-full overflow-hidden relative">
-            <header className="h-16 flex-shrink-0 bg-white dark:bg-surface-dark border-b border-slate-200 dark:border-border-dark flex items-center justify-between px-4 sm:px-8 z-10 transition-all">
+        <div className="min-w-0 flex-1 flex flex-col h-full overflow-hidden relative">
+            <header className="min-h-16 py-3 gap-3 flex-wrap flex-shrink-0 bg-surface border-b border-border flex items-center justify-between px-4 sm:px-4 sm:px-6 lg:px-8 z-10 transition-all">
                 <div className="flex items-center gap-4 transition-all">
                     <MobileSidebarTrigger className="md:hidden" />
-                    <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 font-['Plus_Jakarta_Sans']">Member Directory</h1>
+                    <h1 className="text-2xl sm:text-3xl text-foreground font-sans">Member Directory</h1>
                 </div>
                 <div className="flex items-center gap-4">
                     {/* Invite Member button removed as per request */}
                 </div>
             </header>
-            <div className="flex-1 overflow-y-auto p-4 sm:p-8 bg-slate-50 dark:bg-[#0a0a0a] font-['Plus_Jakarta_Sans']">
-                <div className="mx-auto max-w-6xl flex flex-col gap-6">
+            <div className="min-w-0 flex-1 overflow-y-auto p-4 sm:p-4 sm:p-6 lg:p-8 bg-surface font-sans">
+                <div className="mx-auto max-w-content flex flex-col gap-6">
                     {/* Search and Filters */}
                     <div className="flex flex-col sm:flex-row justify-between items-end sm:items-center gap-4">
                         <div className="flex items-center gap-3 flex-1 w-full sm:w-auto">
                             <form className="relative group w-full sm:max-w-xs">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-orange-600 transition-colors flex items-center justify-center">
-                                    <span className="material-symbols-outlined text-[20px]">search</span>
+                                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-warning pointer-events-none flex items-center justify-center transition-colors">
+                                    <span aria-hidden="true" className="material-symbols-outlined text-[20px]">search</span>
                                 </span>
                                 <input
-                                    name="q"
+                                    name="q" aria-label="Search members"
                                     defaultValue={query}
-                                    className="w-full h-10 pl-10 pr-4 rounded bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 hover:border-orange-500 placeholder:text-slate-400 transition-all shadow-sm"
+                                    className="w-full h-10 pl-11 pr-4 rounded-[var(--radius-input)] bg-surface border border-control-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-focus/30 focus:border-focus hover:border-border placeholder:text-muted transition-all shadow-sm"
                                     placeholder="Search members..."
                                     type="text"
                                 />
@@ -82,31 +82,32 @@ export default async function MemberDirectoryPage({
                     </div>
 
                     {/* Table */}
-                    <div className="bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark rounded-lg shadow-sm overflow-hidden">
-                        <div className="overflow-x-auto">
+                    <div className="bg-surface border border-border rounded-card shadow-sm min-w-0 overflow-hidden">
+                        <div className="max-w-full overflow-x-auto styled-scrollbar" role="region" aria-label="Members table" tabIndex={0}>
                             <table className="w-full min-w-[900px] text-left border-collapse">
                                 <thead>
-                                    <tr className="border-b border-slate-200 dark:border-border-dark bg-slate-50/50 dark:bg-white/5">
-                                        <th className="py-3 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-[35%] gap-2">Name</th>
-                                        <th className="py-3 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-[10%]">Points</th>
-                                        <th className="py-3 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-[10%]">Quests</th>
-                                        <th className="py-3 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-[15%]">Joined Date</th>
-                                        <th className="py-3 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-[10%]">Role</th>
-                                        <th className="py-3 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-[15%]">Cooldown</th>
-                                        <th className="py-3 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider text-right w-[5%]">Actions</th>
+                                    <tr className="border-b border-border bg-surface">
+                                        <th className="py-3 px-6 text-xs font-bold text-muted uppercase tracking-wider w-[35%] gap-2">Name</th>
+                                        <th className="py-3 px-6 text-xs font-bold text-muted uppercase tracking-wider w-[10%]">Points</th>
+                                        <th className="py-3 px-6 text-xs font-bold text-muted uppercase tracking-wider w-[10%]">Quests</th>
+                                        <th className="py-3 px-6 text-xs font-bold text-muted uppercase tracking-wider w-[15%]">Joined Date</th>
+                                        <th className="py-3 px-6 text-xs font-bold text-muted uppercase tracking-wider w-[10%]">Role</th>
+                                        <th className="py-3 px-6 text-xs font-bold text-muted uppercase tracking-wider w-[15%]">Cooldown</th>
+                                        <th className="py-3 px-6 text-xs font-bold text-muted uppercase tracking-wider text-right w-[5%]">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-slate-200 dark:divide-border-dark">
+                                <tbody className="divide-y divide-border">
+                                    {users.length === 0 && <tr><td colSpan={7} className="px-6 py-8 text-center text-muted">No members match this search.</td></tr>}
                                     {users.map((user) => {
                                         const hasPenalty = user.penalties.length > 0;
                                         const status = hasPenalty ? 'On Cooldown' : 'Active';
 
                                         return (
-                                            <tr key={user.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
+                                            <tr key={user.id} className="hover:bg-surface transition-colors group">
                                                 <td className="py-4 px-6">
                                                     <Link href={`/profile/${user.id}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
                                                         {user.image ? (
-                                                            <div className="h-9 w-9 relative rounded-full overflow-hidden ring-2 ring-white dark:ring-surface-dark shrink-0">
+                                                            <div className="h-9 w-9 relative rounded-full overflow-hidden ring-2 ring-control-border shrink-0">
                                                                 <Image
                                                                     src={user.image}
                                                                     alt={user.name || 'User'}
@@ -115,48 +116,48 @@ export default async function MemberDirectoryPage({
                                                                 />
                                                             </div>
                                                         ) : (
-                                                            <div className="h-9 w-9 rounded-full bg-orange-100 dark:bg-orange-900/50 flex items-center justify-center text-orange-600 dark:text-orange-400 text-xs font-bold ring-2 ring-white dark:ring-slate-800 shrink-0">
+                                                            <div className="h-9 w-9 rounded-full bg-surface flex items-center justify-center text-warning text-xs font-bold ring-2 ring-control-border shrink-0">
                                                                 {user.name?.[0] || user.email[0].toUpperCase()}
                                                             </div>
                                                         )}
                                                         <div className="flex flex-col">
-                                                            <span className="text-sm font-bold text-slate-900 dark:text-slate-100">{user.name || 'Unknown'}</span>
-                                                            <span className="text-xs text-slate-500">{user.email}</span>
+                                                            <span className="text-sm font-bold text-foreground">{user.name || 'Unknown'}</span>
+                                                            <span className="text-xs text-muted">{user.email}</span>
                                                         </div>
                                                     </Link>
                                                 </td>
                                                 <td className="py-4 px-6">
                                                     <div className="flex items-center gap-1">
                                                         <Image src="/icon.png" alt="Points" width={16} height={16} className="object-contain" />
-                                                        <span className="text-sm font-mono text-slate-600 dark:text-slate-300 font-bold">{user.points.toLocaleString()}</span>
+                                                        <span className="text-sm font-mono text-muted font-bold">{user.points.toLocaleString()}</span>
                                                     </div>
                                                 </td>
                                                 <td className="py-4 px-6">
-                                                    <span className="text-sm text-slate-600 dark:text-slate-300 font-medium whitespace-nowrap">
+                                                    <span className="text-sm text-muted font-medium whitespace-nowrap">
                                                         {user._count?.snatches || 0} Completed
                                                     </span>
                                                 </td>
                                                 <td className="py-4 px-6">
-                                                    <span className="text-sm text-slate-500 dark:text-slate-400 font-medium font-['Plus_Jakarta_Sans']">
+                                                    <span className="text-sm text-muted font-medium font-sans">
                                                         {new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                                     </span>
                                                 </td>
                                                 <td className="py-4 px-6">
                                                     <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold ${user.role === 'Admin'
-                                                        ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
-                                                        : 'bg-orange-50 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400'
+                                                        ? 'bg-surface text-info  '
+                                                        : 'bg-surface text-warning  '
                                                         }`}>
                                                         {user.role || 'Member'}
                                                     </span>
                                                 </td>
                                                 <td className="py-4 px-6">
                                                     {hasPenalty ? (
-                                                        <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-amber-100 dark:bg-amber-900/20 text-amber-800 dark:text-amber-400 border border-amber-200 dark:border-amber-900/30">
-                                                            <span className="material-symbols-outlined text-[14px]">lock</span>
+                                                        <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-surface text-warning border border-border">
+                                                            <span aria-hidden="true" className="material-symbols-outlined text-[14px]">lock</span>
                                                             <span className="text-xs font-bold whitespace-nowrap">On Cooldown</span>
                                                         </div>
                                                     ) : (
-                                                        <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-emerald-100 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/30">
+                                                        <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-surface text-success border border-border">
                                                             <span className="text-xs font-bold">Active</span>
                                                         </div>
                                                     )}
@@ -178,8 +179,8 @@ export default async function MemberDirectoryPage({
                             </table>
                         </div>
                         {/* Pagination Footer */}
-                        <div className="border-t border-slate-200 dark:border-border-dark px-6 py-4 flex flex-col sm:flex-row items-center justify-between bg-slate-50/50 dark:bg-white/5 gap-4">
-                            <p className="text-sm text-slate-500">Showing <span className="font-bold text-slate-900 dark:text-slate-100">{total === 0 ? 0 : skip + 1}</span> to <span className="font-bold text-slate-900 dark:text-slate-100">{Math.min(skip + limit, total)}</span> of <span className="font-bold text-slate-900 dark:text-slate-100">{total}</span> results</p>
+                        <div className="border-t border-border px-6 py-4 flex flex-col sm:flex-row items-center justify-between bg-surface gap-4">
+                            <p className="text-sm text-muted">Showing <span className="font-bold text-foreground">{total === 0 ? 0 : skip + 1}</span> to <span className="font-bold text-foreground">{Math.min(skip + limit, total)}</span> of <span className="font-bold text-foreground">{total}</span> results</p>
                             <div className="mt-0">
                                 <Pagination totalPages={totalPages} />
                             </div>

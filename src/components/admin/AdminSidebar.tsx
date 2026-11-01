@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect } from 'react';
+import { Dialog } from '@/components/ui/Dialog';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAdminSidebar } from './AdminSidebarContext';
@@ -23,13 +25,22 @@ export function AdminSidebar({ memberCount = 0, submissionCount = 0, user }: Adm
     const pathname = usePathname();
     const { isMobileOpen, closeMobileSidebar } = useAdminSidebar();
 
+    useEffect(() => {
+        if (!isMobileOpen) return;
+        const media = window.matchMedia('(min-width: 768px)');
+        const closeOnDesktop = () => { if (media.matches) closeMobileSidebar(); };
+        closeOnDesktop();
+        media.addEventListener('change', closeOnDesktop);
+        return () => media.removeEventListener('change', closeOnDesktop);
+    }, [isMobileOpen, closeMobileSidebar]);
+
     const getLinkClass = (path: string) => {
         const isActive = pathname === path || (path !== '/admin' && pathname?.startsWith(path));
 
         if (isActive) {
-            return "flex items-center gap-3 px-3 py-2 rounded-lg bg-orange-50/50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 relative transition-all group font-medium";
+            return "min-h-11 flex items-center gap-3 px-3 py-2 rounded-button bg-secondary text-secondary-foreground relative transition-all group font-medium";
         }
-        return "flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors group";
+        return "min-h-11 flex items-center gap-3 px-3 py-2 rounded-card text-muted  hover:bg-surface  hover:text-foreground  transition-colors group";
     };
 
     // Helper to get initials
@@ -46,103 +57,92 @@ export function AdminSidebar({ memberCount = 0, submissionCount = 0, user }: Adm
     const userName = user?.name || user?.handle || 'Admin User';
     const userEmail = user?.email || '';
 
-    return (
+    const content = (
         <>
-            {/* Backdrop */}
-            {isMobileOpen && (
-                <div
-                    className="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-sm"
-                    onClick={closeMobileSidebar}
-                />
-            )}
-
-            {/* Sidebar Container */}
-            <aside className={`
-                fixed md:static inset-y-0 left-0 z-50 w-64 flex-shrink-0 
-                border-r border-border-light dark:border-border-dark 
-                bg-surface-light dark:bg-surface-dark 
-                flex flex-col justify-between 
-                h-screen transition-transform duration-300 ease-in-out
-                ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-            `}>
                 <div>
-                    <div className="h-16 flex items-center px-6 border-b border-border-light dark:border-border-dark">
+                    <div className="h-16 flex items-center px-6 border-b border-border">
                         <div className="flex items-center gap-2">
-                            <span className="font-bold text-lg tracking-tight text-slate-900 dark:text-white">CodeQuest</span>
+                            <span className="font-bold text-lg tracking-tight text-foreground">CodeQuest</span>
                         </div>
                     </div>
-                    <nav className="flex flex-col gap-1 px-4 pt-4 pb-2 border-b border-border-light dark:border-border-dark mb-2">
-                        <div className="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+                    <nav className="flex flex-col gap-1 px-4 pt-4 pb-2 border-b border-border mb-2">
+                        <div className="px-3 py-2 text-xs font-semibold text-muted uppercase tracking-wider mb-1">
                             Global Menu
                         </div>
                         {/* Reordered Menu: Explore, Leaderboard, Workspace */}
-                        <Link className={getLinkClass('/')} href="/" onClick={closeMobileSidebar}>
-                            <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname === '/' ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400 group-hover:text-primary dark:group-hover:text-white'}`}>explore</span>
+                        <Link className={getLinkClass('/')} aria-current={pathname === '/' ? 'page' : undefined} href="/" onClick={closeMobileSidebar}>
+                            <span aria-hidden="true" className={`material-symbols-outlined text-[20px] transition-colors `}>explore</span>
                             <span className="text-sm font-medium">Explore Quests</span>
                         </Link>
-                        <Link className={getLinkClass('/leaderboard')} href="/leaderboard" onClick={closeMobileSidebar}>
-                            <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname?.startsWith('/leaderboard') ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400 group-hover:text-primary dark:group-hover:text-white'}`}>emoji_events</span>
+                        <Link className={getLinkClass('/leaderboard')} aria-current={pathname === '/leaderboard' ? 'page' : undefined} href="/leaderboard" onClick={closeMobileSidebar}>
+                            <span aria-hidden="true" className={`material-symbols-outlined text-[20px] transition-colors `}>emoji_events</span>
                             <span className="text-sm font-medium">Leaderboard</span>
                         </Link>
-                        <Link className={getLinkClass('/workspace')} href="/workspace" onClick={closeMobileSidebar}>
-                            <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname?.startsWith('/workspace') ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400 group-hover:text-primary dark:group-hover:text-white'}`}>code</span>
+                        <Link className={getLinkClass('/workspace')} aria-current={pathname === '/workspace' ? 'page' : undefined} href="/workspace" onClick={closeMobileSidebar}>
+                            <span aria-hidden="true" className={`material-symbols-outlined text-[20px] transition-colors `}>code</span>
                             <span className="text-sm font-medium">Workspace</span>
                         </Link>
                     </nav>
                     <nav className="flex flex-col gap-1 px-4 py-2">
-                        <div className="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+                        <div className="px-3 py-2 text-xs font-semibold text-muted uppercase tracking-wider mb-1">
                             Admin Command Center
                         </div>
-                        <Link className={getLinkClass('/admin')} href="/admin" onClick={closeMobileSidebar}>
-                            <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname === '/admin' ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400 group-hover:text-primary dark:group-hover:text-white'}`}>dashboard</span>
+                        <Link className={getLinkClass('/admin')} aria-current={pathname === '/admin' ? 'page' : undefined} href="/admin" onClick={closeMobileSidebar}>
+                            <span aria-hidden="true" className={`material-symbols-outlined text-[20px] transition-colors `}>dashboard</span>
                             <span className="text-sm font-medium">Overview</span>
                         </Link>
-                        <Link className={getLinkClass('/admin/manage-quests')} href="/admin/manage-quests" onClick={closeMobileSidebar}>
-                            <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname?.startsWith('/admin/manage-quests') ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400 group-hover:text-primary dark:group-hover:text-white'}`}>assignment</span>
+                        <Link className={getLinkClass('/admin/manage-quests')} aria-current={pathname === '/admin/manage-quests' ? 'page' : undefined} href="/admin/manage-quests" onClick={closeMobileSidebar}>
+                            <span aria-hidden="true" className={`material-symbols-outlined text-[20px] transition-colors `}>assignment</span>
                             <span className="text-sm font-medium">Manage Quests</span>
                         </Link>
-                        <Link className={getLinkClass('/admin/submissions')} href="/admin/submissions" onClick={closeMobileSidebar}>
-                            <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname?.startsWith('/admin/submissions') ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400 group-hover:text-primary dark:group-hover:text-white'}`}>inbox</span>
+                        <Link className={getLinkClass('/admin/submissions')} aria-current={pathname === '/admin/submissions' ? 'page' : undefined} href="/admin/submissions" onClick={closeMobileSidebar}>
+                            <span aria-hidden="true" className={`material-symbols-outlined text-[20px] transition-colors `}>inbox</span>
                             <span className="text-sm font-medium whitespace-nowrap">Submission Queue</span>
                             {submissionCount > 0 && (
-                                <span className="ml-auto bg-orange-100 dark:bg-orange-800 text-orange-600 dark:text-orange-300 text-xs font-bold px-2 py-0.5 rounded-full">{submissionCount}</span>
+                                <span className="ml-auto bg-surface text-warning text-xs font-bold px-2 py-0.5 rounded-full">{submissionCount}</span>
                             )}
                         </Link>
-                        <Link className={getLinkClass('/admin/members')} href="/admin/members" onClick={closeMobileSidebar}>
-                            <span className={`material-symbols-outlined text-[20px] transition-colors ${pathname?.startsWith('/admin/members') ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400 group-hover:text-primary dark:group-hover:text-white'}`}>group</span>
+                        <Link className={getLinkClass('/admin/members')} aria-current={pathname === '/admin/members' ? 'page' : undefined} href="/admin/members" onClick={closeMobileSidebar}>
+                            <span aria-hidden="true" className={`material-symbols-outlined text-[20px] transition-colors `}>group</span>
                             <span className="text-sm font-medium whitespace-nowrap">Member Directory</span>
                             {memberCount > 0 && (
-                                <span className="ml-auto bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 text-xs font-bold px-2 py-0.5 rounded-full">{memberCount}</span>
+                                <span className="ml-auto bg-surface text-warning text-xs font-bold px-2 py-0.5 rounded-full">{memberCount}</span>
                             )}
                         </Link>
                     </nav>
                 </div>
-                <div className="p-4 border-t border-border-light dark:border-border-dark flex flex-col gap-3">
-                    <div className="bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 px-3 py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 border border-orange-200 dark:border-orange-800/50">
+                <div className="p-4 border-t border-border flex flex-col gap-3">
+                    <div className="bg-surface text-warning px-3 py-2 rounded-card text-xs font-semibold flex items-center justify-center gap-1.5 border border-border">
                         <Image src="/icon.png" alt="Points" width={14} height={14} className="object-contain" />
                         <span>{user?.points?.toLocaleString('en-US') ?? 0} pts</span>
                     </div>
-                    <Link href={`/profile/${user?.id}`} className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-colors">
+                    <Link href={`/profile/${user?.id}`} className="flex items-center gap-3 p-2 rounded-card hover:bg-surface cursor-pointer transition-colors">
                         {userImage ? (
                             <Image
                                 src={userImage}
                                 alt={userName}
                                 width={32}
                                 height={32}
-                                className="rounded-full object-cover h-8 w-8 border border-slate-200 dark:border-slate-700"
+                                className="rounded-full object-cover h-8 w-8 border border-border"
                             />
                         ) : (
-                            <div className="h-8 w-8 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 font-bold text-xs border border-slate-200 dark:border-slate-600">
+                            <div className="h-8 w-8 rounded-full bg-surface-raised flex items-center justify-center text-muted font-bold text-xs border border-border">
                                 {getInitials(userName)}
                             </div>
                         )}
                         <div className="flex flex-col overflow-hidden">
-                            <span className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">{userName}</span>
-                            <span className="text-xs text-slate-500 truncate">{userEmail}</span>
+                            <span className="text-sm font-medium text-foreground break-words">{userName}</span>
+                            <span className="text-xs text-muted break-words">{userEmail}</span>
                         </div>
                     </Link>
                 </div>
-            </aside>
         </>
     );
+    return <>
+        <aside aria-label="Admin navigation" className="hidden md:flex w-64 shrink-0 flex-col justify-between overflow-y-auto border-r border-border bg-surface h-dvh">{content}</aside>
+        <Dialog open={isMobileOpen} onClose={closeMobileSidebar} title="Navigation" className="md:hidden max-w-sm">
+            <button onClick={closeMobileSidebar} className="mb-3 w-full border border-control-border px-4 py-2">Close navigation</button>
+            <div className="flex flex-col gap-4">{content}</div>
+        </Dialog>
+    </>;
 }

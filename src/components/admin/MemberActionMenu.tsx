@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { updateUserRole, deactivateUser, manualReset, deleteUser } from '@/actions/admin'
 import { assignQuest, getActiveQuestsForAssignment } from '@/actions/assignment'
+import { Dialog } from '@/components/ui/Dialog'
 import { toast } from 'sonner'
 
 type UserProp = {
@@ -13,6 +14,8 @@ type UserProp = {
 }
 
 export function MemberActionMenu({ user }: { user: UserProp }) {
+    const [message, setMessage] = useState('')
+    const [isPending, setIsPending] = useState(false)
     const [isOpen, setIsOpen] = useState(false)
     const [modal, setModal] = useState<'none' | 'role' | 'deactivate' | 'delete' | 'assign-quest'>('none')
     const [confirmText, setConfirmText] = useState('')
@@ -26,7 +29,8 @@ export function MemberActionMenu({ user }: { user: UserProp }) {
 
     useEffect(() => {
         if (modal === 'assign-quest') {
-            getActiveQuestsForAssignment().then(setQuests).catch(console.error)
+            setMessage('')
+            getActiveQuestsForAssignment().then(setQuests).catch(() => setMessage('Could not load active quests. Close and reopen to retry.'))
         }
     }, [modal])
 
@@ -42,18 +46,35 @@ export function MemberActionMenu({ user }: { user: UserProp }) {
             }
             setIsOpen(false)
         }
+        const closeMenu = () => setIsOpen(false)
         if (isOpen) {
             document.addEventListener("mousedown", handleClickOutside)
-            window.addEventListener("scroll", () => setIsOpen(false)) // Close on scroll
-            window.addEventListener("resize", () => setIsOpen(false)) // Close on resize
+            window.addEventListener("scroll", closeMenu) // Close on scroll
+            window.addEventListener("resize", closeMenu) // Close on resize
         }
         return () => {
             document.removeEventListener("mousedown", handleClickOutside)
-            window.removeEventListener("scroll", () => setIsOpen(false))
-            window.removeEventListener("resize", () => setIsOpen(false))
+            window.removeEventListener("scroll", closeMenu)
+            window.removeEventListener("resize", closeMenu)
         }
     }, [isOpen])
 
+    useEffect(() => {
+        if (!isOpen) return
+        dropdownRef.current?.querySelector('button')?.focus()
+        const onKey = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') { setIsOpen(false); buttonRef.current?.focus() }
+        }
+        document.addEventListener('keydown', onKey)
+        return () => document.removeEventListener('keydown', onKey)
+    }, [isOpen])
+
+    const openModal = (next: 'role' | 'deactivate' | 'delete' | 'assign-quest') => {
+        buttonRef.current?.focus()
+        setMessage('')
+        setModal(next)
+        setIsOpen(false)
+    }
     const toggleMenu = () => {
         if (!isOpen && buttonRef.current) {
             const rect = buttonRef.current.getBoundingClientRect()
@@ -67,46 +88,50 @@ export function MemberActionMenu({ user }: { user: UserProp }) {
         }
     }
 
-    const handleUpdateRole = async () => {
-        await updateUserRole(user.id, role)
-        setModal('none')
-        setIsOpen(false)
-    }
-
-    const handleDeactivate = async () => {
-        await deactivateUser(user.id)
-        setModal('none')
-        setIsOpen(false)
-    }
-
-    const handleResetCooldown = async () => {
-        await manualReset(user.id)
-        setIsOpen(false)
-    }
-
-    const handleDelete = async () => {
-        if (confirmText !== 'CONFIRM') return;
-
-        const result = await deleteUser(user.id)
-        if (result.success) {
-            toast.success(`${user.name || 'User'} permanently deleted.`)
-        } else {
-            toast.error(result.error || "Failed to delete user.")
+    const mutate = async (action: () => Promise<{ success: boolean; error?: string }>, success: string) => {
+        if (isPending) return
+        setIsPending(true)
+        setMessage('')
+        try {
+            const result = await action()
+            if (result.success) {
+                setMessage(success)
+                setModal('none')
+                setIsOpen(false)
+            } else {
+                setMessage(result.error || 'Could not save changes. Try again.')
+            }
+        } catch {
+            setMessage('Could not save changes. Try again.')
+        } finally {
+            setIsPending(false)
         }
-
-        setModal('none')
-        setIsOpen(false)
+    }
+    const handleUpdateRole = () => mutate(() => updateUserRole(user.id, role), 'Role updated.')
+    const handleDeactivate = () => mutate(() => deactivateUser(user.id), 'Member deactivated.')
+    const handleResetCooldown = () => mutate(() => manualReset(user.id), 'Cooldown reset.')
+    const handleDelete = () => {
+        if (confirmText !== 'CONFIRM') return
+        return mutate(() => deleteUser(user.id), 'Member permanently deleted.')
     }
 
     const handleAssignQuest = async (force: boolean = false) => {
-        if (!selectedQuestId) return
+        if (!selectedQuestId || isAssigning || isPending) return
         setIsAssigning(true)
 
-        const res = await assignQuest(user.id, selectedQuestId, force)
+        let res;
+        try {
+            res = await assignQuest(user.id, selectedQuestId, force)
+        } catch {
+            setMessage('Could not assign quest. Try again.')
+            setIsAssigning(false)
+            return
+        }
 
         setIsAssigning(false)
 
         if (res.success) {
+            setMessage("Quest assigned.")
             toast.success(`Quest assigned to ${user.name || 'User'}!`)
             setModal('none')
             setIsOpen(false)
@@ -116,67 +141,72 @@ export function MemberActionMenu({ user }: { user: UserProp }) {
                 handleAssignQuest(true)
             }
         } else {
+            setMessage(res.error || "Failed to assign quest.")
             toast.error(res.error || "Failed to assign quest.")
         }
     }
 
     return (
         <>
+            {message && modal === 'none' && <p role="status" className="max-w-xs text-sm text-foreground">{message}</p>}
             <button
                 ref={buttonRef}
+                aria-label={`Actions for ${user.name || "member"}`}
+                aria-expanded={isOpen}
+                disabled={isPending || isAssigning}
                 onClick={toggleMenu}
-                className="text-slate-400 hover:text-orange-600 transition-colors p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 active:text-orange-700"
+                className="text-muted hover:text-warning transition-colors p-1 rounded-full hover:bg-surface-raised active:text-warning"
             >
-                <span className="material-symbols-outlined text-[20px]">more_vert</span>
+                <span aria-hidden="true" className="material-symbols-outlined text-[20px]">more_vert</span>
             </button>
 
             {/* Dropdown Menu - Fixed Position */}
             {isOpen && (
                 <div
                     ref={dropdownRef}
-                    className="fixed w-48 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700 z-[100] overflow-hidden animate-in fade-in zoom-in-95 duration-100"
+                    className="fixed w-48 bg-surface rounded-card shadow-xl border border-border z-[100] overflow-hidden animate-in fade-in zoom-in-95 duration-100"
                     style={{ top: position.top, right: position.right }}
                 >
                     <div className="py-1">
                         <button
-                            onClick={() => { setModal('role'); setIsOpen(false); }}
-                            className="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center gap-2"
+                            onClick={() => { openModal('role'); }}
+                            className="w-full text-left px-4 py-2 text-sm text-foreground hover:bg-surface flex items-center gap-2"
                         >
-                            <span className="material-symbols-outlined text-[18px] text-slate-400">admin_panel_settings</span>
+                            <span aria-hidden="true" className="material-symbols-outlined text-[18px] text-muted">admin_panel_settings</span>
                             Edit Role
                         </button>
 
                         <button
-                            onClick={() => { setModal('assign-quest'); setIsOpen(false); }}
-                            className="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center gap-2"
+                            onClick={() => { openModal('assign-quest'); }}
+                            className="w-full text-left px-4 py-2 text-sm text-foreground hover:bg-surface flex items-center gap-2"
                         >
-                            <span className="material-symbols-outlined text-[18px] text-slate-400">assignment_add</span>
+                            <span aria-hidden="true" className="material-symbols-outlined text-[18px] text-muted">assignment_add</span>
                             Assign Quest
                         </button>
 
                         {user.status === 'On Cooldown' && (
                             <button
                                 onClick={handleResetCooldown}
-                                className="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center gap-2"
+                                className="w-full text-left px-4 py-2 text-sm text-foreground hover:bg-surface flex items-center gap-2"
                             >
-                                <span className="material-symbols-outlined text-[18px] text-slate-400">lock_open</span>
+                                <span aria-hidden="true" className="material-symbols-outlined text-[18px] text-muted">lock_open</span>
                                 Reset Cooldown
                             </button>
                         )}
 
                         <button
-                            onClick={() => { setModal('deactivate'); setIsOpen(false); }}
-                            className="w-full text-left px-4 py-2 text-sm text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/10 flex items-center gap-2"
+                            onClick={() => { openModal('deactivate'); }}
+                            className="w-full text-left px-4 py-2 text-sm text-warning hover:bg-surface flex items-center gap-2"
                         >
-                            <span className="material-symbols-outlined text-[18px]">block</span>
+                            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">block</span>
                             Deactivate Member
                         </button>
 
                         <button
-                            onClick={() => { setConfirmText(''); setModal('delete'); setIsOpen(false); }}
-                            className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 flex items-center gap-2 border-t border-slate-100 dark:border-slate-700/50"
+                            onClick={() => { setConfirmText(''); openModal('delete'); }}
+                            className="w-full text-left px-4 py-2 text-sm text-danger hover:bg-surface flex items-center gap-2 border-t border-border"
                         >
-                            <span className="material-symbols-outlined text-[18px]">delete_forever</span>
+                            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">delete_forever</span>
                             Delete User
                         </button>
                     </div>
@@ -185,89 +215,90 @@ export function MemberActionMenu({ user }: { user: UserProp }) {
 
             {/* Edit Role Modal */}
             {modal === 'role' && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                    <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-sm overflow-hidden p-6 animate-in zoom-in-95">
-                        <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Edit Role</h3>
+                <Dialog open={true} onClose={() => setModal('none')} title="Edit Role" pending={isPending || isAssigning}>
+                        {message && <p role="status" className="mb-4 border border-control-border bg-surface p-3 text-foreground">{message}</p>}
+                        <h3 className="text-lg font-bold text-foreground mb-4">Edit Role</h3>
                         <div className="space-y-3 mb-6">
-                            <label className={`flex items-center p-3 rounded-lg border cursor-pointer transition-all ${role === 'Admin' ? 'border-orange-600 bg-orange-50 dark:bg-orange-900/20' : 'border-slate-200 dark:border-slate-700'}`}>
-                                <input type="radio" name="role" value="Admin" checked={role === 'Admin'} onChange={() => setRole('Admin')} className="accent-orange-600" />
-                                <span className="ml-3 font-medium text-slate-900 dark:text-white">Admin</span>
+                            <label className={`flex items-center p-3 rounded-card border cursor-pointer transition-all ${role === 'Admin' ? 'border-border bg-surface ' : 'border-border '}`}>
+                                <input type="radio" name="role" value="Admin" checked={role === 'Admin'} onChange={() => setRole('Admin')} className="accent-secondary" />
+                                <span className="ml-3 font-medium text-foreground">Admin</span>
                             </label>
-                            <label className={`flex items-center p-3 rounded-lg border cursor-pointer transition-all ${role === 'Member' ? 'border-orange-600 bg-orange-50 dark:bg-orange-900/20' : 'border-slate-200 dark:border-slate-700'}`}>
-                                <input type="radio" name="role" value="Member" checked={role === 'Member'} onChange={() => setRole('Member')} className="accent-orange-600" />
-                                <span className="ml-3 font-medium text-slate-900 dark:text-white">Member</span>
+                            <label className={`flex items-center p-3 rounded-card border cursor-pointer transition-all ${role === 'Member' ? 'border-border bg-surface ' : 'border-border '}`}>
+                                <input type="radio" name="role" value="Member" checked={role === 'Member'} onChange={() => setRole('Member')} className="accent-secondary" />
+                                <span className="ml-3 font-medium text-foreground">Member</span>
                             </label>
                         </div>
-                        <div className="flex gap-3 justify-end">
-                            <button onClick={() => setModal('none')} className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 dark:text-slate-400">Cancel</button>
-                            <button onClick={handleUpdateRole} className="px-4 py-2 text-sm font-bold text-white bg-orange-500 rounded-lg hover:bg-orange-600 shadow-sm shadow-orange-500/20">Save Changes</button>
+                        <div className="flex flex-wrap gap-3 justify-end">
+                            <button onClick={() => setModal('none')} disabled={isPending || isAssigning} className="px-4 py-2 text-sm font-medium text-muted hover:text-foreground">Cancel</button>
+                            <button onClick={handleUpdateRole} disabled={isPending} className="px-4 py-2 text-sm font-bold bg-secondary rounded-card hover:bg-secondary shadow-sm text-secondary-foreground">{isPending ? 'Saving…' : 'Save Changes'}</button>
                         </div>
-                    </div>
-                </div>
+
+                </Dialog>
             )}
 
             {/* Deactivate Modal */}
             {modal === 'deactivate' && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                    <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-md overflow-hidden p-6 animate-in zoom-in-95 border-t-4 border-red-600">
-                        <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Deactivate {user.name}?</h3>
-                        <p className="text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">
+                <Dialog open={true} onClose={() => setModal('none')} title="Deactivate member" pending={isPending || isAssigning}>
+                        {message && <p role="status" className="mb-4 border border-control-border bg-surface p-3 text-foreground">{message}</p>}
+                        <h3 className="text-lg font-bold text-foreground mb-2">Deactivate {user.name}?</h3>
+                        <p className="text-muted mb-6 leading-relaxed">
                             This will restrict the user from joining quests and accessing their workspace. This action can be undone by an Admin later.
                         </p>
-                        <div className="flex gap-3 justify-end">
-                            <button onClick={() => setModal('none')} className="px-4 py-2 text-sm font-medium border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800">Cancel</button>
-                            <button onClick={handleDeactivate} className="px-4 py-2 text-sm font-bold text-white bg-red-600 rounded-lg hover:bg-red-700 shadow-sm shadow-red-500/20">Confirm Deactivate</button>
+                        <div className="flex flex-wrap gap-3 justify-end">
+                            <button onClick={() => setModal('none')} disabled={isPending || isAssigning} className="px-4 py-2 text-sm font-medium border border-border rounded-card text-muted hover:bg-surface">Cancel</button>
+                            <button onClick={handleDeactivate} disabled={isPending} className="px-4 py-2 text-sm font-bold text-danger bg-surface border border-control-border rounded-button hover:bg-surface-raised shadow-sm">{isPending ? 'Deactivating…' : 'Confirm Deactivate'}</button>
                         </div>
-                    </div>
-                </div>
+
+                </Dialog>
             )}
             {/* Delete Modal */}
             {modal === 'delete' && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                    <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-md overflow-hidden p-6 animate-in zoom-in-95 border-t-4 border-red-600">
-                        <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Delete {user.name}?</h3>
-                        <p className="text-slate-600 dark:text-slate-300 mb-4 leading-relaxed">
-                            This action is <strong>permanent</strong> and cannot be undone. All of the user's data, including their completed quests and badges, will be permanently removed.
+                <Dialog open={true} onClose={() => setModal('none')} title="Delete member" pending={isPending || isAssigning}>
+                        {message && <p role="status" className="mb-4 border border-control-border bg-surface p-3 text-foreground">{message}</p>}
+                        <h3 className="text-lg font-bold text-foreground mb-2">Delete {user.name}?</h3>
+                        <p className="text-muted mb-4 leading-relaxed">
+                            This action is <strong>permanent</strong> and cannot be undone. All of the user&apos;s data, including their completed quests and badges, will be permanently removed.
                         </p>
                         <div className="mb-6">
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                                Please type <span className="font-bold select-none text-red-600 dark:text-red-400">CONFIRM</span> to confirm.
+                            <label htmlFor={`confirm-${user.id}`} className="block text-sm font-medium text-foreground mb-2">
+                                Please type <span className="font-bold select-none text-danger">CONFIRM</span> to confirm.
                             </label>
                             <input
                                 type="text"
                                 value={confirmText}
                                 onChange={(e) => setConfirmText(e.target.value)}
-                                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-shadow"
-                                placeholder="CONFIRM"
+                                className="w-full px-3 py-2 border border-control-border rounded-card bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-control-border focus:border-control-border transition-shadow"
+                                id={`confirm-${user.id}`} aria-label="Type CONFIRM to delete member" placeholder="CONFIRM"
                             />
                         </div>
-                        <div className="flex gap-3 justify-end">
-                            <button onClick={() => setModal('none')} className="px-4 py-2 text-sm font-medium border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800">Cancel</button>
+                        <div className="flex flex-wrap gap-3 justify-end">
+                            <button onClick={() => setModal('none')} disabled={isPending || isAssigning} className="px-4 py-2 text-sm font-medium border border-border rounded-card text-muted hover:bg-surface">Cancel</button>
                             <button
                                 onClick={handleDelete}
-                                disabled={confirmText !== 'CONFIRM'}
-                                className="px-4 py-2 text-sm font-bold text-white bg-red-600 rounded-lg hover:bg-red-700 shadow-sm shadow-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                disabled={confirmText !== 'CONFIRM' || isPending}
+                                className="px-4 py-2 text-sm font-bold text-danger bg-surface border border-control-border rounded-button hover:bg-surface-raised shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                             >
-                                Delete User
+                                {isPending ? 'Deleting…' : 'Delete User'}
                             </button>
                         </div>
-                    </div>
-                </div>
+
+                </Dialog>
             )}
 
             {/* Assign Quest Modal */}
             {modal === 'assign-quest' && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                    <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-md overflow-hidden p-6 animate-in zoom-in-95">
-                        <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Assign Quest to {user.name}</h3>
-                        <p className="text-slate-600 dark:text-slate-300 mb-4 leading-relaxed text-sm">
+                <Dialog open={true} onClose={() => setModal('none')} title="Assign quest" pending={isPending || isAssigning}>
+                        {message && <p role="status" className="mb-4 border border-control-border bg-surface p-3 text-foreground">{message}</p>}
+                        <h3 className="text-lg font-bold text-foreground mb-2">Assign Quest to {user.name}</h3>
+                        <p className="text-muted mb-4 leading-relaxed text-sm">
                             Manually assign an active quest to this user. This bypasses the max 3 active quests rule.
                         </p>
                         <div className="mb-6 space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Select Quest</label>
+                                <label htmlFor={`assignment-${user.id}`} className="block text-sm font-medium text-foreground mb-1">Select Quest</label>
                                 <select
-                                    className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                                    id={`assignment-${user.id}`} aria-label="Select quest to assign"
+                                    className="w-full px-3 py-2 border border-control-border rounded-card bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-control-border focus:border-control-border"
                                     value={selectedQuestId}
                                     onChange={(e) => setSelectedQuestId(e.target.value)}
                                     disabled={isAssigning}
@@ -279,18 +310,18 @@ export function MemberActionMenu({ user }: { user: UserProp }) {
                                 </select>
                             </div>
                         </div>
-                        <div className="flex gap-3 justify-end">
-                            <button onClick={() => setModal('none')} className="px-4 py-2 text-sm font-medium border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800" disabled={isAssigning}>Cancel</button>
+                        <div className="flex flex-wrap gap-3 justify-end">
+                            <button onClick={() => setModal('none')} disabled={isPending || isAssigning} className="px-4 py-2 text-sm font-medium border border-border rounded-card text-muted hover:bg-surface" >Cancel</button>
                             <button
                                 onClick={() => handleAssignQuest(false)}
                                 disabled={!selectedQuestId || isAssigning}
-                                className="px-4 py-2 text-sm font-bold text-white bg-orange-600 rounded-lg hover:bg-orange-700 shadow-sm shadow-orange-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                className="px-4 py-2 text-sm font-bold bg-secondary rounded-card hover:bg-secondary shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all text-secondary-foreground"
                             >
                                 {isAssigning ? 'Assigning...' : 'Assign Quest'}
                             </button>
                         </div>
-                    </div>
-                </div>
+
+                </Dialog>
             )}
         </>
     )

@@ -1,91 +1,25 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useState, useRef, useEffect } from 'react'
+import { CustomDropdown, Option } from '@/components/ui/CustomDropdown'
 
 // --- Reusable Custom Select Component ---
-type Option = { label: string, value: string }
-
-function CustomSelect({
-    value,
-    onChange,
-    options,
-    icon
-}: {
-    value: string,
-    onChange: (val: string) => void,
-    options: Option[],
-    icon?: string
+function CustomSelect({ value, onChange, options, icon }: {
+    value: string, onChange: (value: string) => void, options: Option[], icon?: string
 }) {
-    const [isOpen, setIsOpen] = useState(false)
-    const containerRef = useRef<HTMLDivElement>(null)
-
-    // Handle click outside to close
-    useEffect(() => {
-        function handleClickOutside(event: MouseEvent) {
-            if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-                setIsOpen(false)
-            }
-        }
-        document.addEventListener("mousedown", handleClickOutside)
-        return () => document.removeEventListener("mousedown", handleClickOutside)
-    }, [])
-
-    const selectedLabel = options.find(o => o.value === value)?.label || options[0].label
-
+    const label = icon === 'sort' ? 'Sort quests' : icon === 'filter_list' ? 'Difficulty' : 'Timeframe'
     return (
-        <div className="relative min-w-[160px]" ref={containerRef}>
-            <button
-                type="button"
-                onClick={() => setIsOpen(!isOpen)}
-                className={`flex items-center justify-between w-full px-4 py-2.5 bg-white dark:bg-zinc-800 border border-slate-200 dark:border-gray-700 rounded-xl transition-all duration-200 ease-in-out text-sm font-medium text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-white/5
-                ${isOpen ? 'ring-2 ring-orange-500/20 border-orange-500' : ''}`}
-            >
-                <div className="flex items-center gap-2">
-                    {icon && <span className="material-symbols-outlined text-[18px] text-slate-400">{icon}</span>}
-                    <span className="truncate">{selectedLabel}</span>
-                </div>
-                <span className={`material-symbols-outlined text-[20px] text-slate-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>
-                    keyboard_arrow_down
-                </span>
-            </button>
-
-            {/* Dropdown Menu */}
-            {isOpen && (
-                <div className="absolute top-full mt-2 left-0 w-full min-w-[200px] z-50 bg-white dark:bg-surface-dark border border-slate-100 dark:border-gray-800 rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-100">
-                    <div className="py-1 max-h-[240px] overflow-y-auto">
-                        {options.map((option) => {
-                            const isSelected = option.value === value
-                            return (
-                                <button
-                                    key={option.value}
-                                    type="button"
-                                    onClick={() => {
-                                        onChange(option.value)
-                                        setIsOpen(false)
-                                    }}
-                                    className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between transition-colors
-                                        ${isSelected
-                                            ? 'bg-orange-50 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400'
-                                            : 'text-slate-600 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-white/5'
-                                        }
-                                    `}
-                                >
-                                    <span>{option.label}</span>
-                                    {isSelected && (
-                                        <span className="material-symbols-outlined text-[18px]">check</span>
-                                    )}
-                                </button>
-                            )
-                        })}
-                    </div>
-                </div>
-            )}
+        <div className="flex min-w-0 flex-1 flex-col gap-1 text-sm text-muted">
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted">{label}</span>
+            <CustomDropdown
+                value={value}
+                onChange={onChange}
+                options={options}
+                aria-label={label}
+            />
         </div>
     )
 }
-
-// --- Main Component ---
 
 export function QuestSearch() {
     const router = useRouter()
@@ -123,7 +57,7 @@ export function QuestSearch() {
         { label: 'Beginner', value: 'Beginner' },
         { label: 'Intermediate', value: 'Intermediate' },
         { label: 'Advanced', value: 'Advanced' },
-        { label: '✦ Exclusive', value: 'Exclusive' },
+        { label: 'Exclusive', value: 'Exclusive' },
     ]
 
     const sortOptions = [
@@ -136,15 +70,16 @@ export function QuestSearch() {
     return (
         <form
             action={(formData) => handleSearch(formData)}
-            className="flex flex-col md:flex-row gap-4 p-1 justify-center"
+            className="flex flex-col lg:flex-row lg:items-end gap-4"
         >
             {/* Search Input */}
-            <div className="relative flex items-center flex-1 max-w-lg bg-white dark:bg-zinc-800 rounded-xl border border-slate-200 dark:border-gray-700 transition-all duration-200 ease-in-out dark:focus-within:border-orange-500/30 focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-500/20 shadow-sm">
-                <span className="absolute left-4 material-symbols-outlined text-slate-400 text-[20px] pointer-events-none">search</span>
+            <div className="relative flex items-center flex-1 min-w-0 bg-surface rounded-[var(--radius-input)] break-words border border-control-border transition-all duration-fast ease-in-out focus-within:border-focus focus-within:ring-2 focus-within:ring-focus/30">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center pointer-events-none material-symbols-outlined text-muted text-[20px]">search</span>
                 <input
+                    aria-label="Search quests"
                     name="q"
                     defaultValue={searchParams.get('q') || ''}
-                    className="w-full pl-12 pr-4 py-2.5 bg-transparent border-none outline-none appearance-none text-sm font-medium text-slate-700 dark:text-gray-200 placeholder-slate-400"
+                    className="w-full pl-12 pr-4 py-2.5 bg-transparent border-none outline-none appearance-none text-sm font-medium text-foreground placeholder-muted"
                     placeholder="Search quests..."
                     type="text"
                     autoComplete="off"
@@ -152,7 +87,7 @@ export function QuestSearch() {
             </div>
 
             {/* Filters */}
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-end gap-3">
                 <CustomSelect
                     value={searchParams.get('difficulty') || 'All'}
                     onChange={(val) => updateFilter('difficulty', val)}
@@ -168,8 +103,7 @@ export function QuestSearch() {
                 />
             </div>
 
-            {/* Hidden submit button to allow Enter key to submit search text */}
-            <button type="submit" className="sr-only">Search</button>
+            <button type="submit" className="button-primary self-end">Search</button>
         </form>
     )
 }

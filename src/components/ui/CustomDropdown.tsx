@@ -1,95 +1,72 @@
-'use client'
+"use client";
 
-import { useState, useRef, useEffect } from 'react'
-
-export type Option = { label: string, value: string }
+export type Option = { label: string; value: string };
 
 interface CustomDropdownProps {
-    value: string
-    onChange: (val: string) => void
-    options: Option[]
-    placeholder?: string
-    icon?: string
-    className?: string
+    value: string;
+    onChange: (value: string) => void;
+    options: Option[];
+    placeholder?: string;
+    icon?: string;
+    className?: string;
+    id?: string;
+    name?: string;
+    "aria-label"?: string;
+    "aria-labelledby"?: string;
+    disabled?: boolean;
 }
 
 export function CustomDropdown({
     value,
     onChange,
     options,
-    placeholder = 'Select Option',
-    icon,
-    className = ''
+    placeholder = "Select option",
+    className = "",
+    id,
+    name,
+    disabled,
+    "aria-label": label,
+    "aria-labelledby": labelledBy,
 }: CustomDropdownProps) {
-    const [isOpen, setIsOpen] = useState(false)
-    const containerRef = useRef<HTMLDivElement>(null)
-
-    // Handle click outside to close
-    useEffect(() => {
-        function handleClickOutside(event: MouseEvent) {
-            if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-                setIsOpen(false)
-            }
-        }
-        document.addEventListener("mousedown", handleClickOutside)
-        return () => document.removeEventListener("mousedown", handleClickOutside)
-    }, [])
-
-    const selectedOption = options.find(o => o.value === value)
-    const displayLabel = selectedOption ? selectedOption.label : placeholder
-
     return (
-        <div className={`relative ${className}`} ref={containerRef}>
-            <button
-                type="button"
-                onClick={() => setIsOpen(!isOpen)}
-                className={`flex items-center justify-between w-full h-10 px-3 rounded-md border text-sm transition-all duration-200 ease-in-out
-                ${isOpen
-                        ? 'ring-2 ring-orange-500/20 border-orange-500 bg-white dark:bg-slate-900'
-                        : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 hover:bg-white dark:hover:bg-slate-800'
-                    }
-                text-slate-700 dark:text-slate-200`}
+        <div className={`relative inline-block w-full min-w-0 ${className}`}>
+            <select
+                id={id}
+                name={name}
+                disabled={disabled}
+                value={value}
+                onChange={(event) => onChange(event.target.value)}
+                aria-label={labelledBy ? undefined : label || placeholder}
+                aria-labelledby={labelledBy}
+                className="w-full appearance-none rounded-[var(--radius-input)] border border-control-border bg-surface text-foreground py-2 pl-3.5 pr-9 text-sm font-medium shadow-sm transition-all duration-fast hover:border-border focus:border-focus focus:outline-none focus:ring-2 focus:ring-focus/30 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+                style={{ backgroundImage: "none" }}
             >
-                <div className="flex items-center gap-2 truncate">
-                    {icon && <span className="material-symbols-outlined text-[18px] text-slate-400">{icon}</span>}
-                    <span className={!selectedOption ? 'text-slate-400' : ''}>{displayLabel}</span>
-                </div>
-                <span className={`material-symbols-outlined text-[20px] text-slate-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>
-                    keyboard_arrow_down
-                </span>
-            </button>
-
-            {/* Dropdown Menu */}
-            {isOpen && (
-                <div className="absolute top-full mt-1 left-0 w-full z-50 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-100 max-h-[240px] overflow-y-auto">
-                    <div className="py-1">
-                        {options.map((option) => {
-                            const isSelected = option.value === value
-                            return (
-                                <button
-                                    key={option.value}
-                                    type="button"
-                                    onClick={() => {
-                                        onChange(option.value)
-                                        setIsOpen(false)
-                                    }}
-                                    className={`w-full text-left px-3 py-2 text-sm flex items-center justify-between transition-colors
-                                        ${isSelected
-                                            ? 'bg-orange-50 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400 font-medium'
-                                            : 'text-slate-600 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-white/5'
-                                        }
-                                    `}
-                                >
-                                    <span>{option.label}</span>
-                                    {isSelected && (
-                                        <span className="material-symbols-outlined text-[18px]">check</span>
-                                    )}
-                                </button>
-                            )
-                        })}
-                    </div>
-                </div>
-            )}
+                {!options.some((option) => option.value === value) && (
+                    <option value="" disabled className="bg-surface text-muted">
+                        {placeholder}
+                    </option>
+                )}
+                {options.map((option) => (
+                    <option key={option.value} value={option.value} className="bg-surface text-foreground">
+                        {option.label}
+                    </option>
+                ))}
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-muted">
+                <svg
+                    className="h-4 w-4"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                >
+                    <path
+                        fillRule="evenodd"
+                        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                        clipRule="evenodd"
+                    />
+                </svg>
+            </div>
         </div>
-    )
+    );
 }

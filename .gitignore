@@ -47,6 +47,6 @@ next-env.d.ts
 /.implementation
 /qa-report.md
 /temp_app
-.agent
+/.agent/
 /design_context
 prisma/dev.db

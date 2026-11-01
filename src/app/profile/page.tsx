@@ -89,11 +89,11 @@ export default async function ProfilePage() {
     const completedQuestsCount = portfolioSnatches.length
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-background-dark">
-            <Header activePage="leaderboard" />
+        <div className="min-h-screen bg-surface dark:bg-background-dark">
+            <Header />
 
-            <main className="flex-1 px-4 sm:px-6 py-8 md:py-12">
-                <div className="max-w-7xl mx-auto">
+            <main className="page-container flex-1 py-8 md:py-12">
+                <div className="max-w-content mx-auto">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                         <ProfileSidebar
                             user={{ ...user, completedQuests: completedQuestsCount }}
