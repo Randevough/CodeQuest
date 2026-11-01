@@ -54,6 +54,9 @@
     --shadow-primary: 0 4px 0 var(--color-primary-edge);
     --shadow-secondary: 0 4px 0 var(--color-secondary-edge);
     --shadow-panel: 4px 4px 0 var(--color-secondary-edge);
+    --shadow-podium-gold: 0 4px 0 #805300;
+    --shadow-podium-silver: 0 4px 0 #78658F;
+    --shadow-podium-bronze: 0 4px 0 #78350F;
     --content-max: 1200px;
     --page-gutter: 16px;
     --motion-fast: 140ms;
@@ -87,6 +90,9 @@
     --color-success-rgb: 128 230 173;
     --color-danger: #FF9AAA;
     --color-danger-rgb: 255 154 170;
+    --shadow-podium-gold: 0 4px 0 #FFD166;
+    --shadow-podium-silver: 0 4px 0 #8876A8;
+    --shadow-podium-bronze: 0 4px 0 #D97706;
   }
 
   html {
@@ -99,10 +105,6 @@
     margin: 0;
     color: var(--color-text);
     background: var(--color-bg);
-    background-image:
-      linear-gradient(to right, rgb(var(--color-border-rgb) / 0.08) 1px, transparent 1px),
-      linear-gradient(to bottom, rgb(var(--color-border-rgb) / 0.08) 1px, transparent 1px);
-    background-size: 32px 32px;
     font-family: var(--font-geist-sans), "Geist Sans", system-ui, sans-serif;
     font-size: 16px;
     line-height: 1.5;
@@ -218,13 +220,13 @@
 
 @layer components {
   /* Opt-in actions keep existing component styles predictable during migration. */
-  .button-primary, .button-secondary {
+  .button-primary {
     display: inline-flex;
     min-height: 44px;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    border: 1px solid var(--color-control-border);
+    border: 1px solid var(--color-primary-edge);
     border-radius: var(--radius-button);
     padding: 10px 20px;
     font-weight: 700;
@@ -234,10 +236,19 @@
     transition: background-color var(--motion-fast), box-shadow var(--motion-fast), transform var(--motion-fast);
   }
   .button-secondary {
-    border-color: var(--color-control-border);
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 1px solid var(--color-control-border);
+    border-radius: var(--radius-button);
+    padding: 10px 20px;
+    font-weight: 700;
     background: var(--color-secondary);
     color: var(--color-on-secondary);
     box-shadow: var(--shadow-secondary);
+    transition: background-color var(--motion-fast), box-shadow var(--motion-fast), transform var(--motion-fast);
   }
   .button-primary:where(:hover):not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]) {
     background: var(--color-primary-hover);
@@ -321,6 +332,31 @@
 
   .arcade-card-glow-secondary {
     box-shadow: 0 0 24px -4px rgb(var(--color-secondary-rgb) / 0.22);
+  }
+
+  .arcade-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    transition: transform var(--motion-fast), box-shadow var(--motion-fast), border-color var(--motion-fast);
+  }
+  .arcade-card:hover {
+    border-color: var(--color-control-border);
+    box-shadow: 0 4px 0 var(--color-secondary-edge);
+    transform: translateY(-2px);
+  }
+
+  .arcade-podium-1 {
+    border-left: 3px solid var(--color-warning) !important;
+    background: linear-gradient(90deg, rgb(var(--color-warning-rgb) / 0.08) 0%, transparent 100%);
+  }
+  .arcade-podium-2 {
+    border-left: 3px solid var(--color-text-muted) !important;
+    background: linear-gradient(90deg, rgb(var(--color-text-muted-rgb) / 0.08) 0%, transparent 100%);
+  }
+  .arcade-podium-3 {
+    border-left: 3px solid #D97706 !important;
+    background: linear-gradient(90deg, rgb(217 119 6 / 0.08) 0%, transparent 100%);
   }
 
   .arcade-scanline {
