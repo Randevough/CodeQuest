@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import Image from 'next/image'
 import { uploadProfileImage } from '@/actions/profile'
 import { toast } from 'sonner'
 
@@ -86,9 +87,12 @@ export function AvatarUpload({ currentAvatar, name, size = 128, editable = false
                 className={`w-full h-full rounded-full overflow-hidden border-2 border-border bg-surface  relative transition-all ${editable ? 'group-hover:border-border' : ''}`}
             >
                 {currentAvatar ? (
-                    <img
+                    <Image
                         src={currentAvatar}
                         alt={name || 'Profile'}
+                        width={size}
+                        height={size}
+                        unoptimized
                         className={`w-full h-full object-cover transition-opacity ${isUploading ? '' : 'opacity-100'}`}
                     />
                 ) : (

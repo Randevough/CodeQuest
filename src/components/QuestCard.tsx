@@ -143,7 +143,7 @@ export function QuestCard({ quest, isSnatched }: { quest: Quest, isSnatched: boo
             {showDropConfirm && (
                 <Dialog open={showDropConfirm} onClose={() => setShowDropConfirm(false)} pending={loading} title="Drop this Quest?">
                         <p className="text-sm text-muted mb-6">
-                            Are you sure? You won't be able to join another quest for 2 days.
+                            Are you sure? You won&apos;t be able to join another quest for 2 days.
                         </p>
                         <div className="flex gap-3">
                             <button

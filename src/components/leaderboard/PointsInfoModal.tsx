@@ -30,7 +30,7 @@ export function PointsInfoModal() {
                                     <div>
                                         <h4 className="font-semibold text-foreground mb-1">Approved Quests Only</h4>
                                         <p className="text-sm text-muted leading-relaxed">
-                                            Points <span className="inline-flex align-baseline translate-y-0.5"><Image src="/icon.png" alt="Points" width={14} height={14} className="object-contain" /></span> displayed on the leaderboard are strictly from quests that have been <strong className="text-foreground font-medium">'Approved'</strong> by the Admin team.
+                                            Points <span className="inline-flex align-baseline translate-y-0.5"><Image src="/icon.png" alt="Points" width={14} height={14} className="object-contain" /></span> displayed on the leaderboard are strictly from quests that have been <strong className="text-foreground font-medium">&apos;Approved&apos;</strong> by the Admin team.
                                         </p>
                                     </div>
                                 </div>
@@ -42,7 +42,7 @@ export function PointsInfoModal() {
                                     <div>
                                         <h4 className="font-semibold text-foreground mb-1">Pending Validation</h4>
                                         <p className="text-sm text-muted leading-relaxed">
-                                            Tasks with <strong className="text-foreground font-medium">'Pending Review'</strong> or <strong className="text-foreground font-medium">'Revision Needed'</strong> status will not be added to your total balance until they are officially accepted.
+                                            Tasks with <strong className="text-foreground font-medium">&apos;Pending Review&apos;</strong> or <strong className="text-foreground font-medium">&apos;Revision Needed&apos;</strong> status will not be added to your total balance until they are officially accepted.
                                         </p>
                                     </div>
                                 </div>
