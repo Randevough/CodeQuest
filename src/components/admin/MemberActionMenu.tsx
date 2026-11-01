@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { updateUserRole, deactivateUser, manualReset, deleteUser } from '@/actions/admin'
 import { assignQuest, getActiveQuestsForAssignment } from '@/actions/assignment'
 import { Dialog } from '@/components/ui/Dialog'
+import { CustomDropdown } from '@/components/ui/CustomDropdown'
 import { toast } from 'sonner'
 
 type UserProp = {
@@ -296,18 +297,18 @@ export function MemberActionMenu({ user }: { user: UserProp }) {
                         <div className="mb-6 space-y-4">
                             <div>
                                 <label htmlFor={`assignment-${user.id}`} className="block text-sm font-medium text-foreground mb-1">Select Quest</label>
-                                <select
-                                    id={`assignment-${user.id}`} aria-label="Select quest to assign"
-                                    className="w-full px-3 py-2 border border-control-border rounded-card bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-control-border focus:border-control-border"
+                                <CustomDropdown
+                                    id={`assignment-${user.id}`}
+                                    aria-label="Select quest to assign"
                                     value={selectedQuestId}
-                                    onChange={(e) => setSelectedQuestId(e.target.value)}
+                                    onChange={setSelectedQuestId}
+                                    placeholder="Select a quest"
                                     disabled={isAssigning}
-                                >
-                                    <option value="" disabled>-- Select a quest --</option>
-                                    {quests.map(q => (
-                                        <option key={q.id} value={q.id}>[{q.id}] {q.title} (Max: {q.maxSnatchers})</option>
-                                    ))}
-                                </select>
+                                    options={quests.map(q => ({
+                                        value: q.id,
+                                        label: `[${q.id}] ${q.title} (Max: ${q.maxSnatchers})`
+                                    }))}
+                                />
                             </div>
                         </div>
                         <div className="flex flex-wrap gap-3 justify-end">
