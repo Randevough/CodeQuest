@@ -263,7 +263,7 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                                     {quest.snatches.map((snatch) => (
                                         <Link href={`/profile/${snatch.user.id}`} key={snatch.user.id} className="min-h-11 flex items-center gap-3 p-2 -mx-2 rounded-lg hover:bg-surface-raised transition-colors group">
                                             {snatch.user.avatar ? (
-                                                <img src={snatch.user.avatar} alt={snatch.user.name || 'User'} className="size-10 rounded-full object-cover transition-transform" />
+                                                <Image src={snatch.user.avatar} alt={snatch.user.name || 'User'} width={40} height={40} unoptimized className="size-10 rounded-full object-cover transition-transform" />
                                             ) : (
                                                 <div className="size-10 rounded-full bg-surface flex items-center justify-center font-bold text-muted transition-transform">
                                                     {(snatch.user.name || snatch.user.handle || '?')[0].toUpperCase()}

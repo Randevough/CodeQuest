@@ -1,4 +1,3 @@
-/* eslint-disable */
 'use client'
 
 import { createContext, useContext, useEffect, useState } from 'react'
@@ -34,17 +33,17 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     // On mount: read persisted preference, fall back to OS preference
     useEffect(() => {
         const stored = localStorage.getItem('cq-theme') as Theme | null
+        let resolved: Theme = 'light'
         if (stored === 'dark' || stored === 'light') {
-            applyTheme(stored)
-            setTheme(stored)
+            resolved = stored
         } else {
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-            const resolved: Theme = prefersDark ? 'dark' : 'light'
-            applyTheme(resolved)
-            // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/rules-of-hooks
-            // eslint-disable-next-line
-            setTheme(resolved)
+            resolved = prefersDark ? 'dark' : 'light'
         }
+        applyTheme(resolved)
+        queueMicrotask(() => {
+            setTheme(resolved)
+        })
     }, [])
 
 

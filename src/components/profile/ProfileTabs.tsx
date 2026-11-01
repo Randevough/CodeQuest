@@ -327,9 +327,11 @@ export function ProfileTabs({ activeSnatches, portfolioSnatches = [], user, isOw
                                             {/* Badge image with optional lock overlay */}
                                             <div className="relative size-16 rounded-full bg-surface flex items-center justify-center transition-transform overflow-hidden">
                                                 {badge.imageUrl ? (
-                                                    <img
+                                                    <Image
                                                         src={badge.imageUrl}
                                                         alt={badge.name}
+                                                        width={40}
+                                                        height={40}
                                                         className={`w-10 h-10 object-contain max-w-full ${!earned ? 'grayscale' : ''}`}
                                                     />
                                                 ) : (
