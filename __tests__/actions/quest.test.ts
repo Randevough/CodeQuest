@@ -25,12 +25,12 @@ describe('Quest Actions', () => {
             if (!process.env.DATABASE_URL_TEST) return
 
             const quest = await testPrisma.quest.create({
-                data: { id: 'q-new', title: 'Q', description: 'Q', points: 10, difficulty: 'Easy', category: 'Frontend', maxSnatchers: 1 }
+                data: { id: 'q-new', title: 'Q', description: 'Q', points: 10, difficulty: 'Easy', category: 'Frontend', maxSnatchers: 1, status: 'Active' }
             })
 
             for (let i = 0; i < 3; i++) {
                 const q = await testPrisma.quest.create({
-                    data: { id: `q-${i}`, title: 'Q', description: 'Q', points: 10, difficulty: 'Easy', category: 'Frontend', maxSnatchers: 1 }
+                    data: { id: `q-${i}`, title: 'Q', description: 'Q', points: 10, difficulty: 'Easy', category: 'Frontend', maxSnatchers: 1, status: 'Active' }
                 })
                 await testPrisma.snatch.create({
                     data: { userId: 'test-user', questId: q.id, status: 'ACTIVE' }
