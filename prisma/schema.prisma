@@ -6,27 +6,27 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  emailVerified DateTime?
-  name      String?
-  avatar    String?
-  image     String?
-  bio       String?
-  githubUrl String?
-  linkedinUrl String?
-  handle    String?
-  role      String?  @default("Member")
-  password  String?
-  points    Int      @default(0)
-  completedQuests Int @default(0)
-  
+  id              String    @id @default(cuid())
+  email           String    @unique
+  emailVerified   DateTime?
+  name            String?
+  avatar          String?
+  image           String?
+  bio             String?
+  githubUrl       String?
+  linkedinUrl     String?
+  handle          String?
+  role            String?   @default("Member")
+  password        String?
+  points          Int       @default(0)
+  completedQuests Int       @default(0)
+
   snatches      Snatch[]
   penalties     Penalty[]
   accounts      Account[]
@@ -36,28 +36,36 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([points(sort: Desc)])
+  @@index([role])
+  @@index([createdAt])
 }
 
 model Quest {
-  id          String   @id @default(cuid())
-  title       String
-  description String
-  maxSnatchers Int      @default(1)
-  
-  difficulty  String   @default("Beginner") // Beginner, Intermediate, Advanced
-  points      Int      @default(100)
-  category    String   @default("Web") // Web, AI, Mobile
-  status      String   @default("Draft") // Active, Draft, Closed
-  
-  deadline    DateTime?
+  id           String @id @default(cuid())
+  title        String
+  description  String
+  maxSnatchers Int    @default(1)
+
+  difficulty String @default("Beginner") // Beginner, Intermediate, Advanced
+  points     Int    @default(100)
+  category   String @default("Web") // Web, AI, Mobile
+  status     String @default("Draft") // Active, Draft, Closed
+
+  deadline     DateTime?
   requirements String[]
   resources    String[]
-  
-  snatches    Snatch[]
-  squads      Squad[]
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  snatches Snatch[]
+  squads   Squad[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([difficulty])
+  @@index([deadline])
 }
 
 model Squad {
@@ -71,29 +79,32 @@ model Squad {
   createdAt   DateTime @default(now())
 
   @@index([questId])
+  @@index([createdById])
 }
 
 model Snatch {
-  id        String   @id @default(cuid())
-  userId    String
-  questId   String
-  status    String   @default("ACTIVE") // ACTIVE, SUBMITTED, REVISION_NEEDED, ACCEPTED, REJECTED, ARCHIVED, DROPPED
-  
-  user      User     @relation(fields: [userId], references: [id])
-  quest     Quest    @relation(fields: [questId], references: [id])
+  id      String @id @default(cuid())
+  userId  String
+  questId String
+  status  String @default("ACTIVE") // ACTIVE, SUBMITTED, REVISION_NEEDED, ACCEPTED, REJECTED, ARCHIVED, DROPPED
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  approvedAt DateTime?
+  user  User  @relation(fields: [userId], references: [id])
+  quest Quest @relation(fields: [questId], references: [id])
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  approvedAt    DateTime?
   submissionUrl String?
-  feedback String? // Admin feedback on rejection/approval
-  assignedById String?
-  squadId      String?
-  squad        Squad?   @relation(fields: [squadId], references: [id])
+  feedback      String? // Admin feedback on rejection/approval
+  assignedById  String?
+  squadId       String?
+  squad         Squad?    @relation(fields: [squadId], references: [id])
 
   @@unique([userId, questId]) // User can only snatch a quest once (until dropped/completed logic handled?)
   // Actually, if they drop it, can they snatch it again? 
   // For now, let's keep it unique to prevent double snatching.
+  @@index([status])
+  @@index([questId])
 }
 
 model Penalty {
@@ -101,8 +112,8 @@ model Penalty {
   userId    String
   reason    String
   expiresAt DateTime
-  
-  user      User     @relation(fields: [userId], references: [id])
+
+  user User @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
 }
@@ -127,47 +138,48 @@ model Account {
 }
 
 model Badge {
-  id          String   @id @default(cuid())
-  slug        String   @unique
+  id          String  @id @default(cuid())
+  slug        String  @unique
   name        String
   description String
   imageUrl    String?
-  category    String   // PROGRESSION, POINTS, CATEGORY, DIFFICULTY
-  
-  userBadges  UserBadge[]
+  category    String // PROGRESSION, POINTS, CATEGORY, DIFFICULTY
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  userBadges UserBadge[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model UserBadge {
-  id          String   @id @default(cuid())
-  userId      String
-  badgeId     String
-  isFeatured  Boolean  @default(false)
-  
-  user        User     @relation(fields: [userId], references: [id])
-  badge       Badge    @relation(fields: [badgeId], references: [id])
-  
-  earnedAt    DateTime @default(now())
+  id         String  @id @default(cuid())
+  userId     String
+  badgeId    String
+  isFeatured Boolean @default(false)
+
+  user  User  @relation(fields: [userId], references: [id])
+  badge Badge @relation(fields: [badgeId], references: [id])
+
+  earnedAt DateTime @default(now())
 
   @@unique([userId, badgeId])
 }
 
 model Notification {
-  id        String   @id @default(cuid())
-  userId    String
-  type      String   // SUBMISSION_ACCEPTED | SUBMISSION_REVISION | SUBMISSION_REJECTED | BADGE_EARNED | QUEST_ASSIGNED
-  message   String
-  read      Boolean  @default(false)
-  link      String?
+  id      String  @id @default(cuid())
+  userId  String
+  type    String // SUBMISSION_ACCEPTED | SUBMISSION_REVISION | SUBMISSION_REJECTED | BADGE_EARNED | QUEST_ASSIGNED
+  message String
+  read    Boolean @default(false)
+  link    String?
 
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 
   @@index([userId, read])
   @@index([userId, createdAt])
+  @@index([createdAt])
 }
 
 model VerificationToken {
