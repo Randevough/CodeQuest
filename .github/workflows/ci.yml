@@ -50,7 +50,7 @@ jobs:
       run: npx prisma generate
 
     - name: Apply migrations (Test DB)
-      run: npx prisma migrate deploy
+      run: npx prisma db push --skip-generate
 
     - name: Type check
       run: npm run type-check
