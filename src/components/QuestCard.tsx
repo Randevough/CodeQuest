@@ -6,6 +6,7 @@ import { Dialog } from '@/components/ui/Dialog'
 import Link from 'next/link'
 import Image from 'next/image'
 import { dropQuest } from '@/actions/quest'
+import { Users, Trash2 } from 'lucide-react'
 
 type Quest = {
     id: string
@@ -101,8 +102,8 @@ export function QuestCard({ quest, isSnatched }: { quest: Quest, isSnatched: boo
             {/* Footer */}
             <div className="flex flex-wrap gap-3 items-center justify-between pt-4 border-t border-border mt-4">
                 <div className="flex items-center gap-3 text-sm font-medium text-muted">
-                    <div className="flex items-center gap-1">
-                        <span aria-hidden="true" className="material-symbols-outlined text-[16px]">group</span>
+                    <div className="flex items-center gap-1.5">
+                        <Users className="w-4 h-4 text-muted" aria-hidden="true" />
                         <span className={isFull ? 'text-danger' : 'text-foreground'}>
                             {quest._count.snatches}/{quest.maxSnatchers}
                         </span>
@@ -118,7 +119,7 @@ export function QuestCard({ quest, isSnatched }: { quest: Quest, isSnatched: boo
                         disabled={loading}
                         className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-danger hover:text-danger hover:bg-surface-raised rounded border border-transparent hover:border-border transition-all"
                     >
-                        <span aria-hidden="true" className="material-symbols-outlined text-[16px]">delete</span>
+                        <Trash2 className="w-4 h-4" aria-hidden="true" />
                         Drop
                     </button>
                 ) : (

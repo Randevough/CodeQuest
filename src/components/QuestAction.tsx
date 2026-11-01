@@ -5,6 +5,7 @@ import { Dialog } from '@/components/ui/Dialog'
 import { joinQuest, submitQuest } from '@/actions/quest'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { Trophy, ExternalLink, Link as LinkIcon, Hourglass, Send } from 'lucide-react'
 
 interface UserStatus {
     status: string
@@ -84,7 +85,7 @@ export function QuestAction({
             <div className="p-6 bg-surface rounded-card break-words border border-border text-center">
                 <div className="flex flex-col items-center gap-2">
                     <div className="size-12 rounded-full bg-surface flex items-center justify-center text-success mb-2">
-                        <span aria-hidden="true" className="material-symbols-outlined text-[24px]">trophy</span>
+                        <Trophy className="w-6 h-6 text-success" aria-hidden="true" />
                     </div>
                     <h3 className="text-lg font-bold text-success">Mission Accomplished!</h3>
                     <p className="text-success mb-2">
@@ -95,9 +96,9 @@ export function QuestAction({
                             href={userStatus.submissionUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-sm font-medium text-success hover:underline flex items-center gap-1"
+                            className="text-sm font-medium text-success hover:underline flex items-center gap-1.5"
                         >
-                            View your submission <span aria-hidden="true" className="material-symbols-outlined text-[14px]">open_in_new</span>
+                            View your submission <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
                         </a>
                     )}
                 </div>
@@ -117,7 +118,7 @@ export function QuestAction({
                             <div className="flex flex-col gap-3 mb-4">
                                 <div className="relative w-full">
                                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none flex items-center justify-center">
-                                        <span aria-hidden="true" className="material-symbols-outlined icon-filled text-[20px]">link</span>
+                                        <LinkIcon className="w-4 h-4 text-muted" aria-hidden="true" />
                                     </span>
                                     <input
                                         className="block w-full pl-10 pr-3 py-2.5 bg-surface border border-control-border rounded-lg text-sm text-foreground placeholder-muted focus:border-focus transition-all disabled:cursor-not-allowed"
@@ -138,12 +139,12 @@ export function QuestAction({
                                 >
                                     {isPending ? (
                                         <>
-                                            <span aria-hidden="true" className="material-symbols-outlined text-[20px]">hourglass_empty</span>
+                                            <Hourglass className="w-4 h-4" aria-hidden="true" />
                                             Awaiting Evaluation
                                         </>
                                     ) : (
                                         <>
-                                            <span aria-hidden="true" className="material-symbols-outlined text-[20px]">send</span>
+                                            <Send className="w-4 h-4" aria-hidden="true" />
                                             {loading ? 'Submitting...' : 'Submit Quest'}
                                         </>
                                     )}

@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import Link from 'next/link'
+import { Gavel } from 'lucide-react'
 
 export default function AdminError({
     error,
@@ -19,7 +20,7 @@ export default function AdminError({
             <div className="max-w-md w-full bg-surface p-4 sm:p-6 lg:p-8 rounded-2xl shadow-sm border border-border text-center relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1 bg-surface"></div>
                 <div className="mx-auto w-12 h-12 bg-surface text-danger rounded-full flex items-center justify-center mb-6">
-                    <span aria-hidden="true" className="material-symbols-outlined text-[24px]">gavel</span>
+                    <Gavel className="w-6 h-6 text-danger" aria-hidden="true" />
                 </div>
                 <h2 className="text-xl font-bold mb-2">Admin Command Failed</h2>
                 <p className="text-sm text-muted mb-8">

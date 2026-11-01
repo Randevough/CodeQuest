@@ -4,6 +4,8 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { reviewSubmission, type SubmissionItem } from '@/actions/submission';
 import { toast } from 'sonner';
+import { UserAvatar } from '@/components/ui/UserAvatar';
+import { X, User, Users, ExternalLink, Timer, ListChecks, Circle } from 'lucide-react';
 
 interface SubmissionReviewModalProps {
     isOpen: boolean;
@@ -60,9 +62,9 @@ export function SubmissionReviewModal({ isOpen, onClose, snatch, onSuccess }: Su
                         onClick={onClose}
                         disabled={isSubmitting}
                         aria-label="Close review"
-                        className="p-2 text-muted hover:text-muted transition-colors rounded-full hover:bg-surface-raised"
+                        className="p-2 text-muted hover:text-muted transition-colors rounded-full hover:bg-surface-raised flex items-center justify-center"
                     >
-                        <span aria-hidden="true" className="material-symbols-outlined">close</span>
+                        <X className="w-5 h-5" aria-hidden="true" />
                     </button>
                 </div>
 
@@ -76,23 +78,16 @@ export function SubmissionReviewModal({ isOpen, onClose, snatch, onSuccess }: Su
                                 <div className="p-5 border border-border rounded-card bg-surface flex flex-col">
                                     <div className="w-full">
                                         <h5 className="text-[10px] font-bold text-muted uppercase tracking-widest mb-3 flex items-center gap-1.5">
-                                            <span aria-hidden="true" className="material-symbols-outlined text-[14px]">person</span>
+                                            <User className="w-3.5 h-3.5" aria-hidden="true" />
                                             Submitter
                                         </h5>
                                         <div className="flex items-center gap-3 mb-5">
-                                            {snatch.user.avatar ? (
-                                                <Image
-                                                    alt={snatch.user.name || 'User'}
-                                                    width={40}
-                                                    height={40}
-                                                    className="rounded-full ring-1 ring-control-border object-cover"
-                                                    src={snatch.user.avatar as string}
-                                                />
-                                            ) : (
-                                                <div className="w-10 h-10 rounded-full bg-surface-raised flex items-center justify-center text-xs font-bold text-muted">
-                                                    {snatch.user.name?.charAt(0) || '?'}
-                                                </div>
-                                            )}
+                                            <UserAvatar
+                                                src={snatch.user.avatar as string}
+                                                name={snatch.user.name}
+                                                size={40}
+                                                className="size-10 rounded-full border border-border"
+                                            />
                                             <div className="flex flex-col">
                                                 <span className="text-sm font-bold text-foreground">{snatch.user.name}</span>
                                                 <span className="text-xs text-muted">{snatch.user.email}</span>
@@ -103,25 +98,18 @@ export function SubmissionReviewModal({ isOpen, onClose, snatch, onSuccess }: Su
                                         {snatch.squad && snatch.squad.snatches && snatch.squad.snatches.length > 0 && (
                                             <div className="mb-5 border-t border-b border-border py-4">
                                                 <h5 className="text-[10px] font-bold text-muted uppercase tracking-widest mb-3 flex items-center gap-1.5">
-                                                    <span aria-hidden="true" className="material-symbols-outlined text-[14px]">groups</span>
+                                                    <Users className="w-3.5 h-3.5" aria-hidden="true" />
                                                     Squad Members
                                                 </h5>
                                                 <div className="flex flex-col gap-2">
                                                     {snatch.squad.snatches.map((s) => (
                                                         <div key={s.user.id} className="flex items-center gap-2.5">
-                                                            {s.user.avatar ? (
-                                                                <Image
-                                                                    src={s.user.avatar as string}
-                                                                    alt={s.user.name || 'User'}
-                                                                    width={24}
-                                                                    height={24}
-                                                                    className="rounded-full object-cover w-6 h-6 min-w-6 shrink-0"
-                                                                />
-                                                            ) : (
-                                                                <div className="w-6 h-6 min-w-6 shrink-0 rounded-full bg-surface-raised flex items-center justify-center text-[10px] font-bold text-muted">
-                                                                    {s.user.name?.charAt(0) || '?'}
-                                                                </div>
-                                                            )}
+                                                            <UserAvatar
+                                                                src={s.user.avatar as string}
+                                                                name={s.user.name}
+                                                                size={24}
+                                                                className="size-6 rounded-full border border-border"
+                                                            />
                                                             <span className="text-xs font-medium text-foreground">
                                                                 {s.user.name}
                                                             </span>
@@ -138,7 +126,7 @@ export function SubmissionReviewModal({ isOpen, onClose, snatch, onSuccess }: Su
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                             >
-                                                <span aria-hidden="true" className="material-symbols-outlined text-[18px]">open_in_new</span>
+                                                <ExternalLink className="w-4 h-4" aria-hidden="true" />
                                                 View Submission Link
                                             </a>
                                         ) : (
@@ -192,7 +180,7 @@ export function SubmissionReviewModal({ isOpen, onClose, snatch, onSuccess }: Su
                                             </span>
                                             {snatch.quest.deadline && (
                                                 <span className="px-2.5 py-1 rounded-md bg-surface text-danger text-[10px] font-bold border border-border uppercase tracking-wider flex items-center gap-1">
-                                                    <span aria-hidden="true" className="material-symbols-outlined text-[10px]">timer</span>
+                                                    <Timer className="w-3 h-3" aria-hidden="true" />
                                                     {new Date(snatch.quest.deadline).toLocaleDateString()}
                                                 </span>
                                             )}
@@ -218,13 +206,13 @@ export function SubmissionReviewModal({ isOpen, onClose, snatch, onSuccess }: Su
                                                 return (
                                                     <div>
                                                         <h5 className="text-[10px] font-bold text-muted uppercase tracking-widest mb-3 flex items-center gap-1.5">
-                                                            <span aria-hidden="true" className="material-symbols-outlined text-[14px]">checklist</span>
+                                                            <ListChecks className="w-3.5 h-3.5" aria-hidden="true" />
                                                             Submission Checklist
                                                         </h5>
                                                         <ul className="space-y-2">
                                                             {requirements.map((req: string, i: number) => (
                                                                 <li key={i} className="flex items-start gap-2 text-xs text-muted bg-surface p-2 rounded border border-border">
-                                                                    <span aria-hidden="true" className="material-symbols-outlined text-[14px] text-muted mt-0.5">radio_button_unchecked</span>
+                                                                    <Circle className="w-3.5 h-3.5 text-muted mt-0.5 shrink-0" aria-hidden="true" />
                                                                     <span>{req}</span>
                                                                 </li>
                                                             ))}

@@ -1,21 +1,16 @@
 import { getActivityFeed } from '@/actions/activity'
 import type { ActivityFeedItem } from '@/actions/activity'
 import Link from 'next/link'
+import { Award, PlusCircle, Trophy, Zap, Hourglass } from 'lucide-react'
 
 function FeedIcon({ type }: { type: ActivityFeedItem['type'] }) {
-  const icons: Record<ActivityFeedItem['type'], { icon: string; color: string }> = {
-    quest_completed: { icon: 'military_tech', color: 'text-foreground' },
-    quest_published: { icon: 'add_circle', color: 'text-success' },
-    badge_earned: { icon: 'emoji_events', color: 'text-warning' },
+  if (type === 'quest_completed') {
+    return <Award className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
   }
-
-  const { icon, color } = icons[type]
-
-  return (
-    <span aria-hidden="true" className={`material-symbols-outlined text-[18px] ${color} flex-shrink-0`}>
-      {icon}
-    </span>
-  )
+  if (type === 'quest_published') {
+    return <PlusCircle className="w-4 h-4 text-success shrink-0" aria-hidden="true" />
+  }
+  return <Trophy className="w-4 h-4 text-warning shrink-0" aria-hidden="true" />
 }
 
 function FeedItem({ item }: { item: ActivityFeedItem }) {
@@ -53,9 +48,7 @@ export async function ActivityFeed() {
         <div className="bg-surface rounded-lg border border-border">
           {/* Header */}
           <div className="flex items-center gap-2 px-4 py-3 border-b border-border">
-            <span aria-hidden="true" className="material-symbols-outlined text-[16px] text-foreground">
-              electric_bolt
-            </span>
+            <Zap className="w-4 h-4 text-primary" aria-hidden="true" />
             <span className="text-sm font-mono uppercase tracking-[0.2em] font-bold text-muted">
               Recent activity
             </span>
@@ -66,11 +59,9 @@ export async function ActivityFeed() {
           <div className="py-1 max-h-[480px] overflow-y-auto styled-scrollbar">
             {items.length === 0 ? (
               <div className="px-4 py-8 text-center">
-                <span aria-hidden="true" className="material-symbols-outlined text-[32px] text-muted mb-2 block">
-                  hourglass_empty
-                </span>
+                <Hourglass className="w-8 h-8 text-muted mx-auto mb-2 block" aria-hidden="true" />
                 <p className="text-sm text-muted">
-                  No activity yet. Be the first to complete a quest!
+                  No activity yet. Be the first to complete a quest
                 </p>
               </div>
             ) : (

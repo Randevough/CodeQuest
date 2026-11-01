@@ -6,6 +6,7 @@ import { useState, useTransition } from 'react';
 import { createQuest, updateQuest } from '@/actions/quest';
 import { CustomDropdown, Option } from '@/components/ui/CustomDropdown';
 import { DatePicker } from '@/components/ui/DatePicker';
+import { FileText, X, Award, ListChecks, BookOpen } from 'lucide-react';
 
 interface QuestData {
     id?: string;
@@ -178,7 +179,7 @@ export function QuestForm({ initialData, isEditing = false }: QuestFormProps) {
             {/* Quest Details Section */}
             <div className="bg-surface border border-border rounded-card p-6 shadow-sm">
                 <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                    <span aria-hidden="true" className="material-symbols-outlined text-warning">article</span>
+                    <FileText className="w-5 h-5 text-warning" aria-hidden="true" />
                     Quest Details
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -213,10 +214,10 @@ export function QuestForm({ initialData, isEditing = false }: QuestFormProps) {
                                 <button
                                     type="button"
                                     onClick={cancelCustomCategory}
-                                    className="px-3 h-10 rounded-md border border-control-border hover:bg-surface-raised text-muted transition-colors"
+                                    className="px-3 h-10 rounded-md border border-control-border hover:bg-surface-raised text-muted transition-colors flex items-center justify-center"
                                     title="Cancel custom category" aria-label="Cancel custom category"
                                 >
-                                    <span aria-hidden="true" className="material-symbols-outlined text-[20px]">close</span>
+                                    <X className="w-4 h-4" aria-hidden="true" />
                                 </button>
                             </div>
                         ) : (
@@ -247,7 +248,7 @@ export function QuestForm({ initialData, isEditing = false }: QuestFormProps) {
             {/* Rewards & Limits Section */}
             <div className="bg-surface border border-border rounded-card p-6 shadow-sm">
                 <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                    <span aria-hidden="true" className="material-symbols-outlined text-warning">military_tech</span>
+                    <Award className="w-5 h-5 text-warning" aria-hidden="true" />
                     Rewards & Limits
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -298,7 +299,7 @@ export function QuestForm({ initialData, isEditing = false }: QuestFormProps) {
             {/* Requirements Section */}
             <div className="bg-surface border border-border rounded-card p-6 shadow-sm">
                 <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                    <span aria-hidden="true" className="material-symbols-outlined text-warning">checklist</span>
+                    <ListChecks className="w-5 h-5 text-warning" aria-hidden="true" />
                     Submission Checklist
                 </h2>
                 <div className="flex flex-col gap-3">
@@ -337,7 +338,7 @@ export function QuestForm({ initialData, isEditing = false }: QuestFormProps) {
                                         aria-label={`Remove requirement ${index + 1}`}
                                         className="text-muted hover:text-danger transition-colors"
                                     >
-                                        <span aria-hidden="true" className="material-symbols-outlined text-[18px]">close</span>
+                                        <X className="w-4 h-4" aria-hidden="true" />
                                     </button>
                                 </li>
                             ))}
@@ -351,7 +352,7 @@ export function QuestForm({ initialData, isEditing = false }: QuestFormProps) {
             {/* Description Section */}
             <div className="bg-surface border border-border rounded-card p-6 shadow-sm">
                 <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                    <span aria-hidden="true" className="material-symbols-outlined text-warning">description</span>
+                    <BookOpen className="w-5 h-5 text-warning" aria-hidden="true" />
                     Resources & Briefing
                 </h2>
                 <div className="space-y-4">

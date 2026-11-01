@@ -5,6 +5,8 @@ import { Pagination } from "@/components/Pagination"
 import { MemberActionMenu } from "@/components/admin/MemberActionMenu"
 import { MobileSidebarTrigger } from "@/components/admin/MobileSidebarTrigger"
 import { SearchInput } from "@/components/ui/SearchInput"
+import { UserAvatar } from "@/components/ui/UserAvatar"
+import { Lock } from "lucide-react"
 import Image from "next/image"
 
 export default async function MemberDirectoryPage({
@@ -103,20 +105,12 @@ export default async function MemberDirectoryPage({
                                             <tr key={user.id} className="hover:bg-surface transition-colors group">
                                                 <td className="py-4 px-6">
                                                     <Link href={`/profile/${user.id}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-                                                        {user.image ? (
-                                                            <div className="h-9 w-9 relative rounded-full overflow-hidden ring-2 ring-control-border shrink-0">
-                                                                <Image
-                                                                    src={user.image}
-                                                                    alt={user.name || 'User'}
-                                                                    fill
-                                                                    className="object-cover"
-                                                                />
-                                                            </div>
-                                                        ) : (
-                                                            <div className="h-9 w-9 rounded-full bg-surface flex items-center justify-center text-warning text-xs font-bold ring-2 ring-control-border shrink-0">
-                                                                {user.name?.[0] || user.email[0].toUpperCase()}
-                                                            </div>
-                                                        )}
+                                                        <UserAvatar
+                                                            src={user.image}
+                                                            name={user.name || user.email}
+                                                            size={36}
+                                                            className="size-9 rounded-full border border-control-border shrink-0"
+                                                        />
                                                         <div className="flex flex-col">
                                                             <span className="text-sm font-bold text-foreground">{user.name || 'Unknown'}</span>
                                                             <span className="text-xs text-muted">{user.email}</span>
@@ -150,7 +144,7 @@ export default async function MemberDirectoryPage({
                                                 <td className="py-4 px-6">
                                                     {hasPenalty ? (
                                                         <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-surface text-warning border border-border">
-                                                            <span aria-hidden="true" className="material-symbols-outlined text-[14px]">lock</span>
+                                                            <Lock className="w-3.5 h-3.5" aria-hidden="true" />
                                                             <span className="text-xs font-bold whitespace-nowrap">On Cooldown</span>
                                                         </div>
                                                     ) : (

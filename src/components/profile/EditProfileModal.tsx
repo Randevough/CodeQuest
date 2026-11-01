@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { Dialog } from '@/components/ui/Dialog'
 import { updateProfile, updateFeaturedBadges } from '@/actions/profile'
 import { toast } from 'sonner'
+import { Code, Briefcase, Check, Award } from 'lucide-react'
 
 interface Badge {
     id: string
@@ -139,7 +140,7 @@ export function EditProfileModal({ isOpen, onClose, user, badges = [] }: EditPro
                                 GitHub URL
                                 </label>
                                 <div className="relative">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted material-symbols-outlined text-[18px]">code</span>
+                                    <Code className="absolute left-3 top-1/2 -translate-y-1/2 text-muted w-4 h-4" aria-hidden="true" />
                                     <input
                                         type="url"
                                         id="profile-githubUrl"
@@ -156,7 +157,7 @@ export function EditProfileModal({ isOpen, onClose, user, badges = [] }: EditPro
                                 LinkedIn URL
                                 </label>
                                 <div className="relative">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted material-symbols-outlined text-[18px]">work</span>
+                                    <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-muted w-4 h-4" aria-hidden="true" />
                                     <input
                                         type="url"
                                         id="profile-linkedinUrl"
@@ -204,7 +205,7 @@ export function EditProfileModal({ isOpen, onClose, user, badges = [] }: EditPro
                                                 {/* Check mark */}
                                                 {isSelected && (
                                                     <div className="absolute top-1.5 right-1.5 w-4 h-4 bg-secondary rounded-full flex items-center justify-center text-secondary-foreground">
-                                                        <span aria-hidden="true" className="material-symbols-outlined text-foreground text-[12px]">check</span>
+                                                        <Check className="w-3 h-3 text-secondary-foreground" aria-hidden="true" />
                                                     </div>
                                                 )}
 
@@ -213,7 +214,7 @@ export function EditProfileModal({ isOpen, onClose, user, badges = [] }: EditPro
                                                     {badge.imageUrl ? (
                                                         <Image src={badge.imageUrl} alt={badge.name} width={40} height={40} className="object-contain" />
                                                     ) : (
-                                                        <span aria-hidden="true" className="material-symbols-outlined text-foreground text-[28px]">verified</span>
+                                                        <Award className="w-7 h-7 text-primary" aria-hidden="true" />
                                                     )}
                                                 </div>
 

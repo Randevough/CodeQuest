@@ -8,6 +8,8 @@ import Image from 'next/image'
 import { toast } from 'sonner'
 import { useSession } from 'next-auth/react'
 import { formatDistanceToNow } from 'date-fns'
+import { Users, FileEdit, ThumbsUp, Archive } from 'lucide-react'
+import { UserAvatar } from '@/components/ui/UserAvatar'
 
 type SnatchWithQuest = {
     id: string
@@ -128,8 +130,8 @@ export function WorkspaceQuestCard({ snatch }: { snatch: SnatchWithQuest }) {
                             </span>
                             {/* Squad Badge */}
                             {snatch.squad && (
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-sm font-medium bg-surface text-foreground border border-border">
-                                    <span aria-hidden="true" className="material-symbols-outlined text-[14px]">groups</span>
+                                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-sm font-medium bg-surface text-foreground border border-border">
+                                    <Users className="w-3.5 h-3.5" aria-hidden="true" />
                                     {snatch.squad.name}
                                 </span>
                             )}
@@ -141,7 +143,7 @@ export function WorkspaceQuestCard({ snatch }: { snatch: SnatchWithQuest }) {
                 {isRevision && snatch.feedback && (
                     <div className="bg-surface border border-border p-4 rounded-lg flex gap-3">
                         <div className="shrink-0 text-danger">
-                            <span aria-hidden="true" className="material-symbols-outlined">rate_review</span>
+                            <FileEdit className="w-5 h-5" aria-hidden="true" />
                         </div>
                         <div>
                             <p className="text-sm font-bold text-danger mb-1">Feedback from Admin</p>
@@ -156,7 +158,7 @@ export function WorkspaceQuestCard({ snatch }: { snatch: SnatchWithQuest }) {
                 {isCompleted && snatch.feedback && (
                     <div className="bg-surface border border-border p-4 rounded-lg flex gap-3">
                         <div className="shrink-0 text-success">
-                            <span aria-hidden="true" className="material-symbols-outlined">thumb_up</span>
+                            <ThumbsUp className="w-5 h-5" aria-hidden="true" />
                         </div>
                         <div>
                             <p className="text-sm font-bold text-success mb-1">Admin Feedback</p>
@@ -170,13 +172,12 @@ export function WorkspaceQuestCard({ snatch }: { snatch: SnatchWithQuest }) {
                 <div className="mt-2 pt-4 border-t border-border flex flex-col sm:flex-row gap-4 items-center justify-between">
                     {/* Left: User Avatar + Relative Time */}
                     <div className="flex items-center gap-3 w-full sm:w-auto">
-                        {session?.user?.avatar ? (
-                            <Image src={session.user.avatar} alt={session.user.name || 'User'} width={32} height={32} className="size-8 rounded-full object-cover border border-border" />
-                        ) : (
-                            <div className="size-8 rounded-full bg-surface border border-border flex items-center justify-center text-sm font-bold text-muted">
-                                {session?.user?.name?.[0]?.toUpperCase() || 'U'}
-                            </div>
-                        )}
+                        <UserAvatar
+                            src={session?.user?.avatar}
+                            name={session?.user?.name}
+                            size={32}
+                            className="size-8 rounded-full border border-border"
+                        />
                         <div className="flex flex-col">
                             <span className="text-sm font-bold text-foreground">
                                 {session?.user?.name || 'Snatcher'}
@@ -195,7 +196,7 @@ export function WorkspaceQuestCard({ snatch }: { snatch: SnatchWithQuest }) {
                                 disabled={loading}
                                 className="button-primary w-full sm:w-auto"
                             >
-                                <span aria-hidden="true" className="material-symbols-outlined text-[18px]">archive</span>
+                                <Archive className="w-4 h-4" aria-hidden="true" />
                                 Archive Quest
                             </button>
                         ) : isRevision ? (

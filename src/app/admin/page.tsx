@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { getAdminDashboardStats } from '@/actions/admin-dashboard';
 import { StatsGrid, LeaderboardPreview } from '@/components/admin/AdminStats';
 import { ActivityTrendChart, DifficultyDistributionChart } from '@/components/admin/AdminCharts';
+import { Calendar, PlusCircle, FileEdit, Users } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,7 +31,7 @@ export default async function AdminOverviewPage() {
                 </div>
                 <div className="flex items-center gap-4">
                     <div className="text-sm text-muted flex items-center gap-2">
-                        <span aria-hidden="true" className="material-symbols-outlined text-[18px]">calendar_today</span>
+                        <Calendar className="w-4 h-4" aria-hidden="true" />
                         <span>Last 30 Days</span>
                     </div>
                 </div>
@@ -96,7 +97,7 @@ export default async function AdminOverviewPage() {
                             <div className="p-6 grid grid-cols-1 gap-4 flex-1">
                                 <Link href="/admin/manage-quests/create" className="group flex items-center gap-4 p-4 rounded-card border border-control-border hover:border-control-border hover:bg-surface transition-all text-left">
                                     <div className="h-10 w-10 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center flex-shrink-0  transition-transform shadow-sm text-secondary-foreground">
-                                        <span aria-hidden="true" className="material-symbols-outlined">add_circle</span>
+                                        <PlusCircle className="w-5 h-5" aria-hidden="true" />
                                     </div>
                                     <div className="flex flex-col">
                                         <span className="font-bold text-foreground group-hover:text-foreground transition-colors">Create Quest</span>
@@ -105,7 +106,7 @@ export default async function AdminOverviewPage() {
                                 </Link>
                                 <Link href="/admin/submissions" className="group flex items-center gap-4 p-4 rounded-card border border-control-border hover:border-control-border hover:bg-surface transition-all text-left">
                                     <div className="h-10 w-10 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center flex-shrink-0  transition-transform shadow-sm text-secondary-foreground">
-                                        <span aria-hidden="true" className="material-symbols-outlined">rate_review</span>
+                                        <FileEdit className="w-5 h-5" aria-hidden="true" />
                                     </div>
                                     <div className="flex flex-col">
                                         <span className="font-bold text-foreground group-hover:text-foreground transition-colors">Review Submissions</span>
@@ -114,7 +115,7 @@ export default async function AdminOverviewPage() {
                                 </Link>
                                 <Link href="/admin/members" className="group flex items-center gap-4 p-4 rounded-card border border-control-border hover:border-control-border hover:bg-surface transition-all text-left">
                                     <div className="h-10 w-10 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center flex-shrink-0  transition-transform shadow-sm text-secondary-foreground">
-                                        <span aria-hidden="true" className="material-symbols-outlined">manage_accounts</span>
+                                        <Users className="w-5 h-5" aria-hidden="true" />
                                     </div>
                                     <div className="flex flex-col">
                                         <span className="font-bold text-foreground group-hover:text-foreground transition-colors">Manage Members</span>

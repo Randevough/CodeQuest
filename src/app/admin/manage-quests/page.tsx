@@ -5,6 +5,7 @@ import { Pagination } from '@/components/Pagination';
 import { QuestFilters } from '@/components/admin/QuestFilters';
 import { QuestActions } from './QuestActions';
 import { getQuests } from '@/actions/quest';
+import { Plus, Users, SearchX } from 'lucide-react';
 
 interface ManageQuestsPageProps {
     searchParams: {
@@ -44,7 +45,7 @@ export default async function ManageQuestsPage({ searchParams }: ManageQuestsPag
                         href="/admin/manage-quests/create"
                         className="flex items-center justify-center min-h-11 px-4 rounded-button bg-primary hover:bg-primary-hover text-primary-foreground text-sm font-medium shadow-sm transition-all focus:ring-2 focus:ring-control-border focus:outline-none gap-2"
                     >
-                        <span aria-hidden="true" className="material-symbols-outlined text-[18px]">add</span>
+                        <Plus className="w-4 h-4" aria-hidden="true" />
                         Create New Quest
                     </Link>
                 </div>
@@ -102,7 +103,7 @@ export default async function ManageQuestsPage({ searchParams }: ManageQuestsPag
                                             </td>
                                             <td className="px-6 py-4 text-center">
                                                 <div className="inline-flex items-center justify-center gap-1.5 text-muted">
-                                                    <span aria-hidden="true" className="material-symbols-outlined text-[18px] text-muted">group</span>
+                                                    <Users className="w-4 h-4 text-muted" aria-hidden="true" />
                                                     <span className="text-sm font-bold">
                                                         {quest._count.snatches}/{quest.maxSnatchers}
                                                     </span>
@@ -197,7 +198,7 @@ function EmptyState() {
     return (
         <div className="flex flex-col items-center justify-center py-16 text-center">
             <div className="w-16 h-16 bg-surface-raised rounded-full flex items-center justify-center mb-4">
-                <span aria-hidden="true" className="material-symbols-outlined text-3xl text-muted">search_off</span>
+                <SearchX className="w-8 h-8 text-muted" aria-hidden="true" />
             </div>
             <h3 className="text-lg font-medium text-foreground mb-1">No quests found</h3>
             <p className="text-muted text-sm max-w-xs mb-6">
@@ -207,7 +208,7 @@ function EmptyState() {
                 href="/admin/manage-quests/create"
                 className="inline-flex items-center justify-center min-h-11 px-4 rounded-button bg-primary hover:bg-primary-hover text-primary-foreground text-sm font-medium shadow-sm transition-all gap-2"
             >
-                <span aria-hidden="true" className="material-symbols-outlined text-[18px]">add</span>
+                <Plus className="w-4 h-4" aria-hidden="true" />
                 Create Quest
             </Link>
         </div>

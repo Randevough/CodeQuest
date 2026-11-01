@@ -6,6 +6,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { useSession } from 'next-auth/react'
 import { EditProfileModal } from './EditProfileModal'
+import { Pencil, Code, Briefcase, Award } from 'lucide-react'
 
 interface Badge {
     id: string
@@ -43,7 +44,7 @@ export function ProfileSidebar({ user, badges }: ProfileSidebarProps) {
                         aria-label="Edit Profile"
                         title="Edit Profile"
                     >
-                        <span aria-hidden="true" className="material-symbols-outlined text-[18px] leading-none">edit</span>
+                        <Pencil className="w-4 h-4 leading-none" />
                     </button>
                 )}
 
@@ -73,13 +74,13 @@ export function ProfileSidebar({ user, badges }: ProfileSidebarProps) {
                 <div className="flex flex-wrap gap-3 w-full justify-center">
                     {user.githubUrl && (
                         <a className="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg border border-border dark:border-border-dark text-muted hover:bg-surface-raised hover:border-border transition-all text-sm font-medium" href={user.githubUrl} target="_blank" rel="noopener noreferrer">
-                            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">code</span>
+                            <Code className="w-4 h-4" />
                             GitHub
                         </a>
                     )}
                     {user.linkedinUrl && (
                         <a className="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg border border-border dark:border-border-dark text-muted hover:bg-surface-raised hover:border-border transition-all text-sm font-medium" href={user.linkedinUrl} target="_blank" rel="noopener noreferrer">
-                            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">work</span>
+                            <Briefcase className="w-4 h-4" />
                             LinkedIn
                         </a>
                     )}
@@ -103,7 +104,7 @@ export function ProfileSidebar({ user, badges }: ProfileSidebarProps) {
                                     {badge.imageUrl ? (
                                         <Image src={badge.imageUrl} alt={badge.name} width={32} height={32} className="object-contain" />
                                     ) : (
-                                        <span aria-hidden="true" className="material-symbols-outlined text-foreground text-[24px]">verified</span>
+                                        <Award className="w-6 h-6 text-foreground" />
                                     )}
                                     <span className="text-sm">{badge.name}</span>
                                     <span className="sr-only">{badge.description}</span>

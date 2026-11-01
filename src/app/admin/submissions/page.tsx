@@ -7,6 +7,7 @@ import { getSubmissions, type SubmissionItem } from '@/actions/submission';
 import { Pagination } from '@/components/Pagination';
 import { MobileSidebarTrigger } from '@/components/admin/MobileSidebarTrigger';
 import { SearchInput } from '@/components/ui/SearchInput';
+import { Link as LinkIcon, Eye } from 'lucide-react';
 
 export default function SubmissionQueuePage() {
     const queueHeadingRef = useRef<HTMLHeadingElement>(null);
@@ -193,7 +194,7 @@ export default function SubmissionQueuePage() {
                                                 <td className="py-4 px-6 text-center">
                                                     {snatch.submissionUrl ? (
                                                         <a aria-label={`Open submission for ${snatch.quest.title}`} href={snatch.submissionUrl} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 min-w-11 items-center justify-center text-muted hover:text-warning transition-colors">
-                                                            <span aria-hidden="true" className="material-symbols-outlined text-[20px]">link</span>
+                                                            <LinkIcon className="w-5 h-5" aria-hidden="true" />
                                                         </a>
                                                     ) : (
                                                         <span className="text-muted">-</span>
@@ -205,7 +206,7 @@ export default function SubmissionQueuePage() {
                                                             onClick={() => handleOpenReview(snatch.id)}
                                                             className="flex items-center gap-1.5 px-3 py-1.5 bg-secondary text-secondary-foreground rounded-card shadow-sm text-xs font-bold hover:bg-secondary transition-all text-secondary-foreground"
                                                         >
-                                                            <span aria-hidden="true" className="material-symbols-outlined text-[16px]">visibility</span>
+                                                            <Eye className="w-4 h-4" aria-hidden="true" />
                                                             Review
                                                         </button>
                                                     </div>

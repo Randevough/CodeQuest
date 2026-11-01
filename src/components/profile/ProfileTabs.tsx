@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
 import Image from 'next/image'
 import { UserAvatar } from '@/components/ui/UserAvatar'
+import { ScrollText, FolderOpen, Award, ExternalLink, Lock, Star, Brain, TrendingUp, GraduationCap } from 'lucide-react'
 
 // Quick interfaces for props
 interface Quest {
@@ -64,7 +65,7 @@ export function ProfileTabs({ activeSnatches, portfolioSnatches = [], user, isOw
                             : 'text-muted hover:text-foreground border-transparent hover:border-border'
                             }`}
                     >
-                        <span aria-hidden="true" className={`material-symbols-outlined text-[20px] ${activeTab === 'active' ? 'filled' : ''}`}>assignment</span>
+                        <ScrollText className="w-5 h-5" aria-hidden="true" />
                         Active Quests
                         <span className="ml-2 bg-secondary py-0.5 px-2 rounded-full text-sm text-secondary-foreground">{activeSnatches.length}</span>
                     </button>
@@ -76,7 +77,7 @@ export function ProfileTabs({ activeSnatches, portfolioSnatches = [], user, isOw
                             : 'text-muted hover:text-foreground border-transparent hover:border-border'
                             }`}
                     >
-                        <span aria-hidden="true" className="material-symbols-outlined text-[20px]">folder_open</span>
+                        <FolderOpen className="w-5 h-5" aria-hidden="true" />
                         Portfolio History
                     </button>
                     <button
@@ -87,7 +88,7 @@ export function ProfileTabs({ activeSnatches, portfolioSnatches = [], user, isOw
                             : 'text-muted hover:text-foreground border-transparent hover:border-border'
                             }`}
                     >
-                        <span aria-hidden="true" className="material-symbols-outlined text-[20px]">military_tech</span>
+                        <Award className="w-5 h-5" aria-hidden="true" />
                         Badges
                     </button>
                 </nav>
@@ -235,15 +236,13 @@ export function ProfileTabs({ activeSnatches, portfolioSnatches = [], user, isOw
                                             if (d === 'intermediate') return 'bg-surface text-info'
                                             return 'bg-surface text-success'
                                         })()}`}>
-                                            <span aria-hidden="true" className="material-symbols-outlined text-[24px]">
-                                                {(() => {
-                                                    const d = (snatch.quest.difficulty || '').toLowerCase()
-                                                    if (d === 'exclusive') return 'star'
-                                                    if (d === 'expert' || d === 'hard' || d === 'advanced') return 'psychology'
-                                                    if (d === 'intermediate') return 'trending_up'
-                                                    return 'school'
-                                                })()}
-                                            </span>
+                                            {(() => {
+                                                const d = (snatch.quest.difficulty || '').toLowerCase()
+                                                if (d === 'exclusive') return <Star className="w-6 h-6" aria-hidden="true" />
+                                                if (d === 'expert' || d === 'hard' || d === 'advanced') return <Brain className="w-6 h-6" aria-hidden="true" />
+                                                if (d === 'intermediate') return <TrendingUp className="w-6 h-6" aria-hidden="true" />
+                                                return <GraduationCap className="w-6 h-6" aria-hidden="true" />
+                                            })()}
                                         </div>
                                         <div className="flex-grow">
                                             <div className="flex justify-between items-start">
@@ -261,7 +260,7 @@ export function ProfileTabs({ activeSnatches, portfolioSnatches = [], user, isOw
                                                         aria-label="View Code"
                                                         className="p-2 text-muted hover:text-foreground transition-colors"
                                                     >
-                                                        <span aria-hidden="true" className="material-symbols-outlined text-[20px]">open_in_new</span>
+                                                        <ExternalLink className="w-5 h-5" aria-hidden="true" />
                                                     </a>
                                                 )}
                                             </div>
@@ -334,12 +333,12 @@ export function ProfileTabs({ activeSnatches, portfolioSnatches = [], user, isOw
                                                         className={`w-10 h-10 object-contain max-w-full ${!earned ? 'grayscale' : ''}`}
                                                     />
                                                 ) : (
-                                                    <span aria-hidden="true" className={`material-symbols-outlined text-[24px] ${earned ? 'text-foreground' : 'text-muted'}`}>verified</span>
+                                                    <Award className={`w-8 h-8 ${earned ? 'text-primary' : 'text-muted'}`} aria-hidden="true" />
                                                 )}
                                                 {/* Lock overlay for unearned */}
                                                 {!earned && (
-                                                    <div className="absolute inset-0 bg-surface flex items-center justify-center rounded-full">
-                                                        <span aria-hidden="true" className="material-symbols-outlined text-foreground text-[18px]">lock</span>
+                                                    <div className="absolute inset-0 bg-surface/80 flex items-center justify-center rounded-full">
+                                                        <Lock className="w-5 h-5 text-muted" aria-hidden="true" />
                                                     </div>
                                                 )}
                                             </div>
@@ -358,8 +357,8 @@ export function ProfileTabs({ activeSnatches, portfolioSnatches = [], user, isOw
                             </div>
                         ) : (
                             <div className="p-8 text-center text-muted">
-                                <span aria-hidden="true" className="material-symbols-outlined text-4xl mb-2 text-muted block">military_tech</span>
-                                <p>No badges available yet.</p>
+                                <Award className="w-10 h-10 mx-auto mb-2 text-muted block" aria-hidden="true" />
+                                <p>No badges available yet</p>
                             </div>
                         )}
                     </div>

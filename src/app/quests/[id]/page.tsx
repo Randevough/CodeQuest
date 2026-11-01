@@ -5,7 +5,9 @@ import Link from 'next/link'
 import { QuestAction } from '@/components/QuestAction'
 import { Header } from '@/components/Header'
 import { QuestTimer } from '@/components/QuestTimer'
+import { UserAvatar } from '@/components/ui/UserAvatar'
 import Image from 'next/image'
+import { ChevronLeft, Info, ListChecks, Circle, Link as LinkIcon, FileText, Timer, Users, Plus } from 'lucide-react'
 
 // Force dynamic since we use user specific data and params
 export const dynamic = 'force-dynamic'
@@ -100,7 +102,7 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                                     <div className="flex flex-col gap-6">
                                         {/* Back Navigation */}
                                         <Link href="/explore" className="min-h-11 inline-flex items-center gap-1 text-sm font-medium text-muted hover:text-foreground transition-colors font-sans mb-[-10px]">
-                                            <span aria-hidden="true" className="material-symbols-outlined text-[20px]">chevron_left</span>
+                                            <ChevronLeft className="w-5 h-5" aria-hidden="true" />
                                             Back to Quests
                                         </Link>
 
@@ -145,7 +147,7 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                                 <div className="p-4 sm:p-6 space-y-8">
                                     <section>
                                         <h3 className="text-sm font-bold uppercase tracking-wider text-muted mb-4 flex items-center gap-2">
-                                            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">info</span> Mission Briefing
+                                            <Info className="w-4 h-4 text-primary" aria-hidden="true" /> Mission Briefing
                                         </h3>
                                         <div className="max-w-[70ch] text-foreground leading-relaxed">
                                             <p>{quest.description}</p>
@@ -156,13 +158,13 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                                     {requirements.length > 0 && (
                                         <section>
                                             <h3 className="text-sm font-bold uppercase tracking-wider text-muted mb-4 flex items-center gap-2">
-                                                <span aria-hidden="true" className="material-symbols-outlined text-[18px]">checklist</span> Completion Requirements
+                                                <ListChecks className="w-4 h-4 text-primary" aria-hidden="true" /> Completion Requirements
                                             </h3>
                                             <ul className="space-y-3">
                                                 {requirements.map((req, index) => (
                                                     <li key={index} className="flex items-center gap-3 bg-surface p-4 rounded-lg border border-border">
                                                         <div className="flex items-center justify-center min-w-[20px] h-5">
-                                                            <span aria-hidden="true" className="material-symbols-outlined text-muted text-[20px]">radio_button_unchecked</span>
+                                                            <Circle className="w-4 h-4 text-muted" aria-hidden="true" />
                                                         </div>
                                                         <span className="text-foreground text-sm font-medium">{req}</span>
                                                     </li>
@@ -175,11 +177,11 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                                     {quest.resources && (
                                         <section>
                                             <h3 className="text-sm font-bold uppercase tracking-wider text-muted mb-4 flex items-center gap-2">
-                                                <span aria-hidden="true" className="material-symbols-outlined text-[18px]">link</span> Resources
+                                                <LinkIcon className="w-4 h-4 text-primary" aria-hidden="true" /> Resources
                                             </h3>
                                             <div className="bg-surface border border-border rounded-lg p-4">
                                                 <div className="flex items-start gap-3">
-                                                    <span aria-hidden="true" className="material-symbols-outlined text-info mt-0.5">description</span>
+                                                    <FileText className="w-4 h-4 text-info mt-0.5" aria-hidden="true" />
                                                     <div>
                                                         <h5 className="font-semibold text-info text-sm mb-1">Provided Materials</h5>
                                                         {(() => {
@@ -242,7 +244,7 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                             {/* Time Remaining */}
                             <div className="bg-surface dark:bg-surface-dark rounded-card break-words border border-border p-6">
                                 <div className="flex items-center gap-2 mb-4">
-                                    <span aria-hidden="true" className="material-symbols-outlined text-foreground text-[20px]">timer</span>
+                                    <Timer className="w-5 h-5 text-foreground" aria-hidden="true" />
                                     <h4 className="text-sm font-bold text-foreground">Time Remaining</h4>
                                 </div>
                                 <QuestTimer deadline={quest.deadline} />
@@ -252,7 +254,7 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                             <div className="bg-surface dark:bg-surface-dark rounded-card break-words border border-border p-6">
                                 <div className="flex justify-between items-center mb-4">
                                     <div className="flex items-center gap-2">
-                                        <span aria-hidden="true" className="material-symbols-outlined text-foreground text-[20px]">groups</span>
+                                        <Users className="w-5 h-5 text-foreground" aria-hidden="true" />
                                         <h4 className="text-sm font-bold text-foreground">Squad Members</h4>
                                     </div>
                                     <span className={`text-sm font-mono font-bold px-2 py-1 rounded ${quest.snatches.length >= quest.maxSnatchers ? 'bg-surface text-danger' : 'bg-surface text-foreground'}`}>
@@ -262,13 +264,12 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                                 <div className="space-y-4">
                                     {quest.snatches.map((snatch) => (
                                         <Link href={`/profile/${snatch.user.id}`} key={snatch.user.id} className="min-h-11 flex items-center gap-3 p-2 -mx-2 rounded-lg hover:bg-surface-raised transition-colors group">
-                                            {snatch.user.avatar ? (
-                                                <Image src={snatch.user.avatar} alt={snatch.user.name || 'User'} width={40} height={40} unoptimized className="size-10 rounded-full object-cover transition-transform" />
-                                            ) : (
-                                                <div className="size-10 rounded-full bg-surface flex items-center justify-center font-bold text-muted transition-transform">
-                                                    {(snatch.user.name || snatch.user.handle || '?')[0].toUpperCase()}
-                                                </div>
-                                            )}
+                                            <UserAvatar
+                                                src={snatch.user.avatar}
+                                                name={snatch.user.name || snatch.user.handle}
+                                                size={40}
+                                                className="size-10 rounded-full border border-border"
+                                            />
                                             <div className="flex-1 min-w-0">
                                                 <p className="text-sm font-semibold text-foreground break-words group-hover:text-foreground transition-colors">
                                                     {snatch.user.name || snatch.user.handle || 'Anonymous'}
@@ -288,7 +289,7 @@ export default async function QuestPage({ params }: { params: { id: string } }) 
                                     {quest.snatches.length < quest.maxSnatchers && (
                                         <div className="flex items-center gap-3">
                                             <div className="size-10 rounded-full bg-surface border-2 border-dashed border-border flex items-center justify-center text-muted">
-                                                <span aria-hidden="true" className="material-symbols-outlined text-[18px]">add</span>
+                                                <Plus className="w-4 h-4" aria-hidden="true" />
                                             </div>
                                             <div className="flex-1">
                                                 <p className="text-sm text-muted italic">Spot Open</p>

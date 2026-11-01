@@ -6,6 +6,16 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAdminSidebar } from './AdminSidebarContext';
 import Image from 'next/image';
+import {
+    Compass,
+    Trophy,
+    Code,
+    LayoutDashboard,
+    ScrollText,
+    Inbox,
+    Users,
+} from 'lucide-react';
+import { UserAvatar } from '@/components/ui/UserAvatar';
 
 interface AdminSidebarProps {
     memberCount?: number;
@@ -43,16 +53,6 @@ export function AdminSidebar({ memberCount = 0, submissionCount = 0, user }: Adm
         return "min-h-11 flex items-center gap-3 px-3 py-2 rounded-card text-muted  hover:bg-surface  hover:text-foreground  transition-colors group";
     };
 
-    // Helper to get initials
-    const getInitials = (name: string | null) => {
-        const displayName = name || '?';
-        const parts = displayName.split(' ').filter(Boolean);
-        if (parts.length >= 2) {
-            return (parts[0][0] + parts[1][0]).toUpperCase();
-        }
-        return displayName.substring(0, 2).toUpperCase();
-    };
-
     const userImage = user?.avatar || user?.image;
     const userName = user?.name || user?.handle || 'Admin User';
     const userEmail = user?.email || '';
@@ -71,15 +71,15 @@ export function AdminSidebar({ memberCount = 0, submissionCount = 0, user }: Adm
                         </div>
                         {/* Reordered Menu: Explore, Leaderboard, Workspace */}
                         <Link className={getLinkClass('/explore')} aria-current={pathname === '/explore' ? 'page' : undefined} href="/explore" onClick={closeMobileSidebar}>
-                            <span className="material-symbols-outlined text-[20px]" aria-hidden="true">travel_explore</span>
+                            <Compass className="w-5 h-5 shrink-0" aria-hidden="true" />
                             <span>Explore Quests</span>
                         </Link>
                         <Link className={getLinkClass('/leaderboard')} aria-current={pathname === '/leaderboard' ? 'page' : undefined} href="/leaderboard" onClick={closeMobileSidebar}>
-                            <span aria-hidden="true" className={`material-symbols-outlined text-[20px] transition-colors `}>emoji_events</span>
+                            <Trophy className="w-5 h-5 shrink-0" aria-hidden="true" />
                             <span className="text-sm font-medium">Leaderboard</span>
                         </Link>
                         <Link className={getLinkClass('/workspace')} aria-current={pathname === '/workspace' ? 'page' : undefined} href="/workspace" onClick={closeMobileSidebar}>
-                            <span aria-hidden="true" className={`material-symbols-outlined text-[20px] transition-colors `}>code</span>
+                            <Code className="w-5 h-5 shrink-0" aria-hidden="true" />
                             <span className="text-sm font-medium">Workspace</span>
                         </Link>
                     </nav>
@@ -88,22 +88,22 @@ export function AdminSidebar({ memberCount = 0, submissionCount = 0, user }: Adm
                             Admin Command Center
                         </div>
                         <Link className={getLinkClass('/admin')} aria-current={pathname === '/admin' ? 'page' : undefined} href="/admin" onClick={closeMobileSidebar}>
-                            <span aria-hidden="true" className={`material-symbols-outlined text-[20px] transition-colors `}>dashboard</span>
+                            <LayoutDashboard className="w-5 h-5 shrink-0" aria-hidden="true" />
                             <span className="text-sm font-medium">Overview</span>
                         </Link>
                         <Link className={getLinkClass('/admin/manage-quests')} aria-current={pathname === '/admin/manage-quests' ? 'page' : undefined} href="/admin/manage-quests" onClick={closeMobileSidebar}>
-                            <span aria-hidden="true" className={`material-symbols-outlined text-[20px] transition-colors `}>assignment</span>
+                            <ScrollText className="w-5 h-5 shrink-0" aria-hidden="true" />
                             <span className="text-sm font-medium">Manage Quests</span>
                         </Link>
                         <Link className={getLinkClass('/admin/submissions')} aria-current={pathname === '/admin/submissions' ? 'page' : undefined} href="/admin/submissions" onClick={closeMobileSidebar}>
-                            <span aria-hidden="true" className={`material-symbols-outlined text-[20px] transition-colors `}>inbox</span>
+                            <Inbox className="w-5 h-5 shrink-0" aria-hidden="true" />
                             <span className="text-sm font-medium whitespace-nowrap">Submission Queue</span>
                             {submissionCount > 0 && (
                                 <span className="ml-auto bg-surface text-warning text-xs font-bold px-2 py-0.5 rounded-full">{submissionCount}</span>
                             )}
                         </Link>
                         <Link className={getLinkClass('/admin/members')} aria-current={pathname === '/admin/members' ? 'page' : undefined} href="/admin/members" onClick={closeMobileSidebar}>
-                            <span aria-hidden="true" className={`material-symbols-outlined text-[20px] transition-colors `}>group</span>
+                            <Users className="w-5 h-5 shrink-0" aria-hidden="true" />
                             <span className="text-sm font-medium whitespace-nowrap">Member Directory</span>
                             {memberCount > 0 && (
                                 <span className="ml-auto bg-surface text-warning text-xs font-bold px-2 py-0.5 rounded-full">{memberCount}</span>
@@ -116,23 +116,16 @@ export function AdminSidebar({ memberCount = 0, submissionCount = 0, user }: Adm
                         <Image src="/icon.png" alt="Points" width={14} height={14} className="object-contain" />
                         <span>{user?.points?.toLocaleString('en-US') ?? 0} pts</span>
                     </div>
-                    <Link href={`/profile/${user?.id}`} className="flex items-center gap-3 p-2 rounded-card hover:bg-surface cursor-pointer transition-colors">
-                        {userImage ? (
-                            <Image
-                                src={userImage}
-                                alt={userName}
-                                width={32}
-                                height={32}
-                                className="rounded-full object-cover h-8 w-8 border border-border"
-                            />
-                        ) : (
-                            <div className="h-8 w-8 rounded-full bg-surface-raised flex items-center justify-center text-muted font-bold text-xs border border-border">
-                                {getInitials(userName)}
-                            </div>
-                        )}
-                        <div className="flex flex-col overflow-hidden">
-                            <span className="text-sm font-medium text-foreground break-words">{userName}</span>
-                            <span className="text-xs text-muted break-words">{userEmail}</span>
+                    <Link href={`/profile/${user?.id}`} className="flex items-center gap-3 p-2 rounded-card hover:bg-surface-raised cursor-pointer transition-colors min-w-0">
+                        <UserAvatar
+                            src={userImage}
+                            name={userName}
+                            size={36}
+                            className="h-9 w-9 rounded-full border border-border shrink-0"
+                        />
+                        <div className="flex flex-col min-w-0 overflow-hidden">
+                            <span className="text-sm font-semibold text-foreground truncate">{userName}</span>
+                            <span className="text-xs text-muted truncate">{userEmail}</span>
                         </div>
                     </Link>
                 </div>

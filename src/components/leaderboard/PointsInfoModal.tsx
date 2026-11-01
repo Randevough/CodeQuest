@@ -4,6 +4,7 @@
 import { useState } from 'react'
 import { Dialog } from '@/components/ui/Dialog'
 import Image from 'next/image'
+import { Info, CheckCircle2, Clock, Timer } from 'lucide-react'
 
 export function PointsInfoModal() {
     const [isOpen, setIsOpen] = useState(false)
@@ -15,7 +16,7 @@ export function PointsInfoModal() {
                 className="flex items-center justify-center size-11 rounded-full bg-surface text-muted hover:bg-surface-raised transition-colors cursor-pointer"
                 aria-label="View ranking rules"
             >
-                <span aria-hidden="true" className="material-symbols-outlined text-[16px]">info</span>
+                <Info className="w-4 h-4" />
             </button>
 
             {isOpen && (
@@ -25,7 +26,7 @@ export function PointsInfoModal() {
                             <div className="space-y-4">
                                 <div className="flex gap-4">
                                     <div className="flex-shrink-0 size-8 rounded-full bg-surface flex items-center justify-center text-success">
-                                        <span aria-hidden="true" className="material-symbols-outlined text-[18px]">check_circle</span>
+                                        <CheckCircle2 className="w-5 h-5 text-success" />
                                     </div>
                                     <div>
                                         <h4 className="font-semibold text-foreground mb-1">Approved Quests Only</h4>
@@ -37,7 +38,7 @@ export function PointsInfoModal() {
 
                                 <div className="flex gap-4">
                                     <div className="flex-shrink-0 size-8 rounded-full bg-surface flex items-center justify-center text-foreground">
-                                        <span aria-hidden="true" className="material-symbols-outlined text-[18px]">pending</span>
+                                        <Clock className="w-5 h-5 text-foreground" />
                                     </div>
                                     <div>
                                         <h4 className="font-semibold text-foreground mb-1">Pending Validation</h4>
@@ -50,7 +51,7 @@ export function PointsInfoModal() {
 
                             <div className="p-4 bg-surface rounded-lg border border-border">
                                 <div className="flex items-start gap-3">
-                                    <span aria-hidden="true" className="material-symbols-outlined text-foreground text-[20px] mt-0.5">timer</span>
+                                    <Timer className="w-5 h-5 text-foreground mt-0.5 shrink-0" />
                                     <div>
                                         <h4 className="font-semibold text-sm text-foreground mb-1">Tie-Breaker Rule</h4>
                                         <p className="text-sm text-muted">

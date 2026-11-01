@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { Header } from '@/components/Header'
 import { prisma } from '@/lib/db'
 import type { Metadata } from 'next'
+import { Gamepad2, GraduationCap, Compass, UserPlus, Trophy, MousePointerClick, Code, Award, ArrowRight, CheckCircle2 } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -111,15 +112,11 @@ export default async function LandingPage() {
                 {/* Status Badges */}
                 <div className="flex flex-wrap items-center gap-2.5 mb-6">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider bg-primary/15 text-foreground border border-primary/40 shadow-sm">
-                    <span className="material-symbols-outlined text-[15px] text-primary" aria-hidden="true">
-                      sports_esports
-                    </span>
+                    <Gamepad2 className="w-3.5 h-3.5 text-primary" aria-hidden="true" />
                     SEASON 1 ACTIVE
                   </span>
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider bg-surface-raised text-muted border border-border shadow-sm">
-                    <span className="material-symbols-outlined text-[15px] text-focus" aria-hidden="true">
-                      school
-                    </span>
+                    <GraduationCap className="w-3.5 h-3.5 text-focus" aria-hidden="true" />
                     CYBER UNIVERSITY CODING CLUB
                   </span>
                 </div>
@@ -140,9 +137,7 @@ export default async function LandingPage() {
                     href="/explore"
                     className="button-primary text-sm uppercase tracking-wider"
                   >
-                    <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
-                      explore
-                    </span>
+                    <Compass className="w-4 h-4" aria-hidden="true" />
                     Explore Quests
                   </Link>
 
@@ -150,9 +145,7 @@ export default async function LandingPage() {
                     href="/signup"
                     className="button-secondary text-sm uppercase tracking-wider"
                   >
-                    <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
-                      person_add
-                    </span>
+                    <UserPlus className="w-4 h-4" aria-hidden="true" />
                     Join CodeQuest
                   </Link>
 
@@ -160,9 +153,7 @@ export default async function LandingPage() {
                     href="/leaderboard"
                     className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-button border border-control-border bg-surface px-5 py-2.5 text-sm font-bold uppercase tracking-wider text-foreground hover:bg-surface-raised transition-all"
                   >
-                    <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
-                      leaderboard
-                    </span>
+                    <Trophy className="w-4 h-4" aria-hidden="true" />
                     Leaderboard
                   </Link>
                 </div>
@@ -197,9 +188,7 @@ export default async function LandingPage() {
                   </p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-border flex items-center text-xs font-mono text-muted">
-                  <span className="material-symbols-outlined text-[16px] text-focus mr-1.5" aria-hidden="true">
-                    touch_app
-                  </span>
+                  <MousePointerClick className="w-4 h-4 text-focus mr-1.5" aria-hidden="true" />
                   Single or multi-slot squads
                 </div>
               </div>
@@ -216,9 +205,7 @@ export default async function LandingPage() {
                   </p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-border flex items-center text-xs font-mono text-muted">
-                  <span className="material-symbols-outlined text-[16px] text-warning mr-1.5" aria-hidden="true">
-                    code
-                  </span>
+                  <Code className="w-4 h-4 text-warning mr-1.5" aria-hidden="true" />
                   Git repository workflow
                 </div>
               </div>
@@ -235,9 +222,7 @@ export default async function LandingPage() {
                   </p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-border flex items-center text-xs font-mono text-muted">
-                  <span className="material-symbols-outlined text-[16px] text-success mr-1.5" aria-hidden="true">
-                    verified
-                  </span>
+                  <Award className="w-4 h-4 text-success mr-1.5" aria-hidden="true" />
                   Peer-reviewed verification
                 </div>
               </div>
@@ -264,9 +249,7 @@ export default async function LandingPage() {
                 className="inline-flex min-h-[44px] items-center gap-2 text-sm font-bold text-primary hover:text-primary-hover transition-colors font-mono uppercase"
               >
                 View all quests
-                <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
-                  arrow_forward
-                </span>
+                <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </Link>
             </div>
 
@@ -325,21 +308,15 @@ export default async function LandingPage() {
                 </p>
                 <div className="flex flex-wrap gap-4 pt-2">
                   <div className="flex items-center gap-2 text-xs font-mono text-muted">
-                    <span className="material-symbols-outlined text-[18px] text-success" aria-hidden="true">
-                      check_circle
-                    </span>
+                    <CheckCircle2 className="w-4 h-4 text-success" aria-hidden="true" />
                     Shared Git repositories
                   </div>
                   <div className="flex items-center gap-2 text-xs font-mono text-muted">
-                    <span className="material-symbols-outlined text-[18px] text-success" aria-hidden="true">
-                      check_circle
-                    </span>
+                    <CheckCircle2 className="w-4 h-4 text-success" aria-hidden="true" />
                     Distributed task ownership
                   </div>
                   <div className="flex items-center gap-2 text-xs font-mono text-muted">
-                    <span className="material-symbols-outlined text-[18px] text-success" aria-hidden="true">
-                      check_circle
-                    </span>
+                    <CheckCircle2 className="w-4 h-4 text-success" aria-hidden="true" />
                     Equal point distribution upon approval
                   </div>
                 </div>

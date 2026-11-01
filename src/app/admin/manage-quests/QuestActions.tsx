@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { duplicateQuest, deleteQuest, updateQuestStatus } from '@/actions/quest';
 import { toast } from 'sonner';
 import { DeleteQuestModal } from '@/components/admin/DeleteQuestModal';
+import { Hourglass, MoreVertical, Pencil, FileX, Upload, Copy, Trash2 } from 'lucide-react';
 
 interface QuestActionsProps {
     questId: string;
@@ -129,9 +130,11 @@ export function QuestActions({ questId, status, activeSnatchesCount }: QuestActi
                     disabled={isLoading}
                     className="w-8 h-8 flex items-center justify-center text-muted hover:text-warning rounded hover:bg-surface hover:border hover:border-border transition-all disabled:opacity-50"
                 >
-                    <span aria-hidden="true" className="material-symbols-outlined text-[20px]">
-                        {isLoading ? 'hourglass_empty' : 'more_vert'}
-                    </span>
+                    {isLoading ? (
+                        <Hourglass className="w-4 h-4 animate-spin" aria-hidden="true" />
+                    ) : (
+                        <MoreVertical className="w-4 h-4" aria-hidden="true" />
+                    )}
                 </button>
 
                 <div ref={menuRef} id={menuId} popover="auto"
@@ -142,8 +145,7 @@ export function QuestActions({ questId, status, activeSnatchesCount }: QuestActi
                             className="flex items-center px-4 py-2 text-sm text-foreground hover:bg-surface-raised w-full text-left gap-2"
                             onClick={() => setIsOpen(false)}
                         >
-
-                            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">edit</span>
+                            <Pencil className="w-4 h-4" aria-hidden="true" />
                             Edit Quest
                         </Link>
                         {status === 'Active' ? (
@@ -157,7 +159,7 @@ export function QuestActions({ questId, status, activeSnatchesCount }: QuestActi
                                       : 'text-warning  hover:bg-surface '
                                 }`}
                             >
-                                <span aria-hidden="true" className="material-symbols-outlined text-[18px]">unpublished</span>
+                                <FileX className="w-4 h-4" aria-hidden="true" />
                                 Back to Draft
                             </button>
                         ) : (
@@ -165,7 +167,7 @@ export function QuestActions({ questId, status, activeSnatchesCount }: QuestActi
                                 onClick={() => handleStatusUpdate('Active')}
                                 className="flex items-center px-4 py-2 text-sm text-success hover:bg-surface w-full text-left gap-2"
                             >
-                                <span aria-hidden="true" className="material-symbols-outlined text-[18px]">publish</span>
+                                <Upload className="w-4 h-4" aria-hidden="true" />
                                 Publish
                             </button>
                         )}
@@ -173,7 +175,7 @@ export function QuestActions({ questId, status, activeSnatchesCount }: QuestActi
                             onClick={handleDuplicate}
                             className="flex items-center px-4 py-2 text-sm text-foreground hover:bg-surface-raised w-full text-left gap-2"
                         >
-                            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">content_copy</span>
+                            <Copy className="w-4 h-4" aria-hidden="true" />
                             Duplicate
                         </button>
                         <div className="h-px bg-surface-raised my-1 font-medium"></div>
@@ -187,7 +189,7 @@ export function QuestActions({ questId, status, activeSnatchesCount }: QuestActi
                                   : 'text-danger  hover:bg-surface '
                             }`}
                         >
-                            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">delete</span>
+                            <Trash2 className="w-4 h-4" aria-hidden="true" />
                             Delete
                         </button>
                 </div>

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { getWorkspaceQuests } from '@/actions/quest'
 import { WorkspaceQuestCard } from './WorkspaceQuestCard'
 import { Prisma } from '@prisma/client'
+import { PlusCircle, ArrowRight } from 'lucide-react'
 
 type WorkspaceSnatch = Prisma.SnatchGetPayload<{
     include: {
@@ -48,16 +49,16 @@ export async function WorkspaceQuestGrid() {
             {Array.from({ length: emptySlots }).map((_, i) => (
                 <article key={`empty-${i}`} className="flex flex-col items-center justify-center gap-4 h-[240px] border-2 border-dashed border-border rounded-card break-words bg-surface dark:bg-surface-dark/30 hover:bg-surface-raised dark:hover:bg-surface-dark/50 transition-colors">
                     <Link href="/explore" aria-label="Browse new quests" className="min-h-11 group/icon h-12 w-12 rounded-full bg-surface dark:bg-surface-dark border border-border flex items-center justify-center hover:border-border transition-all">
-                        <span aria-hidden="true" className="material-symbols-outlined text-muted group-hover/icon:text-foreground transition-colors">add_circle</span>
+                        <PlusCircle className="w-6 h-6 text-muted group-hover/icon:text-primary transition-colors" aria-hidden="true" />
                     </Link>
                     <div className="text-center">
                         <h3 className="text-sm font-semibold text-foreground">Empty Slot Available</h3>
                         <p className="text-sm text-muted mt-1 max-w-[240px]">
-                            Ready for more? Find a new quest to add to your list.
+                            Ready for more? Find a new quest to add to your list
                         </p>
                     </div>
-                    <Link href="/explore" className="min-h-11 text-sm font-bold text-foreground hover:text-foreground transition-colors flex items-center gap-1">
-                        Browse New Quests <span aria-hidden="true" className="material-symbols-outlined text-sm">arrow_forward</span>
+                    <Link href="/explore" className="min-h-11 text-sm font-bold text-foreground hover:text-foreground transition-colors flex items-center gap-1.5">
+                        Browse New Quests <ArrowRight className="w-4 h-4" aria-hidden="true" />
                     </Link>
                 </article>
             ))}

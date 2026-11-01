@@ -6,6 +6,7 @@ import { assignQuest, getActiveQuestsForAssignment } from '@/actions/assignment'
 import { Dialog } from '@/components/ui/Dialog'
 import { CustomDropdown } from '@/components/ui/CustomDropdown'
 import { toast } from 'sonner'
+import { MoreVertical, Shield, PlusCircle, Unlock, Ban, Trash2 } from 'lucide-react'
 
 type UserProp = {
     id: string
@@ -158,7 +159,7 @@ export function MemberActionMenu({ user }: { user: UserProp }) {
                 onClick={toggleMenu}
                 className="text-muted hover:text-warning transition-colors p-1 rounded-full hover:bg-surface-raised active:text-warning"
             >
-                <span aria-hidden="true" className="material-symbols-outlined text-[20px]">more_vert</span>
+                <MoreVertical className="w-5 h-5" aria-hidden="true" />
             </button>
 
             {/* Dropdown Menu - Fixed Position */}
@@ -173,7 +174,7 @@ export function MemberActionMenu({ user }: { user: UserProp }) {
                             onClick={() => { openModal('role'); }}
                             className="w-full text-left px-4 py-2 text-sm text-foreground hover:bg-surface flex items-center gap-2"
                         >
-                            <span aria-hidden="true" className="material-symbols-outlined text-[18px] text-muted">admin_panel_settings</span>
+                            <Shield className="w-4 h-4 text-muted" aria-hidden="true" />
                             Edit Role
                         </button>
 
@@ -181,7 +182,7 @@ export function MemberActionMenu({ user }: { user: UserProp }) {
                             onClick={() => { openModal('assign-quest'); }}
                             className="w-full text-left px-4 py-2 text-sm text-foreground hover:bg-surface flex items-center gap-2"
                         >
-                            <span aria-hidden="true" className="material-symbols-outlined text-[18px] text-muted">assignment_add</span>
+                            <PlusCircle className="w-4 h-4 text-muted" aria-hidden="true" />
                             Assign Quest
                         </button>
 
@@ -190,7 +191,7 @@ export function MemberActionMenu({ user }: { user: UserProp }) {
                                 onClick={handleResetCooldown}
                                 className="w-full text-left px-4 py-2 text-sm text-foreground hover:bg-surface flex items-center gap-2"
                             >
-                                <span aria-hidden="true" className="material-symbols-outlined text-[18px] text-muted">lock_open</span>
+                                <Unlock className="w-4 h-4 text-muted" aria-hidden="true" />
                                 Reset Cooldown
                             </button>
                         )}
@@ -199,7 +200,7 @@ export function MemberActionMenu({ user }: { user: UserProp }) {
                             onClick={() => { openModal('deactivate'); }}
                             className="w-full text-left px-4 py-2 text-sm text-warning hover:bg-surface flex items-center gap-2"
                         >
-                            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">block</span>
+                            <Ban className="w-4 h-4 text-warning" aria-hidden="true" />
                             Deactivate Member
                         </button>
 
@@ -207,7 +208,7 @@ export function MemberActionMenu({ user }: { user: UserProp }) {
                             onClick={() => { setConfirmText(''); openModal('delete'); }}
                             className="w-full text-left px-4 py-2 text-sm text-danger hover:bg-surface flex items-center gap-2 border-t border-border"
                         >
-                            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">delete_forever</span>
+                            <Trash2 className="w-4 h-4 text-danger" aria-hidden="true" />
                             Delete User
                         </button>
                     </div>

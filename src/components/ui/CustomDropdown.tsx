@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, useId } from "react";
+import { useEffect, useRef, useState, useId, ReactNode } from "react";
+import { Filter, ArrowUpDown, Calendar } from "lucide-react";
 
 export type Option = { label: string; value: string };
 
@@ -9,13 +10,22 @@ interface CustomDropdownProps {
     onChange: (value: string) => void;
     options: Option[];
     placeholder?: string;
-    icon?: string;
+    icon?: ReactNode;
     className?: string;
     id?: string;
     name?: string;
     "aria-label"?: string;
     "aria-labelledby"?: string;
     disabled?: boolean;
+}
+
+function DropdownIcon({ icon }: { icon: ReactNode }) {
+    if (typeof icon === "string") {
+        if (icon === "filter_list") return <Filter className="w-4 h-4 text-muted shrink-0" aria-hidden="true" />;
+        if (icon === "sort") return <ArrowUpDown className="w-4 h-4 text-muted shrink-0" aria-hidden="true" />;
+        if (icon === "calendar_today") return <Calendar className="w-4 h-4 text-muted shrink-0" aria-hidden="true" />;
+    }
+    return <span className="text-muted shrink-0 flex items-center" aria-hidden="true">{icon}</span>;
 }
 
 export function CustomDropdown({
@@ -164,14 +174,7 @@ export function CustomDropdown({
                 className="w-full min-h-[44px] flex items-center justify-between gap-2.5 rounded-[var(--radius-input)] border border-control-border bg-surface text-foreground px-3.5 py-2 text-sm font-medium shadow-sm transition-all duration-fast hover:border-border focus:border-focus focus:outline-none focus:ring-2 focus:ring-focus/30 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
             >
                 <div className="flex items-center gap-2 truncate min-w-0">
-                    {icon && (
-                        <span
-                            className="material-symbols-outlined text-[18px] text-muted shrink-0"
-                            aria-hidden="true"
-                        >
-                            {icon}
-                        </span>
-                    )}
+                    {icon && <DropdownIcon icon={icon} />}
                     <span
                         className={`truncate ${
                             selectedOption ? "text-foreground font-semibold" : "text-muted"

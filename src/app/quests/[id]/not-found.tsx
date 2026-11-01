@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { SearchX } from 'lucide-react'
 
 export default function QuestNotFound() {
     return (
@@ -7,7 +8,7 @@ export default function QuestNotFound() {
                 <div className="mb-6 flex justify-center">
                     <div className="w-24 h-24 bg-surface rounded-card break-words flex items-center justify-center border border-border relative overflow-hidden">
                         <div className="absolute inset-0 bg-surface opacity-20 animate-pulse"></div>
-                        <span aria-hidden="true" className="material-symbols-outlined text-[48px] text-muted relative z-10">search_off</span>
+                        <SearchX className="w-12 h-12 text-muted relative z-10" aria-hidden="true" />
                     </div>
                 </div>
                 <h2 className="text-2xl font-bold mb-4 text-foreground">Quest Not Found</h2>
