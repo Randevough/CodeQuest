@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { CustomDropdown, Option } from '@/components/ui/CustomDropdown'
 
-// --- Reusable Custom Select Component ---
+import { SearchInput } from '@/components/ui/SearchInput'
 function CustomSelect({ value, onChange, options, icon }: {
     value: string, onChange: (value: string) => void, options: Option[], icon?: string
 }) {
@@ -73,16 +73,12 @@ export function QuestSearch() {
             className="flex flex-col lg:flex-row lg:items-end gap-4"
         >
             {/* Search Input */}
-            <div className="relative flex items-center flex-1 min-w-0 bg-surface rounded-[var(--radius-input)] break-words border border-control-border transition-all duration-fast ease-in-out focus-within:border-focus focus-within:ring-2 focus-within:ring-focus/30">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center pointer-events-none material-symbols-outlined text-muted text-[20px]">search</span>
-                <input
-                    aria-label="Search quests"
+            <div className="flex-1 min-w-0">
+                <SearchInput
                     name="q"
+                    aria-label="Search quests"
                     defaultValue={searchParams.get('q') || ''}
-                    className="w-full pl-12 pr-4 py-2.5 bg-transparent border-none outline-none appearance-none text-sm font-medium text-foreground placeholder-muted"
-                    placeholder="Search quests..."
-                    type="text"
-                    autoComplete="off"
+                    placeholder="Search quests"
                 />
             </div>
 
