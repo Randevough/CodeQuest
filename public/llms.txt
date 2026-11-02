@@ -1,0 +1,23 @@
+# CodeQuest
+
+> CodeQuest is a gamified developer arena where engineers tackle real-world software quests, collaborate in squads, climb competitive leaderboards, and earn verified XP and badges.
+
+## Platform Overview
+CodeQuest turns software engineering challenges into structured quests across modern engineering domains. Developers solve quests, submit code artifacts for peer and automated review, and earn XP to level up their developer profile.
+
+- [Quests & Challenges](/explore): Browse active developer quests across domains and difficulty tiers.
+- [Global Leaderboard](/leaderboard): Live global rankings by XP, completed quests, and squad points.
+- [Sitemap](/sitemap.xml): Index of publicly accessible routes and quest resources.
+
+## Quest Categories
+- **Web**: Frontend, fullstack, API development, performance optimization, accessibility, and modern web frameworks.
+- **AI**: Agent architectures, LLM prompt engineering, RAG pipelines, model evaluations, and AI system integration.
+- **Mobile**: Cross-platform and native mobile applications, responsive interfaces, offline-first architectures, and mobile SDK integration.
+
+## Difficulty Tiers & XP Rewards
+- **Beginner**: 100 - 250 XP. Core syntax, basic integrations, clean code fundamentals.
+- **Intermediate**: 300 - 600 XP. Full-stack components, state management, complex API contracts.
+- **Advanced / Expert**: 700 - 1,500+ XP. Distributed systems, high-concurrency architectures, deep performance tuning, production hardening.
+
+## Squad Mechanics
+Developers can assemble squads, pool weekly score points, conquer team milestones, and compete on the global squad leaderboard.
