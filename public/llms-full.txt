@@ -1,0 +1,45 @@
+# CodeQuest - Technical Specification & Platform Ingest
+
+## Mission
+CodeQuest provides a competitive, gamified developer arena designed for software engineers to prove and sharpen real-world engineering skills. Engineers complete hands-on technical quests, participate in squads, earn XP, unlock capability badges, and establish provable on-chain or platform-verified credentials.
+
+## System Architecture & Domain Model
+
+### 1. Quests
+Quests represent real-world development tasks with specific acceptance criteria, test fixtures, and deliverable targets.
+- **Attributes**:
+  - `id`: Unique identifier (CUID / UUID).
+  - `title`: Problem title and primary focus.
+  - `description`: Context, problem statement, technical constraints.
+  - `category`: Domain taxonomy (`Web`, `AI`, `Mobile`).
+  - `difficulty`: Complexity rating (`Beginner`, `Intermediate`, `Advanced`, `Expert`).
+  - `points` / `xp`: Experience points awarded upon verified completion (100 - 1500+ XP).
+  - `requirements`: Structured checklist of deliverables and test conditions.
+
+### 2. Quest Lifecycle & Snatches
+Developers claim quests through a "snatch" mechanism to prevent concurrent collisions on limited slots:
+- **Available**: Quest open for snatching by eligible developers.
+- **Active / Snatched**: Developer currently working on implementation within a designated timer window.
+- **Submitted**: Pull request, repository link, or artifact submitted for verification.
+- **In Review / Revision Needed**: Peer review or automated test pipeline requests revisions.
+- **Completed / Accepted**: Verification passed; XP awarded to user profile and contributing squad.
+- **Archived / Expired**: Quest timed out or archived without completion.
+
+### 3. Squad Mechanics
+- Squads consist of groups of developers collaborating toward collective goals.
+- Squad members contribute a percentage of earned XP to the squad total.
+- Weekly and seasonal squad leaderboards rank teams by collective throughput, code quality, and challenge completions.
+- Squad achievements unlock team badges and exclusive high-tier quests.
+
+### 4. Progression & Gamification Matrix
+- **Tiers**: Novice, Apprentice, Journeyman, Expert, Master, Legend.
+- **Badges**: Domain-specific badges (e.g., `web-weaver`, `ai-architect`, `mobile-maestro`, `conqueror`, `score-leader`).
+- **Penalties**: Anti-abandonment mechanics penalize abandoned claims to preserve quest availability.
+
+### 5. Key URLs & Ingest Endpoints
+- `/`: Home and landing page.
+- `/explore`: Quest discovery filterable by domain, difficulty, and reward tier.
+- `/leaderboard`: Global developer and squad rankings.
+- `/sitemap.xml`: XML sitemap containing all indexable paths.
+- `/llms.txt`: Summary ingest index for LLM search engines.
+- `/llms-full.txt`: Full context specification for deep indexing and technical evaluation.
