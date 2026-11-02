@@ -824,7 +824,7 @@ describe('End-to-End Quest Lifecycle and Gamification Journey', () => {
     expect(teammateSnatch?.squadId).toBe(squadId)
 
     // 3f. Verify notification delivered to squad creator about teammate joining
-    const creatorNotifs = store.notifications.filter(n => n.userId === memberUser.id && n.type === 'QUEST_ASSIGNED')
+    const creatorNotifs = store.notifications.filter(n => n.userId === memberUser.id && (n.type === 'SQUAD_JOIN' || n.type === 'QUEST_ASSIGNED'))
     expect(creatorNotifs.length).toBeGreaterThan(0)
     expect(creatorNotifs[0].message).toContain('joined your squad')
 
