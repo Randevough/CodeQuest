@@ -1,0 +1,10 @@
+.git
+.agent
+.next
+node_modules
+__tests__
+e2e
+coverage
+.env*.local
+worktrees
+npm-debug.log*
