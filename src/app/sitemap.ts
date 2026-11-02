@@ -4,10 +4,16 @@ import { prisma } from '@/lib/db'
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = process.env.NEXTAUTH_URL || 'https://codequest.dev'
 
-    const quests = await prisma.quest.findMany({
-        where: { status: 'Active' },
-        select: { id: true, updatedAt: true }
-    })
+    let quests: Array<{ id: string; updatedAt: Date }> = []
+    try {
+        quests = await prisma.quest.findMany({
+            where: { status: 'Active' },
+            select: { id: true, updatedAt: true }
+        })
+    } catch {
+        // DB unreachable during build static prerender
+        quests = []
+    }
 
     const staticRoutes: MetadataRoute.Sitemap = [
         {

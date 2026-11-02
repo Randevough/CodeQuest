@@ -10,15 +10,20 @@ export const contentType = 'image/png'
 
 export default async function Image({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
-    const quest = await prisma.quest.findUnique({
-        where: { id },
-        select: {
-            title: true,
-            difficulty: true,
-            points: true,
-            category: true,
-        },
-    })
+    let quest = null
+    try {
+        quest = await prisma.quest.findUnique({
+            where: { id },
+            select: {
+                title: true,
+                difficulty: true,
+                points: true,
+                category: true,
+            },
+        })
+    } catch {
+        quest = null
+    }
 
     const title = quest?.title ?? 'Quest Challenge'
     const category = quest?.category ?? 'Developer Arena'
