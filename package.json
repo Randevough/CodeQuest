@@ -9,7 +9,8 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "db:verify": "bash scripts/verify-migrations.sh"
   },
   "dependencies": {
     "@prisma/client": "5.10.0",
