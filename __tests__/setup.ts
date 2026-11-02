@@ -15,7 +15,12 @@ vi.mock('next/cache', () => ({
 }))
 
 vi.mock('next/server', () => ({
-  NextResponse: { json: vi.fn() },
+  NextResponse: {
+    json: vi.fn((data: unknown, init?: { status?: number }) => ({
+      json: () => Promise.resolve(data),
+      status: init?.status ?? 200,
+    })),
+  },
   NextRequest: vi.fn(),
 }))
 

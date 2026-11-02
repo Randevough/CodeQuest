@@ -1,38 +1,60 @@
-import { prisma } from '@/lib/db';
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { redis } from '@/lib/redis';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   const startTime = Date.now();
-  let dbStatus = 'disconnected';
-  let dbLatencyMs: number | null = null;
 
   try {
-    const dbStart = Date.now();
     await prisma.$queryRaw`SELECT 1`;
-    dbLatencyMs = Date.now() - dbStart;
-    dbStatus = 'connected';
-  } catch (error) {
-    dbStatus = 'error';
-    console.error('Health check database query failed:', error);
+  } catch (err: unknown) {
+    return NextResponse.json(
+      {
+        status: 'error',
+        timestamp: new Date().toISOString(),
+        services: {
+          database: {
+            status: 'down',
+            error: err instanceof Error ? err.message : 'Unknown error',
+          },
+        },
+      },
+      { status: 503 }
+    );
   }
 
-  const isHealthy = dbStatus === 'connected';
-  const responsePayload = {
-    status: isHealthy ? 'healthy' : 'degraded',
-    timestamp: new Date().toISOString(),
-    uptimeSeconds: Math.floor(process.uptime()),
-    checks: {
-      database: {
-        status: dbStatus,
-        latencyMs: dbLatencyMs,
-      },
-      environment: process.env.NODE_ENV || 'development',
-    },
-    durationMs: Date.now() - startTime,
-  };
+  const duration = Date.now() - startTime;
 
-  return Response.json(responsePayload, {
-    status: isHealthy ? 200 : 503,
+  let redisStatus = 'unconfigured';
+  if (redis) {
+    try {
+      await redis.ping();
+      redisStatus = 'up';
+    } catch {
+      redisStatus = 'down';
+    }
+  }
+
+  const mem = process.memoryUsage();
+
+  return NextResponse.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    services: {
+      database: {
+        status: 'up',
+        latencyMs: duration,
+      },
+      redis: {
+        status: redisStatus,
+      },
+    },
+    memory: {
+      rss: `${Math.round(mem.rss / 1024 / 1024)}MB`,
+      heapUsed: `${Math.round(mem.heapUsed / 1024 / 1024)}MB`,
+    },
   });
 }
