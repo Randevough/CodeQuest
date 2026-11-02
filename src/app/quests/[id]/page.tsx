@@ -87,8 +87,32 @@ export default async function QuestPage({ params }: { params: Promise<{ id: stri
         return 'bg-surface text-success border border-border';
     }
 
+    const jsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'LearningResource',
+        name: quest.title,
+        description: quest.description,
+        educationalLevel: quest.difficulty || 'Beginner',
+        offers: {
+            '@type': 'Offer',
+            price: 0,
+            priceCurrency: 'USD',
+            category: 'RewardPoints',
+            description: `${quest.points || 0} reward points`
+        },
+        provider: {
+            '@type': 'Organization',
+            name: 'CodeQuest',
+            url: process.env.NEXTAUTH_URL || 'https://codequest.dev'
+        }
+    }
+
     return (
         <div className="min-h-screen flex flex-col relative text-foreground">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
             <div className="relative z-10 flex flex-col min-h-screen">
                 {/* Header */}
                 <Header activePage="explore" />
