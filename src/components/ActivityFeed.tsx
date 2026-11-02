@@ -1,7 +1,10 @@
+'use client'
+
+import { useEffect, useState, useTransition } from 'react'
 import { getActivityFeed } from '@/actions/activity'
 import type { ActivityFeedItem } from '@/actions/activity'
 import Link from 'next/link'
-import { Award, PlusCircle, Trophy, Zap, Hourglass } from 'lucide-react'
+import { Award, PlusCircle, Trophy, Zap, Hourglass, Users } from 'lucide-react'
 
 function FeedIcon({ type }: { type: ActivityFeedItem['type'] }) {
   if (type === 'quest_completed') {
@@ -9,6 +12,12 @@ function FeedIcon({ type }: { type: ActivityFeedItem['type'] }) {
   }
   if (type === 'quest_published') {
     return <PlusCircle className="w-4 h-4 text-success shrink-0" aria-hidden="true" />
+  }
+  if (type === 'squad_created') {
+    return <Users className="w-4 h-4 text-cyan-400 shrink-0" aria-hidden="true" />
+  }
+  if (type === 'squad_joined') {
+    return <Users className="w-4 h-4 text-purple-400 shrink-0" aria-hidden="true" />
   }
   return <Trophy className="w-4 h-4 text-warning shrink-0" aria-hidden="true" />
 }
@@ -39,8 +48,36 @@ function FeedItem({ item }: { item: ActivityFeedItem }) {
   )
 }
 
-export async function ActivityFeed() {
-  const { data: items } = await getActivityFeed(10)
+export function ActivityFeed({ initialItems = [] }: { initialItems?: ActivityFeedItem[] }) {
+  const [items, setItems] = useState<ActivityFeedItem[]>(initialItems)
+  const [, startTransition] = useTransition()
+
+  useEffect(() => {
+    let mounted = true
+
+    const refresh = () => {
+      startTransition(async () => {
+        try {
+          const res = await getActivityFeed(10)
+          if (mounted && res.success) {
+            setItems(res.data)
+          }
+        } catch {
+          // non-fatal
+        }
+      })
+    }
+
+    if (initialItems.length === 0) {
+      refresh()
+    }
+
+    const interval = setInterval(refresh, 30000)
+    return () => {
+      mounted = false
+      clearInterval(interval)
+    }
+  }, [initialItems.length])
 
   return (
     <aside className="lg:sticky lg:top-24 h-fit">
@@ -52,7 +89,6 @@ export async function ActivityFeed() {
             <span className="text-sm font-mono uppercase tracking-[0.2em] font-bold text-muted">
               Recent activity
             </span>
-
           </div>
 
           {/* Feed items */}
@@ -66,7 +102,10 @@ export async function ActivityFeed() {
               </div>
             ) : (
               items.map((item, index) => (
-                <FeedItem key={`${item.type}-${item.timestamp.getTime()}-${index}`} item={item} />
+                <FeedItem
+                  key={`${item.type}-${item.timestamp instanceof Date ? item.timestamp.getTime() : item.timestamp}-${index}`}
+                  item={item}
+                />
               ))
             )}
           </div>
