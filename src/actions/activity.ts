@@ -4,7 +4,7 @@ import { prisma } from '@/lib/db'
 import { formatDistanceToNow } from 'date-fns'
 
 export interface ActivityFeedItem {
-  type: 'quest_completed' | 'quest_published' | 'badge_earned'
+  type: 'quest_completed' | 'quest_published' | 'badge_earned' | 'squad_created' | 'squad_joined'
   message: string
   userId: string | null
   userName: string | null
@@ -16,7 +16,7 @@ export interface ActivityFeedItem {
 
 export async function getActivityFeed(limit = 10): Promise<{ success: boolean; data: ActivityFeedItem[] }> {
   try {
-    const [completions, published, badges] = await Promise.all([
+    const [completions, published, badges, squads, squadSnatches] = await Promise.all([
       // Quest completions (ACCEPTED snatches)
       prisma.snatch.findMany({
         where: { status: 'ACCEPTED' },
@@ -42,6 +42,30 @@ export async function getActivityFeed(limit = 10): Promise<{ success: boolean; d
         include: {
           user: { select: { id: true, name: true, avatar: true } },
           badge: { select: { name: true, slug: true, imageUrl: true } },
+        },
+      }),
+
+      // Recent squads
+      prisma.squad.findMany({
+        orderBy: { createdAt: 'desc' },
+        take: limit,
+        include: {
+          createdBy: true,
+          quest: true,
+        },
+      }),
+
+      // Recent squad snatches
+      prisma.snatch.findMany({
+        where: {
+          squadId: { not: null },
+          status: 'ACTIVE',
+        },
+        orderBy: { createdAt: 'desc' },
+        take: limit,
+        include: {
+          user: true,
+          quest: true,
         },
       }),
     ])
@@ -84,6 +108,32 @@ export async function getActivityFeed(limit = 10): Promise<{ success: boolean; d
         timestamp: ub.earnedAt,
         relativeTime: formatDistanceToNow(ub.earnedAt, { addSuffix: true }),
         link: `/profile/${ub.user.id}`,
+      })
+    }
+
+    for (const squad of squads) {
+      items.push({
+        type: 'squad_created',
+        message: `${squad.createdBy.name || 'A player'} formed a squad for "${squad.quest.title}"`,
+        userId: squad.createdBy.id,
+        userName: squad.createdBy.name,
+        userAvatar: squad.createdBy.avatar,
+        timestamp: squad.createdAt,
+        relativeTime: formatDistanceToNow(squad.createdAt, { addSuffix: true }),
+        link: `/quests/${squad.questId}`,
+      })
+    }
+
+    for (const s of squadSnatches) {
+      items.push({
+        type: 'squad_joined',
+        message: `${s.user.name || 'A player'} joined a squad for "${s.quest.title}"`,
+        userId: s.user.id,
+        userName: s.user.name,
+        userAvatar: s.user.avatar,
+        timestamp: s.createdAt,
+        relativeTime: formatDistanceToNow(s.createdAt, { addSuffix: true }),
+        link: `/quests/${s.questId}`,
       })
     }
 
