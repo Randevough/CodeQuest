@@ -2,20 +2,73 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
+import { Users, Zap, Award, CheckCircle2, AlertCircle, Bell } from "lucide-react";
 import {
     getNotifications,
     getUnreadNotificationCount,
     markNotificationRead,
     markAllNotificationsRead,
+    type NotificationItem,
 } from "@/actions/notification";
 
-interface NotificationItem {
-    id: string;
-    type: string;
-    message: string;
-    read: boolean;
-    link?: string | null;
-    createdAt: Date;
+function NotificationBadge({ type }: { type: string }) {
+    switch (type) {
+        case "SQUAD_JOIN":
+            return (
+                <div
+                    aria-label="Squad join notification"
+                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded-button border border-cyan-500/40 bg-cyan-500/10 text-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.25)]"
+                >
+                    <Users className="h-3.5 w-3.5" aria-hidden="true" />
+                </div>
+            );
+        case "SQUAD_SUBMISSION":
+            return (
+                <div
+                    aria-label="Squad submission notification"
+                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded-button border border-purple-500/40 bg-purple-500/10 text-purple-400 shadow-[0_0_8px_rgba(168,85,247,0.25)]"
+                >
+                    <Zap className="h-3.5 w-3.5" aria-hidden="true" />
+                </div>
+            );
+        case "BADGE_EARNED":
+            return (
+                <div
+                    aria-label="Badge earned notification"
+                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded-button border border-amber-500/40 bg-amber-500/10 text-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.2)]"
+                >
+                    <Award className="h-3.5 w-3.5" aria-hidden="true" />
+                </div>
+            );
+        case "SUBMISSION_ACCEPTED":
+            return (
+                <div
+                    aria-label="Submission accepted notification"
+                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded-button border border-emerald-500/40 bg-emerald-500/10 text-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.2)]"
+                >
+                    <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
+                </div>
+            );
+        case "SUBMISSION_REVISION":
+        case "SUBMISSION_REJECTED":
+            return (
+                <div
+                    aria-label="Submission review notification"
+                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded-button border border-rose-500/40 bg-rose-500/10 text-rose-400 shadow-[0_0_8px_rgba(244,63,94,0.2)]"
+                >
+                    <AlertCircle className="h-3.5 w-3.5" aria-hidden="true" />
+                </div>
+            );
+        default:
+            return (
+                <div
+                    aria-label="Notification"
+                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded-button border border-border bg-surface text-muted"
+                >
+                    <Bell className="h-3.5 w-3.5" aria-hidden="true" />
+                </div>
+            );
+    }
 }
 
 export function NotificationBell() {
@@ -182,31 +235,34 @@ export function NotificationBell() {
                                             : "border-border bg-surface text-foreground font-medium shadow-sm"
                                     }`}
                                 >
-                                    <div className="flex-1 min-w-0 space-y-1">
-                                        <p className="leading-snug break-words">
-                                            {item.message}
-                                        </p>
-                                        <div className="flex items-center gap-2 text-[10px] text-muted">
-                                            <span>
-                                                {new Date(item.createdAt).toLocaleDateString(undefined, {
-                                                    month: "short",
-                                                    day: "numeric",
-                                                    hour: "2-digit",
-                                                    minute: "2-digit",
-                                                })}
-                                            </span>
-                                            {item.link && (
-                                                <Link
-                                                    href={item.link}
-                                                    onClick={() => {
-                                                        if (!item.read) handleMarkAsRead(item.id);
-                                                        setIsOpen(false);
-                                                    }}
-                                                    className="text-focus hover:underline font-semibold"
-                                                >
-                                                    View
-                                                </Link>
-                                            )}
+                                    <div className="flex items-start gap-2.5 flex-1 min-w-0">
+                                        <NotificationBadge type={item.type} />
+                                        <div className="flex-1 min-w-0 space-y-1">
+                                            <p className="leading-snug break-words">
+                                                {item.message}
+                                            </p>
+                                            <div className="flex items-center gap-2 text-[10px] text-muted">
+                                                <span>
+                                                    {new Date(item.createdAt).toLocaleDateString(undefined, {
+                                                        month: "short",
+                                                        day: "numeric",
+                                                        hour: "2-digit",
+                                                        minute: "2-digit",
+                                                    })}
+                                                </span>
+                                                {item.link && (
+                                                    <Link
+                                                        href={item.link}
+                                                        onClick={() => {
+                                                            if (!item.read) handleMarkAsRead(item.id);
+                                                            setIsOpen(false);
+                                                        }}
+                                                        className="text-focus hover:underline font-semibold"
+                                                    >
+                                                        View
+                                                    </Link>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
 

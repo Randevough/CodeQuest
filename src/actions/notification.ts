@@ -3,6 +3,25 @@
 import { prisma } from '@/lib/db'
 import { auth } from '@/auth'
 
+export type NotificationType =
+  | 'SUBMISSION_ACCEPTED'
+  | 'SUBMISSION_REVISION'
+  | 'SUBMISSION_REJECTED'
+  | 'BADGE_EARNED'
+  | 'QUEST_ASSIGNED'
+  | 'SQUAD_JOIN'
+  | 'SQUAD_SUBMISSION'
+
+export interface NotificationItem {
+  id: string
+  userId: string
+  type: NotificationType | string
+  message: string
+  read: boolean
+  link?: string | null
+  createdAt: Date
+}
+
 // Internal helper — NOT called from client directly.
 // Callers MUST wrap this in try/catch (Safeguard #2: best-effort, failure-isolated).
 export async function createNotification({
@@ -12,13 +31,27 @@ export async function createNotification({
   link,
 }: {
   userId: string
-  type: string
+  type: NotificationType | string
   message: string
   link?: string
 }) {
   return await prisma.notification.create({
     data: { userId, type, message, link },
   })
+}
+
+export async function createSquadNotification({
+  userId,
+  type,
+  message,
+  link,
+}: {
+  userId: string
+  type: 'SQUAD_JOIN' | 'SQUAD_SUBMISSION'
+  message: string
+  link?: string
+}) {
+  return await createNotification({ userId, type, message, link })
 }
 
 export async function getNotifications(limit = 20) {

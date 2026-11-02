@@ -123,10 +123,7 @@ export async function joinSquad(squadId: string) {
     if (!user) redirect('/login')
 
     try {
-        let notifiedCreatorId: string | null = null
-        let questTitle: string | null = null
-
-        await prisma.$transaction(async (tx) => {
+        const squadToNotify = await prisma.$transaction(async (tx) => {
             // Check for active penalty
             const activePenalty = await tx.penalty.findFirst({
                 where: {
@@ -202,18 +199,23 @@ export async function joinSquad(squadId: string) {
             }
 
             if (squad.createdById !== user.id) {
-                notifiedCreatorId = squad.createdById
-                questTitle = squad.quest.title
+                return {
+                    createdById: squad.createdById,
+                    questId: squad.questId,
+                    quest: { title: squad.quest.title }
+                }
             }
+
+            return null
         })
 
-        if (notifiedCreatorId && questTitle) {
+        if (squadToNotify) {
             try {
                 await createNotification({
-                    userId: notifiedCreatorId,
-                    type: 'QUEST_ASSIGNED',
-                    message: `${user.name || 'A user'} joined your squad for "${questTitle}".`,
-                    link: '/workspace'
+                    userId: squadToNotify.createdById,
+                    type: 'SQUAD_JOIN',
+                    message: `${user.name || 'A player'} joined your squad for "${squadToNotify.quest.title}"`,
+                    link: `/quests/${squadToNotify.questId}`
                 })
             } catch (notifErr) {
                 console.error("Failed to notify squad creator:", notifErr)
