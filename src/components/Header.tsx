@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { ThemeToggle } from "./ThemeToggle";
 import { NotificationBell } from "./NotificationBell";
@@ -10,6 +11,7 @@ import { UserAvatar } from "./ui/UserAvatar";
 
 interface HeaderProps {
     activePage?: "explore" | "leaderboard" | "workspace";
+    isLanding?: boolean;
 }
 
 const navLinks = [
@@ -18,7 +20,9 @@ const navLinks = [
     { id: "workspace", href: "/workspace", label: "My Workspace" },
 ] as const;
 
-export function Header({ activePage }: HeaderProps) {
+export function Header({ activePage, isLanding: propIsLanding }: HeaderProps) {
+    const pathname = usePathname();
+    const isLanding = propIsLanding ?? pathname === "/";
     const { data: session } = useSession();
     const [isAccountOpen, setIsAccountOpen] = useState(false);
     const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
@@ -73,18 +77,30 @@ export function Header({ activePage }: HeaderProps) {
         `flex min-h-11 items-center px-4 py-2 rounded-button text-sm font-semibold transition-colors ${
             activePage === pageId
                 ? "bg-secondary text-secondary-foreground"
+                : isLanding
+                ? "text-[#C2C7D0] hover:text-[#FFF3DE] hover:bg-[#20283A]"
                 : "text-muted hover:text-foreground hover:bg-surface-raised"
         }`;
 
     const dropdownItemClass =
-        "flex items-center gap-2.5 w-full px-3 py-2 text-sm font-medium rounded-button text-foreground hover:bg-surface-raised transition-colors";
+        `flex items-center gap-2.5 w-full px-3 py-2 text-sm font-medium rounded-button transition-colors ${
+            isLanding
+                ? "text-[#FFF3DE] hover:bg-[#2B354D]"
+                : "text-foreground hover:bg-surface-raised"
+        }`;
 
     const user = session?.user;
     const isAdmin = user?.role === "Admin";
     const userPoints = user?.points ?? 0;
 
     return (
-        <header className="relative z-40 border-b border-border bg-surface text-foreground">
+        <header
+            className={`relative z-40 border-b transition-colors ${
+                isLanding
+                    ? "border-[#2E3A52] bg-[#141925] text-[#FFF3DE]"
+                    : "border-border bg-surface text-foreground"
+            }`}
+        >
             <div className="page-container flex min-h-20 items-center justify-between gap-4 py-3">
                 {/* Brand */}
                 <Link
@@ -122,7 +138,7 @@ export function Header({ activePage }: HeaderProps) {
                 {/* Right Actions */}
                 <div className="flex items-center gap-2">
                     {user && <NotificationBell />}
-                    <ThemeToggle />
+                    {!isLanding && <ThemeToggle />}
 
                     {/* Desktop Account Trigger & Popover */}
                     {user ? (
@@ -134,7 +150,11 @@ export function Header({ activePage }: HeaderProps) {
                                 aria-haspopup="menu"
                                 aria-label="Account options menu"
                                 onClick={() => setIsAccountOpen(!isAccountOpen)}
-                                className="flex items-center gap-2.5 min-h-11 py-1.5 px-2.5 rounded-button border border-control-border bg-surface hover:bg-surface-raised focus:outline-none focus:ring-2 focus:ring-focus/40 transition-colors"
+                                className={`flex items-center gap-2.5 min-h-11 py-1.5 px-2.5 rounded-button border transition-colors ${
+                                    isLanding
+                                        ? "border-[#2E3A52] bg-[#20283A] text-[#FFF3DE] hover:bg-[#2B354D] focus:outline-none focus:ring-2 focus:ring-[#FFAE58]/40"
+                                        : "border-control-border bg-surface hover:bg-surface-raised focus:outline-none focus:ring-2 focus:ring-focus/40"
+                                }`}
                             >
                                 <UserAvatar
                                     src={user.image || user.avatar}
@@ -142,11 +162,13 @@ export function Header({ activePage }: HeaderProps) {
                                     size={28}
                                     className="shrink-0"
                                 />
-                                <span className="text-sm font-semibold text-foreground max-w-[120px] truncate">
+                                <span className={`text-sm font-semibold max-w-[120px] truncate ${isLanding ? "text-[#FFF3DE]" : "text-foreground"}`}>
                                     {user.name || "Account"}
                                 </span>
                                 <svg
-                                    className={`w-4 h-4 text-muted transition-transform duration-fast ${
+                                    className={`w-4 h-4 transition-transform duration-fast ${
+                                        isLanding ? "text-[#8A94A6]" : "text-muted"
+                                    } ${
                                         isAccountOpen ? "rotate-180" : ""
                                     }`}
                                     fill="none"
@@ -168,10 +190,18 @@ export function Header({ activePage }: HeaderProps) {
                                 <div
                                     role="menu"
                                     aria-orientation="vertical"
-                                    className="absolute right-0 top-full mt-2 w-72 rounded-card bg-surface border border-border shadow-panel z-50 p-2 animate-fade-in-up"
+                                    className={`absolute right-0 top-full mt-2 w-72 rounded-card border shadow-panel z-50 p-2 animate-fade-in-up ${
+                                        isLanding
+                                            ? "bg-[#20283A] border-[#2E3A52] text-[#FFF3DE]"
+                                            : "bg-surface border-border text-foreground"
+                                    }`}
                                 >
                                     {/* User summary header */}
-                                    <div className="p-3 bg-surface-raised rounded-button border border-border/60 mb-2">
+                                    <div className={`p-3 rounded-button border mb-2 ${
+                                        isLanding
+                                            ? "bg-[#2B354D] border-[#2E3A52]"
+                                            : "bg-surface-raised border-border/60"
+                                    }`}>
                                         <div className="flex items-center gap-3">
                                             <UserAvatar
                                                 src={user.image || user.avatar}
@@ -179,11 +209,11 @@ export function Header({ activePage }: HeaderProps) {
                                                 size={40}
                                             />
                                             <div className="min-w-0 flex-1">
-                                                <p className="text-sm font-bold text-foreground truncate">
+                                                <p className={`text-sm font-bold truncate ${isLanding ? "text-[#FFF3DE]" : "text-foreground"}`}>
                                                     {user.name || "Adventurer"}
                                                 </p>
                                                 {user.email && (
-                                                    <p className="text-xs text-muted truncate">
+                                                    <p className={`text-xs truncate ${isLanding ? "text-[#8A94A6]" : "text-muted"}`}>
                                                         {user.email}
                                                     </p>
                                                 )}
@@ -313,7 +343,11 @@ export function Header({ activePage }: HeaderProps) {
                         <div className="hidden sm:flex items-center gap-2">
                             <Link
                                 href="/login"
-                                className="min-h-11 inline-flex items-center justify-center px-4 py-2 rounded-button text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary-hover transition-colors shadow-sm"
+                                className={`min-h-11 inline-flex items-center justify-center px-4 py-2 rounded-button text-sm font-semibold transition-colors shadow-sm ${
+                                    isLanding
+                                        ? "bg-[#FFAE58] text-[#141925] hover:bg-[#FFBE76]"
+                                        : "bg-primary text-primary-foreground hover:bg-primary-hover"
+                                }`}
                             >
                                 Sign in
                             </Link>
@@ -327,10 +361,14 @@ export function Header({ activePage }: HeaderProps) {
                         aria-controls="mobile-drawer"
                         aria-label={isMobileDrawerOpen ? "Close navigation menu" : "Open navigation menu"}
                         onClick={() => setIsMobileDrawerOpen(!isMobileDrawerOpen)}
-                        className="lg:hidden flex items-center justify-center min-h-11 w-11 rounded-button border border-control-border bg-surface hover:bg-surface-raised focus:outline-none focus:ring-2 focus:ring-focus/40 transition-colors"
+                        className={`lg:hidden flex items-center justify-center min-h-11 w-11 rounded-button border transition-colors ${
+                            isLanding
+                                ? "border-[#2E3A52] bg-[#20283A] text-[#FFF3DE] hover:bg-[#2B354D] focus:outline-none focus:ring-2 focus:ring-[#FFAE58]/40"
+                                : "border-control-border bg-surface hover:bg-surface-raised focus:outline-none focus:ring-2 focus:ring-focus/40"
+                        }`}
                     >
                         <svg
-                            className="w-5 h-5 text-foreground"
+                            className={`w-5 h-5 ${isLanding ? "text-[#FFF3DE]" : "text-foreground"}`}
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"

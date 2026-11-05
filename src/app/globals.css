@@ -1,4 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -62,6 +61,46 @@
     --motion-fast: 140ms;
     --background: var(--color-bg);
     --foreground: var(--color-text);
+  }
+
+  /* Soft Arcade Scoped Tokens for Landing Page (DESIGN.md v2.1.0) */
+  .soft-arcade {
+    --sa-bg: #141925;
+    --sa-surface: #20283A;
+    --sa-surface-soft: #232B3E;
+    --sa-surface-cream: #FFF3DE;
+    --sa-surface-cream-light: #FFF5E4;
+    --sa-surface-raised: #2B354D;
+    --sa-surface-overlay: #35415E;
+    --sa-border-subtle: #2E3A52;
+    --sa-border-strong: #47577A;
+    --sa-border-dark: #141925;
+    --sa-text-primary: #FFF3DE;
+    --sa-text-secondary: #C2C7D0;
+    --sa-text-muted: #8A94A6;
+    --sa-text-inverse: #141925;
+    --sa-amber: #FFAE58;
+    --sa-amber-hover: #FFBE76;
+    --sa-amber-edge: #C27A29;
+    --sa-shadow-amber: 0 4px 0 #C27A29;
+    --sa-shadow-slate: 0 4px 0 #182030;
+    --sa-shadow-cream: 0 6px 0 rgba(20, 25, 37, 0.45);
+    --color-bg: #141925;
+    --color-bg-rgb: 20 25 37;
+    --color-surface: #20283A;
+    --color-surface-rgb: 32 40 58;
+    --color-surface-raised: #2B354D;
+    --color-surface-raised-rgb: 43 53 77;
+    --color-border: #2E3A52;
+    --color-border-rgb: 46 58 82;
+    --color-control-border: #47577A;
+    --color-control-border-rgb: 71 87 122;
+    --color-text: #FFF3DE;
+    --color-text-rgb: 255 243 222;
+    --color-text-muted: #8A94A6;
+    --color-text-muted-rgb: 138 148 166;
+    background-color: var(--sa-bg);
+    color: var(--sa-text-primary);
   }
 
   .dark {
@@ -143,6 +182,9 @@
   }
 
   button, input, select, textarea { font: inherit; }
+  button, [role="button"], a[href], input[type="submit"] {
+    cursor: pointer;
+  }
   button, [role="button"], input[type="submit"], input[type="button"] {
     min-height: 44px;
     min-width: 44px;
@@ -293,6 +335,41 @@
 }
 
 @layer utilities {
+  /* Tactile zero-blur buttons */
+  .btn-tactile-orange {
+    background-color: #ed8936;
+    color: #0C0F17;
+    font-weight: 700;
+    border: 2px solid #b35a15;
+    box-shadow: 0 4px 0 #b35a15;
+    transition: transform var(--motion-fast), box-shadow var(--motion-fast), filter var(--motion-fast);
+  }
+  .btn-tactile-orange:hover:not(:disabled):not([aria-disabled="true"]) {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 0 #b35a15;
+    filter: brightness(1.05);
+  }
+  .btn-tactile-orange:active:not(:disabled):not([aria-disabled="true"]) {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #b35a15;
+  }
+
+  .btn-tactile-slate {
+    background-color: #20283A;
+    color: #FFF3DE;
+    font-weight: 600;
+    border: 2px solid #47577A;
+    box-shadow: 0 4px 0 #10141D;
+    transition: transform var(--motion-fast), box-shadow var(--motion-fast), background-color var(--motion-fast);
+  }
+  .btn-tactile-slate:hover:not(:disabled):not([aria-disabled="true"]) {
+    background-color: #2B354D;
+  }
+  .btn-tactile-slate:active:not(:disabled):not([aria-disabled="true"]) {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #10141D;
+  }
+
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   .styled-scrollbar {
@@ -383,5 +460,5 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  .animate-fade-in-up, .button-primary:active, .button-secondary:active { transform: none !important; }
+  .animate-fade-in-up, .button-primary:active, .button-secondary:active, .btn-tactile-orange:active, .btn-tactile-slate:active, .btn-tactile-orange:hover, .btn-tactile-slate:hover { transform: none !important; }
 }
