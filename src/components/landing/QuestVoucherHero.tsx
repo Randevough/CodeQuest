@@ -27,7 +27,7 @@ export function QuestVoucherHero({ initialStep = 'available' }: QuestVoucherHero
   }
 
   return (
-    <div className="w-full rounded-2xl bg-[#20283A] border-2 border-[#2E3A52] p-5 sm:p-6 shadow-[0_6px_0_#10141D] space-y-4">
+    <div className="w-full min-w-0 rounded-2xl bg-[#20283A] border-2 border-[#2E3A52] p-5 sm:p-6 shadow-[0_6px_0_#10141D] space-y-4">
       {/* Serial Stamp */}
       <div className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#8A94A6]">
         BOUNTY #042 • TIKET TANTANGAN
@@ -43,14 +43,14 @@ export function QuestVoucherHero({ initialStep = 'available' }: QuestVoucherHero
             Intermediate
           </span>
         </div>
-        <span className="px-3 py-1 rounded-xl bg-[#ed8936] text-[#0C0F17] text-xs font-mono font-bold border border-[#b35a15] shadow-[0_2px_0_#b35a15]">
+        <span className="shrink-0 px-3 py-1 rounded-xl bg-[#ed8936] text-[#0C0F17] text-xs font-mono font-bold border border-[#b35a15] shadow-[0_2px_0_#b35a15]">
           +350 XP
         </span>
       </div>
 
       {/* Quest Details */}
       <div className="space-y-2">
-        <h2 className="text-lg sm:text-xl font-bold text-[#FFF3DE] tracking-tight leading-snug">
+        <h2 className="text-lg sm:text-xl font-bold text-[#FFF3DE] tracking-tight leading-snug break-normal">
           OAuth2 SSO Service & JWT Security
         </h2>
         <p className="text-xs sm:text-sm text-[#C2C7D0] leading-relaxed">
