@@ -10,6 +10,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "type-check": "tsc --noEmit",
+    "audit:lighthouse": "node scripts/audit-lighthouse.mjs",
     "db:verify": "bash scripts/verify-migrations.sh"
   },
   "dependencies": {

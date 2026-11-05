@@ -2,6 +2,12 @@ import "../custom-auth.css";
 import Link from "next/link";
 import Image from "next/image";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Authentication | CodeQuest",
+    description: "Sign in or register for CodeQuest to start completing missions and earning badges.",
+};
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
     return (

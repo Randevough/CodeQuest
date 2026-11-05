@@ -5,8 +5,15 @@ import { PaginationControls } from '@/components/leaderboard/PaginationControls'
 import { UserStanding } from '@/components/leaderboard/UserStanding'
 import { LeaderboardFilters } from '@/components/leaderboard/LeaderboardFilters'
 
+import type { Metadata } from 'next'
+
 // Force dynamic to ensure we get latest data
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+    title: 'Global Leaderboard | CodeQuest',
+    description: 'Track top cyber developers, quest points, and member ranks on the official CodeQuest club leaderboard.',
+}
 
 export default async function LeaderboardPage(props: {
     searchParams: Promise<{ page?: string; timeframe?: string; q?: string; query?: string }>

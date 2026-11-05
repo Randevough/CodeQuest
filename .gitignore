@@ -23,7 +23,9 @@
 # misc
 .DS_Store
 *.pem
-/scripts
+/scripts/*
+!/scripts/verify-migrations.sh
+!/scripts/audit-lighthouse.mjs
 
 # debug
 npm-debug.log*

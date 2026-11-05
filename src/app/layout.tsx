@@ -9,8 +9,22 @@ import { DevRoleSwitcher } from "@/components/dev/DevRoleSwitcher";
 
 
 export const metadata: Metadata = {
-  title: 'CodeQuest',
-  description: 'CodeQuest platform',
+  metadataBase: new URL('https://codequest.dev'),
+  title: {
+    default: 'CodeQuest — Gamified Coding Platform',
+    template: '%s | CodeQuest',
+  },
+  description: 'Gamified coding platform for students to snatch quests, build features, and earn ranks.',
+  openGraph: {
+    title: 'CodeQuest',
+    description: 'Gamified coding platform for students to snatch quests, build features, and earn ranks.',
+    url: 'https://codequest.dev',
+    siteName: 'CodeQuest',
+    type: 'website',
+  },
+  alternates: {
+    canonical: '/',
+  },
 };
 export default async function RootLayout({
   children,
@@ -22,6 +36,14 @@ export default async function RootLayout({
   return (
     <html lang="en" className={fontVariables} suppressHydrationWarning>
       <head>
+        {/* Preload critical font */}
+        <link
+          rel="preload"
+          href="/fonts/Geist-Variable.ttf"
+          as="font"
+          type="font/ttf"
+          crossOrigin="anonymous"
+        />
         {/* FOUT-prevention: apply theme class synchronously before React hydrates */}
         <script
           dangerouslySetInnerHTML={{
