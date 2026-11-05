@@ -35,35 +35,41 @@ describe('ArcadeStar Primitive', () => {
 })
 
 describe('HeroSection Component', () => {
-  it('renders status chip, headline, subcopy, and rule badges', () => {
+  it('renders subtle campus club label, headline, and subcopy', () => {
     render(<HeroSection />)
 
-    // Status Chip
-    expect(screen.getByText('INSTITUSI AKTIF')).toBeTruthy()
-    expect(screen.getByText('CYBER UNIVERSITY CODING CLUB')).toBeTruthy()
+    // Subtle label (no pill badge, no em dash)
+    expect(
+      screen.getByText('Cyber University Coding Club: Arena Proyek & Bounty Mahasiswa')
+    ).toBeTruthy()
 
-    // Headline
+    // Headline with clean copy and modern font
     const headline = screen.getByRole('heading', { level: 1 })
-    expect(headline.textContent).toContain('KLAIM MISI KODING KAMPUS. BANGUN PROYEK NYATA.')
+    expect(headline.textContent).toContain('Klaim Misi Kampus.')
+    expect(headline.textContent).toContain('Bangun Karya Nyata.')
+    expect(headline.className).toContain('font-sans')
+    expect(headline.className).toContain('font-black')
 
     // Subcopy
     expect(
       screen.getByText(
-        'Bukan tutorial video pasif. Ambil tiket misi proyek, kolaborasi dalam skuad, kirim URL repositori, dan raih evaluasi mentor.'
+        'Kerjakan proyek software riil di IDE lokal, kumpulkan repositori Git, dan raih review terverifikasi dari mentor Cyber University.'
       )
     ).toBeTruthy()
 
-    // Rule Badges
-    expect(screen.getByText('Maks. 3 Misi Aktif')).toBeTruthy()
-    expect(screen.getByText('Review Mentor Kampus')).toBeTruthy()
-    expect(screen.getByText('14 Lencana Keahlian')).toBeTruthy()
+    // Floating pills removed
+    expect(screen.queryByText('Maks. 3 Misi Aktif')).toBeNull()
+    expect(screen.queryByText('Review Mentor Kampus')).toBeNull()
+    expect(screen.queryByText('14 Lencana Keahlian')).toBeNull()
   })
 
-  it('renders primary CTA pointing to /explore', () => {
+  it('renders primary CTA pointing to /explore with rounded-xl', () => {
     render(<HeroSection />)
 
     const primaryLink = screen.getByRole('link', { name: /Jelajahi Misi/i })
     expect(primaryLink.getAttribute('href')).toBe('/explore')
+    expect(primaryLink.className).toContain('rounded-xl')
+    expect(primaryLink.className).not.toContain('rounded-full')
   })
 
   it('renders guest secondary CTA pointing to /login when sessionUser is null or undefined', () => {
@@ -71,6 +77,7 @@ describe('HeroSection Component', () => {
 
     let secondaryLink = screen.getByRole('link', { name: /Masuk Akun Kampus/i })
     expect(secondaryLink.getAttribute('href')).toBe('/login')
+    expect(secondaryLink.className).toContain('rounded-xl')
 
     unmount()
     render(<HeroSection />)
@@ -87,6 +94,7 @@ describe('HeroSection Component', () => {
 
     const memberLink = screen.getByRole('link', { name: /Buka Workspace Saya/i })
     expect(memberLink.getAttribute('href')).toBe('/workspace')
+    expect(memberLink.className).toContain('rounded-xl')
     expect(screen.queryByRole('link', { name: /Masuk Akun Kampus/i })).toBeNull()
   })
 
@@ -99,6 +107,7 @@ describe('HeroSection Component', () => {
 
     let adminLink = screen.getByRole('link', { name: /Buka Panel Admin/i })
     expect(adminLink.getAttribute('href')).toBe('/admin/members')
+    expect(adminLink.className).toContain('rounded-xl')
 
     // Also handles uppercase 'ADMIN'
     unmount()
@@ -115,41 +124,44 @@ describe('HeroSection Component', () => {
   it('mounts interactive QuestVoucherHero on the right column', () => {
     render(<HeroSection />)
 
-    expect(screen.getByText('OAuth2 Auth Service & JWT Security')).toBeTruthy()
-    expect(screen.getByRole('button', { name: /AMBIL TIKET MISI/i })).toBeTruthy()
+    expect(screen.getByText('OAuth2 SSO Service & JWT Security')).toBeTruthy()
+    expect(screen.getByRole('button', { name: /Ambil Tiket Misi/i })).toBeTruthy()
   })
 })
 
 describe('QuestVoucherHero Lifecycle Engine', () => {
-  it('renders State 1 (Available) with telemetry and snatch button', () => {
+  it('renders State 1 (Available) with clean metadata and ticket action', () => {
     render(<QuestVoucherHero />)
 
     expect(screen.getByText('Web')).toBeTruthy()
     expect(screen.getByText('Intermediate')).toBeTruthy()
     expect(screen.getByText('+350 XP')).toBeTruthy()
-    expect(screen.getByText('OAuth2 Auth Service & JWT Security')).toBeTruthy()
+    expect(screen.getByText('OAuth2 SSO Service & JWT Security')).toBeTruthy()
     expect(
       screen.getByText('Bangun modul autentikasi terpusat SSO mahasiswa dengan spesifikasi OAuth2 nyata.')
     ).toBeTruthy()
 
-    expect(screen.getByText('Kapasitas:')).toBeTruthy()
-    expect(screen.getByText('2/3 Mahasiswa')).toBeTruthy()
-    expect(screen.getByText('Beban:')).toBeTruthy()
-    expect(screen.getByText('0/3 Aktif')).toBeTruthy()
+    expect(screen.getByText('Kuota Mahasiswa:')).toBeTruthy()
+    expect(screen.getByText('2/3')).toBeTruthy()
+    expect(screen.getByText('Evaluator:')).toBeTruthy()
+    expect(screen.getByText('Mentor Kampus')).toBeTruthy()
+    expect(screen.getByText('Deadline:')).toBeTruthy()
+    expect(screen.getByText('3 Hari')).toBeTruthy()
 
-    expect(screen.getByRole('button', { name: /AMBIL TIKET MISI/i })).toBeTruthy()
+    expect(screen.getByRole('button', { name: /Ambil Tiket Misi/i })).toBeTruthy()
   })
 
   it('transitions through complete 3-step lifecycle: snatch -> submit repo -> mentor approval -> reset', () => {
     render(<QuestVoucherHero />)
 
     // 1. Initial State: Click Snatch
-    const snatchBtn = screen.getByRole('button', { name: /AMBIL TIKET MISI/i })
+    const snatchBtn = screen.getByRole('button', { name: /Ambil Tiket Misi/i })
     fireEvent.click(snatchBtn)
 
     // 2. In Progress State
     expect(screen.getByText('3/3 (Penuh)')).toBeTruthy()
-    expect(screen.getByText('1/3 Aktif')).toBeTruthy()
+    expect(screen.getByText('Mentor Kampus')).toBeTruthy()
+    expect(screen.getByText('3 Hari')).toBeTruthy()
 
     const input = screen.getByLabelText(/URL Repositori GitHub/i) as HTMLInputElement
     expect(input.value).toBe('https://github.com/cyber-univ/quest-auth-jwt')
@@ -159,7 +171,7 @@ describe('QuestVoucherHero Lifecycle Engine', () => {
     expect(input.value).toBe('https://github.com/cyber-univ/my-fork')
 
     // Submit repo
-    const submitBtn = screen.getByRole('button', { name: /KIRIM SUBMISSION REPOSITORI/i })
+    const submitBtn = screen.getByRole('button', { name: /Kirim Repositori/i })
     fireEvent.click(submitBtn)
 
     // 3. Approved & XP Credited State
@@ -173,8 +185,7 @@ describe('QuestVoucherHero Lifecycle Engine', () => {
     const resetBtn = screen.getByRole('button', { name: /Coba Siklus Misi Lain/i })
     fireEvent.click(resetBtn)
 
-    expect(screen.getByRole('button', { name: /AMBIL TIKET MISI/i })).toBeTruthy()
-    expect(screen.getByText('2/3 Mahasiswa')).toBeTruthy()
-    expect(screen.getByText('0/3 Aktif')).toBeTruthy()
+    expect(screen.getByRole('button', { name: /Ambil Tiket Misi/i })).toBeTruthy()
+    expect(screen.getByText('2/3')).toBeTruthy()
   })
 })
