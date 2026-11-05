@@ -50,6 +50,11 @@ describe('HeroSection Component', () => {
     expect(headline.className).toContain('font-sans')
     expect(headline.className).toContain('font-black')
 
+    // Micro-proof chips
+    expect(screen.getByText('Git Repo Mandiri')).toBeTruthy()
+    expect(screen.getByText('Review Mentor 1-on-1')).toBeTruthy()
+    expect(screen.getByText('Reward XP Resmi')).toBeTruthy()
+
     // Subcopy
     expect(
       screen.getByText(
@@ -132,6 +137,11 @@ describe('HeroSection Component', () => {
 describe('QuestVoucherHero Lifecycle Engine', () => {
   it('renders State 1 (Available) with clean metadata and ticket action', () => {
     render(<QuestVoucherHero />)
+
+    expect(screen.getByText('BOUNTY #042 • TIKET TANTANGAN')).toBeTruthy()
+    expect(screen.getByText('POST /api/auth/token')).toBeTruthy()
+    expect(screen.getByText('RS256')).toBeTruthy()
+    expect(screen.getByText('SPEC: RFC-6749 OAuth2 Auth Code Grant')).toBeTruthy()
 
     expect(screen.getByText('Web')).toBeTruthy()
     expect(screen.getByText('Intermediate')).toBeTruthy()

@@ -27,7 +27,12 @@ export function QuestVoucherHero({ initialStep = 'available' }: QuestVoucherHero
   }
 
   return (
-    <div className="w-full rounded-2xl bg-[#20283A] border-2 border-[#2E3A52] p-5 sm:p-6 shadow-[0_6px_0_#10141D] space-y-5">
+    <div className="w-full rounded-2xl bg-[#20283A] border-2 border-[#2E3A52] p-5 sm:p-6 shadow-[0_6px_0_#10141D] space-y-4">
+      {/* Serial Stamp */}
+      <div className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#8A94A6]">
+        BOUNTY #042 • TIKET TANTANGAN
+      </div>
+
       {/* Voucher Header / Tags */}
       <div className="flex items-center justify-between gap-2 border-b border-[#2E3A52] pb-4">
         <div className="flex items-center gap-2 flex-wrap">
@@ -53,6 +58,9 @@ export function QuestVoucherHero({ initialStep = 'available' }: QuestVoucherHero
         </p>
       </div>
 
+      {/* Ticket Perforation Divider */}
+      <div className="border-t-2 border-dashed border-[#2E3A52] my-4 relative" aria-hidden="true" />
+
       {/* Ticket Metadata */}
       <div className="rounded-xl bg-[#141925] border border-[#2E3A52] p-3.5 space-y-2.5 font-mono text-xs">
         <div className="flex items-center justify-between">
@@ -73,13 +81,23 @@ export function QuestVoucherHero({ initialStep = 'available' }: QuestVoucherHero
 
       {/* Lifecycle Actions */}
       {step === 'available' && (
-        <button
-          type="button"
-          onClick={handleSnatch}
-          className="btn-tactile-orange w-full py-3 px-4 rounded-xl text-sm font-bold flex items-center justify-center tracking-wide motion-reduce:transform-none"
-        >
-          Ambil Tiket Misi
-        </button>
+        <div className="space-y-4">
+          <div className="rounded-lg bg-[#141925] border border-[#2E3A52] p-2.5 font-mono text-[11px] text-[#8A94A6] space-y-1">
+            <div className="text-[#38BDF8] flex items-center justify-between">
+              <span>POST /api/auth/token</span>
+              <span className="text-[#3DD68C]">RS256</span>
+            </div>
+            <p className="text-[10px] text-[#8A94A6]/80 truncate">SPEC: RFC-6749 OAuth2 Auth Code Grant</p>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleSnatch}
+            className="w-full py-3 px-4 rounded-xl text-sm font-bold bg-[#ed8936] text-[#0C0F17] border-2 border-[#b35a15] shadow-[0_4px_0_#b35a15] hover:bg-[#f6994a] active:translate-y-[2px] active:shadow-[0_2px_0_#b35a15] transition-all motion-reduce:transform-none flex items-center justify-center gap-2"
+          >
+            Ambil Tiket Misi
+          </button>
+        </div>
       )}
 
       {step === 'in_progress' && (
@@ -111,7 +129,7 @@ export function QuestVoucherHero({ initialStep = 'available' }: QuestVoucherHero
           </div>
           <button
             type="submit"
-            className="btn-tactile-orange w-full py-3 px-4 rounded-xl text-sm font-bold flex items-center justify-center gap-2 tracking-wide motion-reduce:transform-none"
+            className="w-full py-3 px-4 rounded-xl text-sm font-bold bg-[#ed8936] text-[#0C0F17] border-2 border-[#b35a15] shadow-[0_4px_0_#b35a15] hover:bg-[#f6994a] active:translate-y-[2px] active:shadow-[0_2px_0_#b35a15] transition-all motion-reduce:transform-none flex items-center justify-center gap-2"
           >
             <svg
               className="w-4 h-4 fill-current shrink-0"
