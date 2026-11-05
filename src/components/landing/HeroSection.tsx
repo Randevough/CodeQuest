@@ -3,6 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { QuestVoucherHero } from './QuestVoucherHero'
+import { TactileHeroEngine } from './TactileHeroEngine'
 
 export interface HeroSectionProps {
   sessionUser?: {
@@ -85,9 +86,14 @@ export function HeroSection({
             </div>
           </div>
 
-          {/* Right Column: Interactive Quest Voucher (Cols 8-12) */}
+          {/* Right Column: Interactive Quest Voucher / Hero Engine (Cols 8-12) */}
           <div className="min-w-0 lg:col-span-5 w-full">
-            <QuestVoucherHero />
+            <div className="lg:hidden">
+              <QuestVoucherHero />
+            </div>
+            <div className="hidden lg:block">
+              <TactileHeroEngine />
+            </div>
           </div>
         </div>
       </div>

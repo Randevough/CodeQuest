@@ -132,6 +132,13 @@ describe('HeroSection Component', () => {
     expect(screen.getByText('OAuth2 SSO Service & JWT Security')).toBeTruthy()
     expect(screen.getByRole('button', { name: /Ambil Tiket Misi/i })).toBeTruthy()
   })
+
+  it('mounts TactileHeroEngine on desktop container', () => {
+    render(<HeroSection />)
+
+    expect(screen.getByTestId('tactile-hero-engine')).toBeTruthy()
+    expect(screen.getByText('GIT ENGINE v1.4 • MISI #042')).toBeTruthy()
+  })
 })
 
 describe('QuestVoucherHero Lifecycle Engine', () => {
