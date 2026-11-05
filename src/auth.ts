@@ -29,8 +29,6 @@ const nextAuthResult = NextAuth({
         Credentials({
             async authorize(credentials) {
                 if (!credentials?.email) return null;
-                const email = credentials.email as string;
-                if (!email.endsWith('@cyber-univ.ac.id')) return null;
 
                 const parsedCredentials = z
                     .object({ email: z.string().email(), password: z.string().min(6) })

@@ -9,6 +9,7 @@ import { rateLimit } from '@/lib/rate-limit';
 import { headers } from 'next/headers';
 import crypto from 'crypto';
 import { sendVerificationEmail } from '@/lib/email';
+import { validateRegistrationEmail } from '@/lib/email-guard';
 
 export async function authenticate(prevState: string | undefined, formData: FormData) {
     const ip = (await headers()).get('x-forwarded-for') || 'unknown';
@@ -19,9 +20,8 @@ export async function authenticate(prevState: string | undefined, formData: Form
     let redirectTo = '/?loggedIn=true';
 
     // Check if admin login to redirect to dashboard
-    if (email === 'codequest@cyber-univ.ac.id') {
-        redirectTo = '/admin/members';
-    }
+    const user = await prisma.user.findUnique({ where: { email }, select: { role: true } });
+    if (user?.role === 'Admin') redirectTo = '/admin/members';
 
     try {
         await signIn('credentials', { ...Object.fromEntries(formData), redirectTo });
@@ -52,7 +52,8 @@ export async function signup(prevState: string | undefined, formData: FormData) 
     const name = formData.get('name') as string;
 
     if (!email || !password) return "Missing fields";
-    if (!email.endsWith('@cyber-univ.ac.id')) return "Invalid domain. Only @cyber-univ.ac.id emails are allowed.";
+    const emailCheck = validateRegistrationEmail(email);
+    if (!emailCheck.valid) return emailCheck.reason;
     if (password !== confirmPassword && confirmPassword) return "Passwords do not match";
 
     const existingUser = await prisma.user.findUnique({

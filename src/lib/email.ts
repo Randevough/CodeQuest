@@ -12,7 +12,7 @@ export async function sendVerificationEmail(email: string, token: string) {
 
     try {
         const data = await resend.emails.send({
-            from: 'CodeQuest <noreply@cyber-univ.ac.id>',
+            from: process.env.EMAIL_FROM || 'CodeQuest <onboarding@resend.dev>',
             to: email,
             subject: 'Verify your CodeQuest account',
             html: `
