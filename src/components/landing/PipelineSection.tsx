@@ -68,7 +68,7 @@ export function PipelineSection({ className = "" }: PipelineSectionProps) {
       >
         {PIPELINE_STEPS.map((item, idx) => (
           <div key={`track-${item.step}`} className="flex items-center gap-3">
-            <span className="w-3.5 h-3.5 rounded-full bg-[#FFAE58] ring-4 ring-[#FFAE58]/20 shadow-[0_0_12px_#FFAE58] flex-shrink-0" />
+            <span className="w-3.5 h-3.5 rounded-full bg-[#FFAE58] border-2 border-[#141925] shadow-[0_2px_0_#C27A29] flex-shrink-0" />
             <span className="text-xs font-semibold text-[#FFAE58] tracking-wide">
               {item.level}
             </span>
@@ -84,14 +84,14 @@ export function PipelineSection({ className = "" }: PipelineSectionProps) {
           <div
             key={item.step}
             data-testid={`pipeline-step-${item.step}`}
-            className="rounded-[20px] bg-[#20283A] border-2 border-[#2E3A52] p-6 flex flex-col justify-between shadow-[0_4px_0_#141925] transition-all duration-150 hover:-translate-y-1 hover:border-[#47577A]"
+            className="rounded-2xl bg-[#20283A] border-2 border-[#2E3A52] p-6 flex flex-col justify-between shadow-[0_4px_0_#141925] transition-all duration-150 hover:-translate-y-1 hover:border-[#47577A]"
           >
             <div>
-              {/* Warm Rounded Step Badge */}
+              {/* Warm Step Badge */}
               <div className="flex items-center justify-between mb-4">
                 <div
                   data-testid={`step-badge-${item.step}`}
-                  className="px-3.5 py-1 rounded-full bg-[#FFAE58] text-[#141925] flex items-center justify-center font-bold text-xs sm:text-sm shadow-[0_2px_0_#C27A29] select-none"
+                  className="px-3 py-1 rounded-lg bg-[#FFAE58] text-[#141925] border-b-2 border-[#C27A29] flex items-center justify-center font-bold text-xs sm:text-sm select-none"
                 >
                   {item.level}
                 </div>
@@ -111,7 +111,7 @@ export function PipelineSection({ className = "" }: PipelineSectionProps) {
 
             <div className="mt-6 pt-4 border-t border-[#2E3A52] flex items-center justify-between text-xs text-[#8A94A6]">
               <span className="text-[#FFAE58] font-semibold">
-                <span aria-hidden="true">✦</span> {item.highlight}
+                {item.highlight}
               </span>
               <span>Langkah {item.step} dari 04</span>
             </div>

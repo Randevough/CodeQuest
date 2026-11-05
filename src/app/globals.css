@@ -394,11 +394,6 @@
     background-size: 24px 24px;
   }
 
-  .arcade-dots-bg {
-    background-image: radial-gradient(rgb(var(--color-border-rgb) / 0.25) 1.5px, transparent 1.5px);
-    background-size: 20px 20px;
-  }
-
   .arcade-panel {
     background-color: var(--color-surface);
     border: 1px solid var(--color-border);
@@ -436,15 +431,6 @@
   .arcade-podium-3 {
     border-left: 3px solid #D97706 !important;
     background: linear-gradient(90deg, rgb(217 119 6 / 0.08) 0%, transparent 100%);
-  }
-
-  .arcade-scanline {
-    background-image: linear-gradient(
-      to bottom,
-      transparent 50%,
-      rgb(0 0 0 / 0.08) 51%
-    );
-    background-size: 100% 4px;
   }
 }
 

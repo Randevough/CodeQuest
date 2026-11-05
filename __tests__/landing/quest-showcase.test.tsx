@@ -97,10 +97,9 @@ describe("QuestBubble", () => {
     expect(card.className).toContain("border-[#141925]");
   });
 
-  it("renders header with retro star, category pill, difficulty stars, and points chip", () => {
+  it("renders header with category pill, difficulty stars, and points chip", () => {
     render(<QuestBubble quest={sampleQuest} />);
 
-    expect(screen.getByTestId("retro-star").textContent?.trim()).toBe("✦");
     expect(screen.getByTestId("category-pill").textContent?.trim()).toBe("WEB • PEMULA");
     expect(screen.getByTestId("difficulty-stars").textContent?.trim()).toBe("★☆☆");
     expect(screen.getByTestId("points-chip").textContent?.trim()).toBe("+150 PTS");

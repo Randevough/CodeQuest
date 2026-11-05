@@ -22,13 +22,12 @@ export function PlayerPebble({
       className={`w-full rounded-full bg-[#20283A] hover:bg-[#2B354D] border-[1.5px] border-[#2E3A52] hover:border-[#47577A] px-4 py-2.5 flex items-center justify-between transition-colors ${className}`}
     >
       <div className="flex items-center gap-3 min-w-0">
-        {/* Avatar Sirkular: w-10 h-10, background raised #2B354D, border 2px #FFAE58, teks cq + bintang */}
+        {/* Avatar Sirkular: w-10 h-10, background raised #2B354D, border 2px #FFAE58, teks cq */}
         <div
           className="w-10 h-10 rounded-full bg-[#2B354D] border-2 border-[#FFAE58] flex items-center justify-center shrink-0 text-[#FFF3DE] font-mono text-xs font-bold"
           aria-hidden="true"
         >
           <span>cq</span>
-          <span className="text-[#FFAE58] text-[10px] ml-0.5">✦</span>
         </div>
 
         <div className="min-w-0">

@@ -145,7 +145,6 @@ export function LeaderboardSection({ topUsers }: LeaderboardSectionProps) {
                   </div>
 
                   <div className="flex items-center gap-1.5 shrink-0 ml-2">
-                    <span className="text-[#141925] text-sm" aria-hidden="true">✦</span>
                     <span className="font-mono font-black text-sm sm:text-base text-[#141925]">
                       {rank1.points.toLocaleString('en-US')} PTS
                     </span>
@@ -300,7 +299,6 @@ export function LeaderboardSection({ topUsers }: LeaderboardSectionProps) {
             className="rounded-xl bg-[#141925] border border-[#FFAE58]/40 p-3 min-h-[52px] flex items-center justify-between gap-2 transition-all"
           >
             <div className="flex items-center gap-2 min-w-0">
-              <span className="text-[#FFAE58] text-sm shrink-0" aria-hidden="true">✦</span>
               <p className="text-xs text-[#FFF3DE] leading-snug truncate sm:whitespace-normal">
                 {activeBadge
                   ? activeBadge.requirement
@@ -360,7 +358,7 @@ export function LeaderboardSection({ topUsers }: LeaderboardSectionProps) {
 
           <div className="pt-3 border-t border-[#2E3A52] text-center">
             <span className="text-[11px] font-mono text-[#8A94A6]">
-              ✦ Sematkan hingga 3 lencana teratas di kartu profil publikmu.
+              Sematkan hingga 3 lencana teratas di kartu profil publikmu.
             </span>
           </div>
         </div>

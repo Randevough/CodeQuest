@@ -32,8 +32,8 @@ export function SquadSection() {
               <span className="text-xs font-semibold text-[#FFF3DE] tracking-wide">
                 Lobi Skuad: Full-Stack Runner
               </span>
-              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#20283A] text-[#FFAE58] border border-[#2E3A52]">
-                [PREVIEW LOBI]
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg bg-[#20283A] text-[#FFAE58] border border-[#2E3A52]">
+                Lobi Terbuka
               </span>
               <span
                 data-testid="party-slots-badge"

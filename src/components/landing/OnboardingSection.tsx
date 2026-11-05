@@ -37,20 +37,6 @@ export function OnboardingSection({ isLoggedIn = false, userName }: OnboardingSe
     <section className="soft-arcade page-container py-12" aria-labelledby="onboarding-section-title">
       {/* Centered action box with thick border #47577A and Soft Arcade surface */}
       <div className="relative rounded-[24px] bg-[#20283A] border-2 border-[#47577A] p-6 sm:p-10 md:p-14 text-center overflow-hidden shadow-[0_6px_0_#182030]">
-        {/* Subtle Decorative Star Accents */}
-        <div
-          className="absolute -top-6 -left-6 text-[#FFAE58]/10 text-8xl select-none pointer-events-none"
-          aria-hidden="true"
-        >
-          ✦
-        </div>
-        <div
-          className="absolute -bottom-6 -right-6 text-[#FFAE58]/10 text-8xl select-none pointer-events-none"
-          aria-hidden="true"
-        >
-          ✦
-        </div>
-
         <div className="max-w-2xl mx-auto space-y-6 relative z-10">
           {/* Eyebrow & Headline & Subheadline */}
           <div className="space-y-3">
@@ -128,7 +114,6 @@ export function OnboardingSection({ isLoggedIn = false, userName }: OnboardingSe
                 href="/signup"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 min-h-[48px] px-8 rounded-full bg-[#FFAE58] hover:bg-[#FFBE76] active:translate-y-0.5 text-[#141925] font-bold text-sm border-2 border-[#C27A29] shadow-[0_4px_0_#C27A29] transition-all motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFF3DE] focus-visible:ring-offset-2 focus-visible:ring-offset-[#20283A]"
               >
-                <span aria-hidden="true">✦</span>
                 <span>Daftar Akun Mahasiswa</span>
               </Link>
             )}
@@ -153,7 +138,7 @@ export function OnboardingSection({ isLoggedIn = false, userName }: OnboardingSe
               <CheckCircle2 className="w-3.5 h-3.5 text-[#3DD68C]" aria-hidden="true" /> Dukungan autentikasi email terverifikasi
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="text-[#FFAE58]" aria-hidden="true">✦</span> Bebas iklan &amp; kurasi langsung mentor
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#3DD68C]" aria-hidden="true" /> Bebas iklan &amp; kurasi langsung mentor
             </span>
           </div>
         </div>

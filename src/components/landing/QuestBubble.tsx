@@ -86,16 +86,9 @@ export function QuestBubble({
         className="relative flex flex-col justify-between h-full rounded-[22px] bg-[#FFF3DE] border-2 border-[#141925] p-6 text-[#141925] shadow-[0_6px_0_rgba(20,25,37,0.45)] transition-all duration-150 ease-out hover:-translate-y-0.5 hover:shadow-[0_8px_0_rgba(20,25,37,0.45)] active:translate-y-0.5 active:shadow-[0_2px_0_rgba(20,25,37,0.45)]"
       >
         <div>
-          {/* Header Row: Retro 4-point star, category pill, difficulty stars, points chip */}
+          {/* Header Row: category pill, difficulty stars, points chip */}
           <div className="flex items-center justify-between gap-2 mb-4">
             <div className="flex items-center gap-2 flex-wrap">
-              <span
-                data-testid="retro-star"
-                className="text-[#FFAE58] text-xl font-bold select-none leading-none"
-                aria-hidden="true"
-              >
-                ✦
-              </span>
               <span
                 data-testid="category-pill"
                 className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#FFAE58] text-[#141925] tracking-wide"
