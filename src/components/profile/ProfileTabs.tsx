@@ -330,6 +330,7 @@ export function ProfileTabs({ activeSnatches, portfolioSnatches = [], user, isOw
                                                         alt={badge.name}
                                                         width={40}
                                                         height={40}
+                                                        unoptimized
                                                         className={`w-10 h-10 object-contain max-w-full ${!earned ? 'grayscale' : ''}`}
                                                     />
                                                 ) : (
