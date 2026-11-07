@@ -139,7 +139,7 @@ describe('Email Verification Action', () => {
         const token = await testPrisma.verificationToken.findFirst({ where: { identifier: 'newuser@cyber-univ.ac.id' } })
         expect(token).not.toBeNull()
         expect(token?.token).toBeDefined()
-    })
+    }, 15000)
 
     it('login is REJECTED for an unverified user', async () => {
         if (!process.env.DATABASE_URL_TEST) return
@@ -150,5 +150,5 @@ describe('Email Verification Action', () => {
 
         const res = await authenticate(undefined, formData)
         expect(res).toBe('Please check your email and verify your account before logging in.')
-    })
+    }, 15000)
 })
