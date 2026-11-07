@@ -1,9 +1,25 @@
 import { MobileSidebarTrigger } from '@/components/admin/MobileSidebarTrigger';
 import Link from 'next/link';
+import dynamicImport from 'next/dynamic';
 import { getAdminDashboardStats } from '@/actions/admin-dashboard';
 import { StatsGrid, LeaderboardPreview } from '@/components/admin/AdminStats';
-import { ActivityTrendChart, DifficultyDistributionChart } from '@/components/admin/AdminCharts';
 import { Calendar, PlusCircle, FileEdit, Users } from 'lucide-react';
+
+const ActivityTrendChart = dynamicImport(
+    () => import('@/components/admin/AdminCharts').then((m) => m.ActivityTrendChart),
+    {
+        ssr: false,
+        loading: () => <div className="h-64 w-full bg-surface-raised rounded animate-pulse" />,
+    }
+);
+
+const DifficultyDistributionChart = dynamicImport(
+    () => import('@/components/admin/AdminCharts').then((m) => m.DifficultyDistributionChart),
+    {
+        ssr: false,
+        loading: () => <div className="h-64 w-full bg-surface-raised rounded animate-pulse" />,
+    }
+);
 
 export const dynamic = 'force-dynamic';
 
