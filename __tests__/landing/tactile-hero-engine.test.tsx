@@ -87,7 +87,7 @@ describe('TactileHeroEngine Component', () => {
     expect(mentorStamp).toBeTruthy()
     expect(screen.getByText('✓ DISETUJUI MENTOR KAMPUS')).toBeTruthy()
     expect(
-      screen.getByText('"Arsitektur token aman dan implementasi refresh token bersih."')
+      screen.getByText('“Arsitektur token aman dan implementasi refresh token bersih.”')
     ).toBeTruthy()
 
     const m2 = screen.getByTestId('node-m2')

@@ -6,10 +6,7 @@ import {
   formatCategoryPill,
   getDifficultyStars,
 } from "@/components/landing/QuestBubble";
-import {
-  QuestShowcaseSection,
-  FALLBACK_TEASERS,
-} from "@/components/landing/QuestShowcaseSection";
+import { QuestShowcaseSection } from "@/components/landing/QuestShowcaseSection";
 
 describe("getDifficultyStars helper", () => {
   it("maps beginner/pemula to ★☆☆", () => {
