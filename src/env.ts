@@ -5,8 +5,8 @@ const envSchema = z.object({
   DIRECT_URL: z.string().url(),
   AUTH_SECRET: z.string().min(1),
   BLOB_READ_WRITE_TOKEN: z.string().min(1).optional(),
-  UPSTASH_REDIS_REST_URL: z.string().url(),
-  UPSTASH_REDIS_REST_TOKEN: z.string().min(1),
+  UPSTASH_REDIS_REST_URL: z.string().url().or(z.literal('')).optional(),
+  UPSTASH_REDIS_REST_TOKEN: z.string().min(1).or(z.literal('')).optional(),
 });
 
 const envParse = envSchema.safeParse(process.env);
