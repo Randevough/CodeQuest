@@ -593,14 +593,16 @@ export async function getQuests({
     limit = 10,
     search = '',
     status,
-    includeFull = false // Default to false to preserve existing behavior for other callers
+    includeFull = false, // Default to false to preserve existing behavior for other callers
+    orderBy = { updatedAt: 'desc' }
 }: {
     page?: number;
     limit?: number;
     search?: string;
     status?: string;
     includeFull?: boolean;
-}) {
+    orderBy?: Prisma.QuestOrderByWithRelationInput | Prisma.QuestOrderByWithRelationInput[];
+} = {}) {
     try {
         const offset = (page - 1) * limit;
 
@@ -622,7 +624,7 @@ export async function getQuests({
         // Fetch Quests
         const quests = await prisma.quest.findMany({
             where,
-            orderBy: { updatedAt: 'desc' }, // Updated to sort by latest modified
+            orderBy,
             skip: offset,
             take: limit + 5, // Fetch a few more to handle filtering of full quests (basic mitigation)
             include: {
