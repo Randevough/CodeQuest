@@ -8,7 +8,6 @@ import { Calendar, PlusCircle, FileEdit, Users } from 'lucide-react';
 const ActivityTrendChart = dynamicImport(
     () => import('@/components/admin/AdminCharts').then((m) => m.ActivityTrendChart),
     {
-        ssr: false,
         loading: () => <div className="h-64 w-full bg-surface-raised rounded animate-pulse" />,
     }
 );
@@ -16,7 +15,6 @@ const ActivityTrendChart = dynamicImport(
 const DifficultyDistributionChart = dynamicImport(
     () => import('@/components/admin/AdminCharts').then((m) => m.DifficultyDistributionChart),
     {
-        ssr: false,
         loading: () => <div className="h-64 w-full bg-surface-raised rounded animate-pulse" />,
     }
 );
