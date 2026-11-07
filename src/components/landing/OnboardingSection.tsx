@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { LogIn, LayoutDashboard, CheckCircle2, UserPlus, Sparkles } from 'lucide-react'
+import { LogIn, LayoutDashboard, CheckCircle2, Sparkles } from 'lucide-react'
 
 export interface OnboardingSectionProps {
   isLoggedIn?: boolean

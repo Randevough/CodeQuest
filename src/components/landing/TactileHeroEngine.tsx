@@ -98,9 +98,6 @@ export function TactileHeroEngine({
   useEffect(() => {
     if (typeof window === 'undefined' || !window.matchMedia) return
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
-    if (mediaQuery.matches) {
-      setIsPlaying(false)
-    }
 
     const handler = (e: MediaQueryListEvent) => {
       if (e.matches) {
@@ -518,7 +515,7 @@ export function TactileHeroEngine({
               <span className="text-[10px] font-mono text-[#8A94A6]">@mentor-cyber</span>
             </div>
             <p className="text-xs text-[#FFF3DE] italic font-medium leading-relaxed">
-              "Arsitektur token aman dan implementasi refresh token bersih."
+              &ldquo;Arsitektur token aman dan implementasi refresh token bersih.&rdquo;
             </p>
           </div>
         </div>

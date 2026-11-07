@@ -56,7 +56,7 @@ jobs:
       - name: Run unit & integration tests
         env:
           DATABASE_URL: "postgresql://postgres:password@127.0.0.1:5432/codequest_staging"
-        run: npm test -- --run
+        run: npm test
 
       - name: Validate Prisma schema
         run: npx prisma db push --skip-generate
