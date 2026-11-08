@@ -50,13 +50,13 @@ export function SquadSection() {
           {/* Visual Squad Members */}
           <div className="py-4 space-y-3">
             {/* Slot 1: Alex Dev • Ketua Tim • Status Siap */}
-            <div className="flex items-center justify-between p-3.5 rounded-xl bg-[#20283A] border border-[#2E3A52]">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#FFAE58] text-[#141925] flex items-center justify-center font-bold text-xs shadow-[0_2px_0_#C27A29]">
+            <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-0 p-3.5 rounded-xl bg-[#20283A] border border-[#2E3A52]">
+              <div className="flex min-w-0 max-w-full items-center gap-3">
+                <div className="w-8 h-8 shrink-0 rounded-full bg-[#FFAE58] text-[#141925] flex items-center justify-center font-bold text-xs shadow-[0_2px_0_#C27A29]">
                   01
                 </div>
-                <div>
-                  <div className="flex items-center gap-2">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className="text-sm font-bold text-[#FFF3DE]">Alex Dev</span>
                     <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-[#141925] text-[#FFAE58] border border-[#2E3A52]">
                       Ketua Tim
@@ -65,19 +65,19 @@ export function SquadSection() {
                   <p className="text-xs text-[#C2C7D0]">Frontend Lead</p>
                 </div>
               </div>
-              <span className="text-xs font-bold px-3 py-0.5 rounded-full bg-[#3DD68C]/20 text-[#3DD68C] border border-[#1F8A55]">
+              <span className="shrink-0 text-xs font-bold px-3 py-0.5 rounded-full bg-[#3DD68C]/20 text-[#3DD68C] border border-[#1F8A55]">
                 Siap
               </span>
             </div>
 
             {/* Slot 2: Budi Runner • Pengembang Backend • Status Siap */}
-            <div className="flex items-center justify-between p-3.5 rounded-xl bg-[#20283A] border border-[#2E3A52]">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#2B354D] text-[#FFF3DE] flex items-center justify-center font-bold text-xs shadow-[0_2px_0_#141925]">
+            <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-0 p-3.5 rounded-xl bg-[#20283A] border border-[#2E3A52]">
+              <div className="flex min-w-0 max-w-full items-center gap-3">
+                <div className="w-8 h-8 shrink-0 rounded-full bg-[#2B354D] text-[#FFF3DE] flex items-center justify-center font-bold text-xs shadow-[0_2px_0_#141925]">
                   02
                 </div>
-                <div>
-                  <div className="flex items-center gap-2">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className="text-sm font-bold text-[#FFF3DE]">Budi Runner</span>
                     <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-[#141925] text-[#C2C7D0] border border-[#2E3A52]">
                       Pengembang Backend
@@ -86,7 +86,7 @@ export function SquadSection() {
                   <p className="text-xs text-[#C2C7D0]">Backend Engineer</p>
                 </div>
               </div>
-              <span className="text-xs font-bold px-3 py-0.5 rounded-full bg-[#3DD68C]/20 text-[#3DD68C] border border-[#1F8A55]">
+              <span className="shrink-0 text-xs font-bold px-3 py-0.5 rounded-full bg-[#3DD68C]/20 text-[#3DD68C] border border-[#1F8A55]">
                 Siap
               </span>
             </div>
@@ -95,14 +95,14 @@ export function SquadSection() {
             {invited ? (
               <div
                 data-testid="squad-slot-3-joined"
-                className="flex items-center justify-between p-3.5 rounded-xl bg-[#20283A] border border-[#3DD68C]/50 shadow-[0_2px_0_#1F8A55] transition-all animate-in fade-in duration-200"
+                className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-0 p-3.5 rounded-xl bg-[#20283A] border border-[#3DD68C]/50 shadow-[0_2px_0_#1F8A55] transition-all animate-in fade-in duration-200"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-[#3DD68C] text-[#141925] flex items-center justify-center font-bold text-xs shadow-[0_2px_0_#1F8A55]">
+                <div className="flex min-w-0 max-w-full items-center gap-3">
+                  <div className="w-8 h-8 shrink-0 rounded-full bg-[#3DD68C] text-[#141925] flex items-center justify-center font-bold text-xs shadow-[0_2px_0_#1F8A55]">
                     03
                   </div>
-                  <div>
-                    <div className="flex items-center gap-2">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
                       <span className="text-sm font-bold text-[#FFF3DE]">Citra Code</span>
                       <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-[#141925] text-[#3DD68C] border border-[#1F8A55]">
                         Desainer UI
@@ -111,8 +111,8 @@ export function SquadSection() {
                     <p className="text-xs text-[#3DD68C]">Desainer UI bergabung</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold px-3 py-0.5 rounded-full bg-[#3DD68C]/20 text-[#3DD68C] border border-[#1F8A55] flex items-center gap-1">
+                <div className="flex shrink-0 flex-wrap items-center gap-2">
+                  <span className="shrink-0 text-xs font-bold px-3 py-0.5 rounded-full bg-[#3DD68C]/20 text-[#3DD68C] border border-[#1F8A55] flex items-center gap-1">
                     <Check className="w-3.5 h-3.5" aria-hidden="true" />
                     Siap
                   </span>
@@ -131,21 +131,21 @@ export function SquadSection() {
                 type="button"
                 data-testid="squad-slot-3-open"
                 onClick={() => setInvited(true)}
-                className="w-full flex items-center justify-between p-3.5 rounded-xl border-2 border-dashed border-[#47577A] bg-[#141925]/60 hover:bg-[#141925] hover:border-[#FFAE58] text-left transition-all group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFAE58]"
+                className="w-full flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-0 p-3.5 rounded-xl border-2 border-dashed border-[#47577A] bg-[#141925]/60 hover:bg-[#141925] hover:border-[#FFAE58] text-left transition-all group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFAE58]"
                 aria-label="Ajak rekan mahasiswa bergabung ke skuad"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full border-2 border-dashed border-[#47577A] group-hover:border-[#FFAE58] text-[#8A94A6] group-hover:text-[#FFAE58] flex items-center justify-center text-sm transition-colors">
+                <div className="flex min-w-0 max-w-full items-center gap-3">
+                  <div className="w-8 h-8 shrink-0 rounded-full border-2 border-dashed border-[#47577A] group-hover:border-[#FFAE58] text-[#8A94A6] group-hover:text-[#FFAE58] flex items-center justify-center text-sm transition-colors">
                     <UserPlus className="w-4 h-4" aria-hidden="true" />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <div className="text-sm font-bold text-[#FFAE58] group-hover:text-[#FFBE76] transition-colors">
                       + Ajak Rekan Mahasiswa Bergabung
                     </div>
                     <p className="text-xs text-[#8A94A6]">Klik untuk membagikan tautan undangan lobi</p>
                   </div>
                 </div>
-                <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-[#20283A] text-[#C2C7D0] border border-[#2E3A52] group-hover:border-[#FFAE58]/60 transition-colors">
+                <span className="shrink-0 text-xs font-medium px-2.5 py-0.5 rounded-full bg-[#20283A] text-[#C2C7D0] border border-[#2E3A52] group-hover:border-[#FFAE58]/60 transition-colors">
                   Slot Tersedia
                 </span>
               </button>
