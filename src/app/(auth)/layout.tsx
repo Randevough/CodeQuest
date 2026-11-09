@@ -37,11 +37,6 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
             {/* Right Column: Arcade Visual Composition (Desktop) */}
             <div className="hidden lg:flex lg:w-1/2 xl:w-7/12 flex-col justify-center items-center p-8 lg:p-12 xl:p-16 bg-surface/40 border-l border-border relative overflow-hidden">
-                {/* Background Grid Pattern */}
-                <div
-                    className="absolute inset-0 pointer-events-none opacity-40 arcade-grid-bg"
-                    aria-hidden="true"
-                />
 
                 {/* Ambient glow accent */}
                 <div

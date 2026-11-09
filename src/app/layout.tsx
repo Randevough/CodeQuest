@@ -11,13 +11,13 @@ import { DevRoleSwitcher } from "@/components/dev/DevRoleSwitcher";
 export const metadata: Metadata = {
   metadataBase: new URL('https://codequest.dev'),
   title: {
-    default: 'CodeQuest — Gamified Coding Platform',
+    default: 'CodeQuest: quest board of UKM Coding Cyber University',
     template: '%s | CodeQuest',
   },
-  description: 'Gamified coding platform for students to snatch quests, build features, and earn ranks.',
+  description: 'Take a real project quest, build it in your own Git repository, and get it reviewed by club staff. Approved quests earn points and badges.',
   openGraph: {
     title: 'CodeQuest',
-    description: 'Gamified coding platform for students to snatch quests, build features, and earn ranks.',
+    description: 'Take a real project quest, build it in your own Git repository, and get it reviewed by club staff. Approved quests earn points and badges.',
     url: 'https://codequest.dev',
     siteName: 'CodeQuest',
     type: 'website',
@@ -34,7 +34,7 @@ export default async function RootLayout({
   const session = await auth();
 
   return (
-    <html lang="en" className={fontVariables} suppressHydrationWarning>
+    <html lang="en" className={`${fontVariables} dark`} suppressHydrationWarning>
       <head>
         {/* Preload critical font */}
         <link
@@ -44,10 +44,10 @@ export default async function RootLayout({
           type="font/ttf"
           crossOrigin="anonymous"
         />
-        {/* FOUT-prevention: apply theme class synchronously before React hydrates */}
+        {/* Dark is the default. Only an explicit saved 'light' choice removes it, before React hydrates. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('cq-theme');if(t==='dark'){document.documentElement.classList.add('dark')}else if(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.classList.add('dark')}}catch(e){}})()`,
+            __html: `(function(){try{if(localStorage.getItem('cq-theme')==='light'){document.documentElement.classList.remove('dark')}}catch(e){}})()`,
           }}
         />
       </head>

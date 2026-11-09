@@ -1,9 +1,5 @@
-'use client'
-
-import React from 'react'
 import Link from 'next/link'
-import { QuestVoucherHero } from './QuestVoucherHero'
-import { TactileHeroEngine } from './TactileHeroEngine'
+import { QuestDemo } from './QuestDemo'
 
 export interface HeroSectionProps {
   sessionUser?: {
@@ -11,89 +7,43 @@ export interface HeroSectionProps {
     email?: string | null
     role?: string
   } | null
-  totalActiveQuests?: number
 }
 
-export function HeroSection({
-  sessionUser,
-}: HeroSectionProps) {
+export function HeroSection({ sessionUser }: HeroSectionProps) {
   const isAdmin = sessionUser?.role?.toLowerCase() === 'admin'
   const secondaryCta = !sessionUser
-    ? { label: 'Masuk Akun Kampus', href: '/login' }
+    ? { label: 'How it works', href: '#how-it-works' }
     : isAdmin
-    ? { label: 'Buka Panel Admin', href: '/admin/members' }
-    : { label: 'Buka Workspace Saya', href: '/workspace' }
+    ? { label: 'Open admin panel', href: '/admin/members' }
+    : { label: 'Open workspace', href: '/workspace' }
 
   return (
-    <section aria-label="Hero" className="w-full py-8 md:py-14 lg:py-16">
+    <section aria-label="Introduction" className="w-full py-6 md:py-12">
       <div className="page-container">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          {/* Left Column: Campus Guild Intro & CTAs (Cols 1-7) */}
-          <div className="min-w-0 lg:col-span-7 space-y-6 sm:space-y-8">
-            {/* Subtle Label */}
-            <p className="text-xs sm:text-sm font-semibold tracking-wide uppercase text-[#8A94A6]">
-              Cyber University Coding Club: Arena Proyek & Bounty Mahasiswa
-            </p>
-
-            {/* Headline */}
-            <h1 className="font-sans font-black tracking-tight text-3xl sm:text-4xl lg:text-5xl leading-[1.15] break-normal [hyphens:none]">
-              <span className="block text-[#FFF3DE]">Klaim Misi Kampus.</span>
-              <span className="block text-[#ed8936]">Bangun Karya Nyata.</span>
+        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-14">
+          <div className="min-w-0 space-y-7 lg:col-span-6">
+            <h1>
+              <span className="block text-foreground">Pick a quest.</span>
+              <span className="block text-foreground dark:text-primary">Ship the project.</span>
             </h1>
 
-            {/* Subcopy */}
-            <p className="text-base sm:text-lg text-[#C2C7D0] leading-relaxed max-w-2xl">
-              Kerjakan proyek software riil di IDE lokal, kumpulkan repositori Git, dan raih review terverifikasi dari mentor Cyber University.
+            <p className="max-w-xl text-lg text-muted">
+              CodeQuest is the quest board of UKM Coding Cyber University. Take a real project, build it in your
+              own Git repository, and have club staff review it. Approved quests earn points and badges.
             </p>
 
-            {/* Tactile CTAs */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2">
-              <Link
-                href="/explore"
-                className="inline-flex items-center justify-center px-7 py-3 min-h-[48px] rounded-xl text-base font-bold bg-[#ed8936] text-[#0C0F17] border-2 border-[#b35a15] shadow-[0_4px_0_#b35a15] hover:bg-[#f6994a] active:translate-y-[2px] active:shadow-[0_2px_0_#b35a15] transition-all motion-reduce:transform-none"
-              >
-                Jelajahi Misi
+            <div className="flex flex-col gap-4 pt-1 sm:flex-row sm:items-center">
+              <Link href="/explore" className="btn btn-primary btn-lg">
+                Browse quests
               </Link>
-
-              <Link
-                href={secondaryCta.href}
-                className="inline-flex items-center justify-center px-7 py-3 min-h-[48px] rounded-xl text-base font-semibold bg-[#20283A] text-[#FFF3DE] border-2 border-[#47577A] shadow-[0_4px_0_#10141D] hover:bg-[#2B354D] active:translate-y-[2px] active:shadow-[0_2px_0_#10141D] transition-all motion-reduce:transform-none"
-              >
+              <Link href={secondaryCta.href} className="btn btn-secondary btn-lg">
                 {secondaryCta.label}
               </Link>
             </div>
-
-            {/* Micro-Proof Row */}
-            <div className="flex flex-wrap items-center gap-3 pt-2 text-xs text-[#8A94A6] font-medium">
-              <span className="inline-flex items-center gap-1.5">
-                <svg className="w-3.5 h-3.5 text-[#3DD68C] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-                Git Repo Mandiri
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <svg className="w-3.5 h-3.5 text-[#3DD68C] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-                Review Mentor 1-on-1
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <svg className="w-3.5 h-3.5 text-[#3DD68C] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-                Reward XP Resmi
-              </span>
-            </div>
           </div>
 
-          {/* Right Column: Interactive Quest Voucher / Hero Engine (Cols 8-12) */}
-          <div className="min-w-0 lg:col-span-5 w-full">
-            <div className="lg:hidden">
-              <QuestVoucherHero />
-            </div>
-            <div className="hidden lg:block">
-              <TactileHeroEngine />
-            </div>
+          <div className="min-w-0 lg:col-span-6">
+            <QuestDemo />
           </div>
         </div>
       </div>

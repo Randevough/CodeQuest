@@ -10,7 +10,7 @@ interface ThemeContextValue {
 }
 
 const ThemeContext = createContext<ThemeContextValue>({
-    theme: 'light',
+    theme: 'dark',
     toggleTheme: () => { },
 })
 
@@ -19,7 +19,7 @@ export function useTheme() {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-    const [theme, setTheme] = useState<Theme>('light')
+    const [theme, setTheme] = useState<Theme>('dark')
 
     function applyTheme(t: Theme) {
         const root = document.documentElement
@@ -30,16 +30,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
-    // On mount: read persisted preference, fall back to OS preference
+    // On mount: read the persisted preference. Dark is the default.
     useEffect(() => {
         const stored = localStorage.getItem('cq-theme') as Theme | null
-        let resolved: Theme = 'light'
-        if (stored === 'dark' || stored === 'light') {
-            resolved = stored
-        } else {
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-            resolved = prefersDark ? 'dark' : 'light'
-        }
+        const resolved: Theme = stored === 'light' ? 'light' : 'dark'
         applyTheme(resolved)
         queueMicrotask(() => {
             setTheme(resolved)

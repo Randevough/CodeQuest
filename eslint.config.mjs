@@ -15,6 +15,8 @@ const eslintConfig = defineConfig([
     "claude-skills/**",
     ".kilo/**",
     ".agent/**",
+    ".agents/**",
+    ".impeccable/**",
   ]),
   {
     files: ["**/*.cjs"],

@@ -1,123 +1,81 @@
-import React from "react";
-
 export interface PipelineStep {
-  step: string;
-  level: string;
-  title: string;
-  description: string;
-  highlight: string;
+  step: string
+  title: string
+  description: string
 }
 
 export const PIPELINE_STEPS: PipelineStep[] = [
   {
-    step: "01",
-    level: "Level 1",
-    title: "01. Kunci Quest",
-    description: "Pilih tantangan di katalog dan amankan slot pengerjaan.",
-    highlight: "Katalog dan Slot",
+    step: '1',
+    title: 'Take a slot',
+    description: 'Pick a quest and take one of its open slots. You can hold up to 3 active quests at a time.',
   },
   {
-    step: "02",
-    level: "Level 2",
-    title: "02. Bangun Solusi",
-    description: "Kembangkan kode di repositori Git mandiri atau bersama tim.",
-    highlight: "Git Mandiri atau Tim",
+    step: '2',
+    title: 'Build in your repo',
+    description: 'Work in your own Git repository. Quests with more than one slot can be done with a squad.',
   },
   {
-    step: "03",
-    level: "Level 3",
-    title: "03. Kirim Repositori",
-    description: "Buka pull request resmi lengkap dengan dokumentasi solusi.",
-    highlight: "PR dan Dokumentasi",
+    step: '3',
+    title: 'Submit the URL',
+    description: 'When the work is ready, send your repository URL from your workspace.',
   },
   {
-    step: "04",
-    level: "Level 4",
-    title: "04. Buka Reward",
-    description: "Review disetujui mentor, poin XP dan lencana langsung aktif.",
-    highlight: "Mentor dan XP",
+    step: '4',
+    title: 'Get reviewed by staff',
+    description:
+      'Club staff read your work by hand. Approved quests add their points to your total. If changes are needed, you get feedback and can resubmit.',
   },
-];
+]
 
 export interface PipelineSectionProps {
-  className?: string;
+  className?: string
 }
 
-export function PipelineSection({ className = "" }: PipelineSectionProps) {
+export function PipelineSection({ className = '' }: PipelineSectionProps) {
   return (
     <section
+      id="how-it-works"
       aria-labelledby="pipeline-heading"
-      className={`page-container py-12 ${className}`.trim()}
+      className={`page-container scroll-mt-6 ${className}`.trim()}
     >
-      <div className="text-center max-w-2xl mx-auto mb-10">
-        <h2
-          id="pipeline-heading"
-          className="text-2xl sm:text-4xl font-black text-[#FFF3DE] uppercase tracking-tight"
-        >
-          Empat Langkah Menuju Kode Terverifikasi
-        </h2>
-        <p className="text-[#C2C7D0] mt-3 text-sm sm:text-base leading-relaxed">
-          Alur kerja repo Git nyata dengan reward XP otomatis.
-        </p>
-      </div>
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
+        <div className="space-y-3 lg:col-span-4">
+          <h2 id="pipeline-heading">How a quest works</h2>
+          <p className="text-muted">The same four steps apply to every quest on the board.</p>
+        </div>
 
-      {/* Desktop Visual Connecting Progress Track */}
-      <div
-        className="hidden lg:grid grid-cols-4 gap-6 mb-6 px-2"
-        aria-hidden="true"
-      >
-        {PIPELINE_STEPS.map((item, idx) => (
-          <div key={`track-${item.step}`} className="flex items-center gap-3">
-            <span className="w-3.5 h-3.5 rounded-full bg-[#FFAE58] border-2 border-[#141925] shadow-[0_2px_0_#C27A29] flex-shrink-0" />
-            <span className="text-xs font-semibold text-[#FFAE58] tracking-wide">
-              {item.level}
-            </span>
-            {idx < PIPELINE_STEPS.length - 1 && (
-              <div className="flex-1 h-0.5 bg-gradient-to-r from-[#FFAE58]/60 to-[#47577A] mx-2 rounded-full" />
-            )}
-          </div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {PIPELINE_STEPS.map((item) => (
-          <div
-            key={item.step}
-            data-testid={`pipeline-step-${item.step}`}
-            className="rounded-2xl bg-[#20283A] border-2 border-[#2E3A52] p-6 flex flex-col justify-between shadow-[0_4px_0_#141925] transition-all duration-150 hover:-translate-y-1 hover:border-[#47577A]"
-          >
-            <div>
-              {/* Warm Step Badge */}
-              <div className="flex items-center justify-between mb-4">
-                <div
-                  data-testid={`step-badge-${item.step}`}
-                  className="px-3 py-1 rounded-lg bg-[#FFAE58] text-[#141925] border-b-2 border-[#C27A29] flex items-center justify-center font-bold text-xs sm:text-sm select-none"
+        <ol className="lg:col-span-8">
+          {PIPELINE_STEPS.map((item, index) => {
+            const isLast = index === PIPELINE_STEPS.length - 1
+            return (
+              <li
+                key={item.step}
+                data-testid={`pipeline-step-${item.step}`}
+                className="relative flex gap-5 pb-10 last:pb-0"
+              >
+                {!isLast && (
+                  <span
+                    aria-hidden="true"
+                    className="absolute left-[21px] top-12 h-[calc(100%-3rem)] w-0.5 rounded-full bg-border"
+                  />
+                )}
+                <span
+                  data-testid={`step-number-${item.step}`}
+                  className="relative flex size-11 shrink-0 items-center justify-center rounded-full border-2 border-primary bg-inset font-display text-lg tabular-nums"
                 >
-                  {item.level}
-                </div>
-                <span className="text-xs font-medium text-[#8A94A6]">
-                  Langkah {item.step}
+                  {item.step}
                 </span>
-              </div>
-
-              <h3 className="text-lg font-bold text-[#FFF3DE] mb-2 leading-snug">
-                {item.title}
-              </h3>
-
-              <p className="text-sm text-[#C2C7D0] leading-relaxed">
-                {item.description}
-              </p>
-            </div>
-
-            <div className="mt-6 pt-4 border-t border-[#2E3A52] flex items-center justify-between text-xs text-[#8A94A6]">
-              <span className="text-[#FFAE58] font-semibold">
-                {item.highlight}
-              </span>
-              <span>Langkah {item.step} dari 04</span>
-            </div>
-          </div>
-        ))}
+                <div className="min-w-0 space-y-1.5 pt-1.5">
+                  <h3>{item.title}</h3>
+                  <p className="max-w-prose text-muted">{item.description}</p>
+                  {isLast && <span className="chip chip-mint mt-2">Reviewed by a person</span>}
+                </div>
+              </li>
+            )
+          })}
+        </ol>
       </div>
     </section>
-  );
+  )
 }

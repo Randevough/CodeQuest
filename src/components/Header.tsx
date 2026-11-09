@@ -3,41 +3,44 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
+import {
+    ChevronDownIcon,
+    CloseIcon,
+    InfoIcon,
+    LogOutIcon,
+    MenuIcon,
+    ShieldCheckIcon,
+    UserIcon,
+} from "@/components/ui/ArcadeIcons";
 import { ThemeToggle } from "./ThemeToggle";
 import { NotificationBell } from "./NotificationBell";
 import { UserAvatar } from "./ui/UserAvatar";
 
 interface HeaderProps {
     activePage?: "explore" | "leaderboard" | "workspace";
+    /** Kept for existing call sites. The header now looks the same everywhere. */
     isLanding?: boolean;
 }
 
 const navLinks = [
-    { id: "explore", href: "/explore", label: "Explore Quests" },
+    { id: "explore", href: "/explore", label: "Explore quests" },
     { id: "leaderboard", href: "/leaderboard", label: "Leaderboard" },
-    { id: "workspace", href: "/workspace", label: "My Workspace" },
+    { id: "workspace", href: "/workspace", label: "My workspace" },
 ] as const;
 
-export function Header({ activePage, isLanding: propIsLanding }: HeaderProps) {
-    const pathname = usePathname();
-    const isLanding = propIsLanding ?? pathname === "/";
+export function Header({ activePage }: HeaderProps) {
     const { data: session } = useSession();
     const [isAccountOpen, setIsAccountOpen] = useState(false);
     const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
     const accountRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLButtonElement>(null);
-    const drawerRef = useRef<HTMLDivElement>(null);
+    const drawerRef = useRef<HTMLDialogElement>(null);
 
-    // Close floating account dropdown on outside click
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
-            if (
-                accountRef.current &&
-                !accountRef.current.contains(event.target as Node)
-            ) {
+            if (accountRef.current && !accountRef.current.contains(event.target as Node)) {
                 setIsAccountOpen(false);
             }
         }
@@ -50,7 +53,6 @@ export function Header({ activePage, isLanding: propIsLanding }: HeaderProps) {
         };
     }, [isAccountOpen]);
 
-    // Handle ESC key for popover and drawer
     useEffect(() => {
         function handleKeyDown(event: KeyboardEvent) {
             if (event.key === "Escape") {
@@ -68,6 +70,20 @@ export function Header({ activePage, isLanding: propIsLanding }: HeaderProps) {
         return () => document.removeEventListener("keydown", handleKeyDown);
     }, [isAccountOpen, isMobileDrawerOpen]);
 
+    useEffect(() => {
+        const drawer = drawerRef.current;
+        if (!isMobileDrawerOpen || !drawer) return;
+        const trigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        const overflow = document.body.style.overflow;
+        drawer.showModal();
+        document.body.style.overflow = "hidden";
+        return () => {
+            drawer.close();
+            document.body.style.overflow = overflow;
+            if (trigger?.isConnected) trigger?.focus();
+        };
+    }, [isMobileDrawerOpen]);
+
     const closeAll = () => {
         setIsAccountOpen(false);
         setIsMobileDrawerOpen(false);
@@ -76,37 +92,24 @@ export function Header({ activePage, isLanding: propIsLanding }: HeaderProps) {
     const navItemClass = (pageId: string) =>
         `flex min-h-11 items-center px-4 py-2 rounded-button text-sm font-semibold transition-colors ${
             activePage === pageId
-                ? "bg-secondary text-secondary-foreground"
-                : isLanding
-                ? "text-[#C2C7D0] hover:text-[#FFF3DE] hover:bg-[#20283A]"
+                ? "bg-surface-raised text-foreground shadow-[inset_0_-3px_0_var(--color-primary)]"
                 : "text-muted hover:text-foreground hover:bg-surface-raised"
         }`;
 
     const dropdownItemClass =
-        `flex items-center gap-2.5 w-full px-3 py-2 text-sm font-medium rounded-button transition-colors ${
-            isLanding
-                ? "text-[#FFF3DE] hover:bg-[#2B354D]"
-                : "text-foreground hover:bg-surface-raised"
-        }`;
+        "flex items-center gap-2.5 w-full px-3 py-2 min-h-11 text-sm font-medium rounded-button text-foreground hover:bg-surface-raised transition-colors";
 
     const user = session?.user;
     const isAdmin = user?.role === "Admin";
     const userPoints = user?.points ?? 0;
 
     return (
-        <header
-            className={`relative z-40 border-b transition-colors ${
-                isLanding
-                    ? "border-[#2E3A52] bg-[#141925] text-[#FFF3DE]"
-                    : "border-border bg-surface text-foreground"
-            }`}
-        >
+        <header className="relative z-dropdown border-b-2 border-border bg-background text-foreground">
             <div className="page-container flex min-h-20 items-center justify-between gap-4 py-3">
-                {/* Brand */}
                 <Link
                     href="/"
                     onClick={closeAll}
-                    className="flex min-h-11 shrink-0 items-center gap-2 font-display text-lg tracking-tight hover:opacity-90 transition-opacity"
+                    className="flex min-h-11 shrink-0 items-center gap-2 font-display text-lg hover:opacity-90 transition-opacity"
                 >
                     <Image
                         src="/icon-big.png"
@@ -118,11 +121,7 @@ export function Header({ activePage, isLanding: propIsLanding }: HeaderProps) {
                     <span>CodeQuest</span>
                 </Link>
 
-                {/* Desktop Navigation */}
-                <nav
-                    aria-label="Main navigation"
-                    className="hidden lg:flex items-center gap-1"
-                >
+                <nav aria-label="Main navigation" className="hidden lg:flex items-center gap-1">
                     {navLinks.map((link) => (
                         <Link
                             key={link.id}
@@ -135,12 +134,10 @@ export function Header({ activePage, isLanding: propIsLanding }: HeaderProps) {
                     ))}
                 </nav>
 
-                {/* Right Actions */}
                 <div className="flex items-center gap-2">
                     {user && <NotificationBell />}
-                    {!isLanding && <ThemeToggle />}
+                    <ThemeToggle />
 
-                    {/* Desktop Account Trigger & Popover */}
                     {user ? (
                         <div ref={accountRef} className="relative hidden sm:block">
                             <button
@@ -150,11 +147,7 @@ export function Header({ activePage, isLanding: propIsLanding }: HeaderProps) {
                                 aria-haspopup="menu"
                                 aria-label="Account options menu"
                                 onClick={() => setIsAccountOpen(!isAccountOpen)}
-                                className={`flex items-center gap-2.5 min-h-11 py-1.5 px-2.5 rounded-button border transition-colors ${
-                                    isLanding
-                                        ? "border-[#2E3A52] bg-[#20283A] text-[#FFF3DE] hover:bg-[#2B354D] focus:outline-none focus:ring-2 focus:ring-[#FFAE58]/40"
-                                        : "border-control-border bg-surface hover:bg-surface-raised focus:outline-none focus:ring-2 focus:ring-focus/40"
-                                }`}
+                                className="flex items-center gap-2.5 min-h-11 py-1.5 px-2.5 rounded-button border-2 border-control-border bg-surface text-foreground hover:bg-surface-raised"
                             >
                                 <UserAvatar
                                     src={user.image || user.avatar}
@@ -162,46 +155,23 @@ export function Header({ activePage, isLanding: propIsLanding }: HeaderProps) {
                                     size={28}
                                     className="shrink-0"
                                 />
-                                <span className={`text-sm font-semibold max-w-[120px] truncate ${isLanding ? "text-[#FFF3DE]" : "text-foreground"}`}>
+                                <span className="text-sm font-semibold max-w-[120px] truncate">
                                     {user.name || "Account"}
                                 </span>
-                                <svg
-                                    className={`w-4 h-4 transition-transform duration-fast ${
-                                        isLanding ? "text-[#8A94A6]" : "text-muted"
-                                    } ${
+                                <ChevronDownIcon
+                                    className={`size-4 text-muted transition-transform duration-fast ${
                                         isAccountOpen ? "rotate-180" : ""
                                     }`}
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    strokeWidth={2}
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M19 9l-7 7-7-7"
-                                    />
-                                </svg>
+                                />
                             </button>
 
-                            {/* Floating Dropdown Popover */}
                             {isAccountOpen && (
                                 <div
                                     role="menu"
                                     aria-orientation="vertical"
-                                    className={`absolute right-0 top-full mt-2 w-72 rounded-card border shadow-panel z-50 p-2 animate-fade-in-up ${
-                                        isLanding
-                                            ? "bg-[#20283A] border-[#2E3A52] text-[#FFF3DE]"
-                                            : "bg-surface border-border text-foreground"
-                                    }`}
+                                    className="absolute right-0 top-full mt-2 w-72 rounded-card border-2 border-border bg-surface text-foreground shadow-panel z-overlay p-2 animate-fade-in-up"
                                 >
-                                    {/* User summary header */}
-                                    <div className={`p-3 rounded-button border mb-2 ${
-                                        isLanding
-                                            ? "bg-[#2B354D] border-[#2E3A52]"
-                                            : "bg-surface-raised border-border/60"
-                                    }`}>
+                                    <div className="p-3 rounded-button border-2 border-border bg-inset mb-2">
                                         <div className="flex items-center gap-3">
                                             <UserAvatar
                                                 src={user.image || user.avatar}
@@ -209,19 +179,17 @@ export function Header({ activePage, isLanding: propIsLanding }: HeaderProps) {
                                                 size={40}
                                             />
                                             <div className="min-w-0 flex-1">
-                                                <p className={`text-sm font-bold truncate ${isLanding ? "text-[#FFF3DE]" : "text-foreground"}`}>
+                                                <p className="text-sm font-bold truncate">
                                                     {user.name || "Adventurer"}
                                                 </p>
                                                 {user.email && (
-                                                    <p className={`text-xs truncate ${isLanding ? "text-[#8A94A6]" : "text-muted"}`}>
-                                                        {user.email}
-                                                    </p>
+                                                    <p className="text-xs text-muted truncate">{user.email}</p>
                                                 )}
                                             </div>
                                         </div>
-                                        <div className="mt-2.5 pt-2 border-t border-border/40 flex items-center justify-between text-xs">
+                                        <div className="mt-2.5 pt-2 border-t-2 border-border flex items-center justify-between text-xs">
                                             <span className="text-muted font-medium">Points</span>
-                                            <div className="flex items-center gap-1 font-mono font-bold text-foreground">
+                                            <span className="chip chip-amber font-mono tabular-nums">
                                                 <Image
                                                     src="/icon.png"
                                                     alt=""
@@ -229,33 +197,14 @@ export function Header({ activePage, isLanding: propIsLanding }: HeaderProps) {
                                                     height={14}
                                                     className="object-contain"
                                                 />
-                                                <span>{userPoints.toLocaleString("en-US")} PTS</span>
-                                            </div>
+                                                {userPoints.toLocaleString("en-US")} PTS
+                                            </span>
                                         </div>
                                     </div>
 
-                                    {/* Menu Items */}
                                     <div className="space-y-0.5">
-                                        <Link
-                                            href="/profile"
-                                            onClick={closeAll}
-                                            role="menuitem"
-                                            className={dropdownItemClass}
-                                        >
-                                            <svg
-                                                className="w-4 h-4 text-muted"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                                strokeWidth={2}
-                                                aria-hidden="true"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                                                />
-                                            </svg>
+                                        <Link href="/profile" onClick={closeAll} role="menuitem" className={dropdownItemClass}>
+                                            <UserIcon className="size-4 text-muted" />
                                             <span>Profile</span>
                                         </Link>
 
@@ -266,50 +215,18 @@ export function Header({ activePage, isLanding: propIsLanding }: HeaderProps) {
                                                 role="menuitem"
                                                 className={dropdownItemClass}
                                             >
-                                                <svg
-                                                    className="w-4 h-4 text-muted"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    stroke="currentColor"
-                                                    strokeWidth={2}
-                                                    aria-hidden="true"
-                                                >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                                                    />
-                                                </svg>
-                                                <span>Admin Dashboard</span>
+                                                <ShieldCheckIcon className="size-4 text-muted" />
+                                                <span>Admin dashboard</span>
                                             </Link>
                                         )}
 
-                                        <Link
-                                            href="/about"
-                                            onClick={closeAll}
-                                            role="menuitem"
-                                            className={dropdownItemClass}
-                                        >
-                                            <svg
-                                                className="w-4 h-4 text-muted"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                                strokeWidth={2}
-                                                aria-hidden="true"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                                />
-                                            </svg>
+                                        <Link href="/about" onClick={closeAll} role="menuitem" className={dropdownItemClass}>
+                                            <InfoIcon className="size-4 text-muted" />
                                             <span>About</span>
                                         </Link>
                                     </div>
 
-                                    {/* Logout Divider & Action */}
-                                    <div className="mt-1 pt-1 border-t border-border">
+                                    <div className="mt-1 pt-1 border-t-2 border-border">
                                         <button
                                             type="button"
                                             role="menuitem"
@@ -319,20 +236,7 @@ export function Header({ activePage, isLanding: propIsLanding }: HeaderProps) {
                                             }}
                                             className="flex items-center gap-2.5 w-full px-3 py-2 text-sm font-semibold rounded-button text-danger hover:bg-danger/10 transition-colors text-left"
                                         >
-                                            <svg
-                                                className="w-4 h-4 text-danger"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                                strokeWidth={2}
-                                                aria-hidden="true"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                                                />
-                                            </svg>
+                                            <LogOutIcon className="size-4" />
                                             <span>Log out</span>
                                         </button>
                                     </div>
@@ -340,138 +244,78 @@ export function Header({ activePage, isLanding: propIsLanding }: HeaderProps) {
                             )}
                         </div>
                     ) : (
-                        <div className="hidden sm:flex items-center gap-2">
-                            <Link
-                                href="/login"
-                                className={`min-h-11 inline-flex items-center justify-center px-4 py-2 rounded-button text-sm font-semibold transition-colors shadow-sm ${
-                                    isLanding
-                                        ? "bg-[#FFAE58] text-[#141925] hover:bg-[#FFBE76]"
-                                        : "bg-primary text-primary-foreground hover:bg-primary-hover"
-                                }`}
-                            >
+                        <div className="hidden sm:flex items-center gap-3">
+                            <Link href="/login" className="btn btn-ghost btn-sm">
                                 Sign in
+                            </Link>
+                            <Link href="/signup" className="btn btn-primary btn-sm">
+                                Sign up
                             </Link>
                         </div>
                     )}
 
-                    {/* Mobile Drawer Trigger */}
                     <button
                         type="button"
                         aria-expanded={isMobileDrawerOpen}
                         aria-controls="mobile-drawer"
                         aria-label={isMobileDrawerOpen ? "Close navigation menu" : "Open navigation menu"}
                         onClick={() => setIsMobileDrawerOpen(!isMobileDrawerOpen)}
-                        className={`lg:hidden flex items-center justify-center min-h-11 w-11 rounded-button border transition-colors ${
-                            isLanding
-                                ? "border-[#2E3A52] bg-[#20283A] text-[#FFF3DE] hover:bg-[#2B354D] focus:outline-none focus:ring-2 focus:ring-[#FFAE58]/40"
-                                : "border-control-border bg-surface hover:bg-surface-raised focus:outline-none focus:ring-2 focus:ring-focus/40"
-                        }`}
+                        className="lg:hidden flex items-center justify-center min-h-11 w-11 rounded-button border-2 border-control-border bg-surface text-foreground hover:bg-surface-raised"
                     >
-                        <svg
-                            className={`w-5 h-5 ${isLanding ? "text-[#FFF3DE]" : "text-foreground"}`}
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                            aria-hidden="true"
-                        >
-                            {isMobileDrawerOpen ? (
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M6 18L18 6M6 6l12 12"
-                                />
-                            ) : (
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M4 6h16M4 12h16M4 18h16"
-                                />
-                            )}
-                        </svg>
+                        {isMobileDrawerOpen ? <CloseIcon className="size-5" /> : <MenuIcon className="size-5" />}
                     </button>
                 </div>
             </div>
 
-            {/* Mobile Navigation Drawer */}
             {isMobileDrawerOpen && (
-                <div
+                <dialog
+                    ref={drawerRef}
                     id="mobile-drawer"
-                    className="fixed inset-0 z-50 lg:hidden flex justify-end"
+                    onCancel={(event) => { event.preventDefault(); closeAll(); }}
+                    aria-label="Navigation menu"
+                    className="fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none border-0 bg-transparent p-0 text-foreground z-modal lg:hidden open:flex justify-end"
                 >
-                    {/* Backdrop */}
                     <div
-                        className="fixed inset-0 bg-background/80 backdrop-blur-sm transition-opacity"
+                        className="fixed inset-0 bg-background/85"
                         onClick={closeAll}
                         aria-hidden="true"
                     />
 
-                    {/* Drawer Content */}
                     <div
-                        ref={drawerRef}
-                        className="relative w-full max-w-sm bg-surface border-l border-border h-full flex flex-col justify-between p-6 shadow-panel overflow-y-auto z-10 animate-fade-in-up"
+                        className="relative w-full max-w-sm bg-surface border-l-2 border-border h-full flex flex-col justify-between p-6 overflow-y-auto z-10 animate-fade-in-up"
                     >
                         <div className="space-y-6">
-                            {/* Drawer Header */}
-                            <div className="flex items-center justify-between pb-4 border-b border-border">
-                                <Link
-                                    href="/"
-                                    onClick={closeAll}
-                                    className="flex items-center gap-2 font-display text-lg tracking-tight"
-                                >
-                                    <Image
-                                        src="/icon-big.png"
-                                        alt="CodeQuest Logo"
-                                        width={28}
-                                        height={28}
-                                    />
+                            <div className="flex items-center justify-between pb-4 border-b-2 border-border">
+                                <Link href="/" onClick={closeAll} className="flex items-center gap-2 font-display text-lg">
+                                    <Image src="/icon-big.png" alt="CodeQuest Logo" width={28} height={28} />
                                     <span>CodeQuest</span>
                                 </Link>
                                 <button
                                     type="button"
                                     onClick={closeAll}
                                     aria-label="Close navigation drawer"
-                                    className="p-2 rounded-button text-muted hover:text-foreground hover:bg-surface-raised transition-colors"
+                                    className="flex items-center justify-center rounded-button text-muted hover:text-foreground hover:bg-surface-raised transition-colors"
                                 >
-                                    <svg
-                                        className="w-5 h-5"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        strokeWidth={2}
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M6 18L18 6M6 6l12 12"
-                                        />
-                                    </svg>
+                                    <CloseIcon className="size-5" />
                                 </button>
                             </div>
 
-                            {/* User Info Card in Drawer */}
                             {user ? (
-                                <div className="p-4 bg-surface-raised rounded-card border border-border">
+                                <div className="p-4 bg-inset rounded-card border-2 border-border">
                                     <div className="flex items-center gap-3 mb-3">
-                                        <UserAvatar
-                                            src={user.image || user.avatar}
-                                            name={user.name}
-                                            size={44}
-                                        />
+                                        <UserAvatar src={user.image || user.avatar} name={user.name} size={44} />
                                         <div className="min-w-0 flex-1">
                                             <p className="text-sm font-bold text-foreground truncate">
                                                 {user.name || "Adventurer"}
                                             </p>
                                             {user.email && (
-                                                <p className="text-xs text-muted truncate">
-                                                    {user.email}
-                                                </p>
+                                                <p className="text-xs text-muted truncate">{user.email}</p>
                                             )}
                                         </div>
                                     </div>
-                                    <div className="pt-2 border-t border-border flex items-center justify-between text-xs">
-                                        <span className="text-muted font-medium">EXP Points</span>
-                                        <div className="flex items-center gap-1 font-mono font-bold text-foreground">
+                                    <div className="pt-2 border-t-2 border-border flex items-center justify-between text-xs">
+                                        <span className="text-muted font-medium">Points</span>
+                                        <span className="chip chip-amber font-mono tabular-nums">
                                             <Image
                                                 src="/icon.png"
                                                 alt=""
@@ -479,23 +323,21 @@ export function Header({ activePage, isLanding: propIsLanding }: HeaderProps) {
                                                 height={14}
                                                 className="object-contain"
                                             />
-                                            <span>{userPoints.toLocaleString("en-US")} PTS</span>
-                                        </div>
+                                            {userPoints.toLocaleString("en-US")} PTS
+                                        </span>
                                     </div>
                                 </div>
                             ) : (
-                                <div className="space-y-2 pb-2">
-                                    <Link
-                                        href="/login"
-                                        onClick={closeAll}
-                                        className="min-h-11 flex items-center justify-center w-full py-2.5 px-4 rounded-button bg-primary text-primary-foreground font-semibold hover:bg-primary-hover transition-colors"
-                                    >
+                                <div className="grid grid-cols-2 gap-3 pb-2">
+                                    <Link href="/login" onClick={closeAll} className="btn btn-secondary">
                                         Sign in
+                                    </Link>
+                                    <Link href="/signup" onClick={closeAll} className="btn btn-primary">
+                                        Sign up
                                     </Link>
                                 </div>
                             )}
 
-                            {/* Navigation Links */}
                             <nav aria-label="Mobile menu" className="space-y-1">
                                 {navLinks.map((link) => (
                                     <Link
@@ -510,37 +352,24 @@ export function Header({ activePage, isLanding: propIsLanding }: HeaderProps) {
                                 ))}
 
                                 {user && (
-                                    <Link
-                                        href="/profile"
-                                        onClick={closeAll}
-                                        className={navItemClass("profile")}
-                                    >
+                                    <Link href="/profile" onClick={closeAll} className={navItemClass("profile")}>
                                         Profile
                                     </Link>
                                 )}
 
                                 {isAdmin && (
-                                    <Link
-                                        href="/admin/manage-quests"
-                                        onClick={closeAll}
-                                        className={navItemClass("admin")}
-                                    >
-                                        Admin Dashboard
+                                    <Link href="/admin/manage-quests" onClick={closeAll} className={navItemClass("admin")}>
+                                        Admin dashboard
                                     </Link>
                                 )}
 
-                                <Link
-                                    href="/about"
-                                    onClick={closeAll}
-                                    className={navItemClass("about")}
-                                >
+                                <Link href="/about" onClick={closeAll} className={navItemClass("about")}>
                                     About
                                 </Link>
                             </nav>
                         </div>
 
-                        {/* Drawer Footer Actions */}
-                        <div className="pt-6 border-t border-border space-y-3">
+                        <div className="pt-6 border-t-2 border-border space-y-3">
                             {user && (
                                 <button
                                     type="button"
@@ -548,28 +377,15 @@ export function Header({ activePage, isLanding: propIsLanding }: HeaderProps) {
                                         closeAll();
                                         signOut({ callbackUrl: "/login" });
                                     }}
-                                    className="flex items-center justify-center gap-2 min-h-11 w-full px-4 py-2.5 rounded-button text-sm font-semibold text-danger border border-danger/20 hover:bg-danger/10 transition-colors"
+                                    className="flex items-center justify-center gap-2 min-h-11 w-full px-4 py-2.5 rounded-button text-sm font-semibold text-danger border-2 border-danger/30 hover:bg-danger/10 transition-colors"
                                 >
-                                    <svg
-                                        className="w-4 h-4 text-danger"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        strokeWidth={2}
-                                        aria-hidden="true"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                                        />
-                                    </svg>
+                                    <LogOutIcon className="size-4" />
                                     <span>Log out</span>
                                 </button>
                             )}
                         </div>
                     </div>
-                </div>
+                </dialog>
             )}
         </header>
     );

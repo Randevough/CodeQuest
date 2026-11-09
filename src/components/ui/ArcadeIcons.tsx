@@ -5,6 +5,43 @@ export interface IconProps extends React.SVGProps<SVGSVGElement> {
     size?: number;
 }
 
+/*
+ * Blocky UI glyphs drawn for the keycap language: heavy 3px strokes, square caps,
+ * mitered joins, solid fills. Used on public surfaces and the shell.
+ */
+function Glyph({ className = "size-5", size, children, ...props }: IconProps & { children: React.ReactNode }) {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width={size}
+            height={size}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={3}
+            strokeLinecap="square"
+            strokeLinejoin="miter"
+            aria-hidden="true"
+            className={className}
+            {...props}
+        >
+            {children}
+        </svg>
+    );
+}
+
+export const CheckIcon = (p: IconProps) => <Glyph {...p}><path d="M4 12.5 9.5 18 20 6.5" /></Glyph>;
+export const ChevronDownIcon = (p: IconProps) => <Glyph {...p}><path d="m5 9 7 7 7-7" /></Glyph>;
+export const MenuIcon = (p: IconProps) => <Glyph {...p}><path d="M3 6h18M3 12h18M3 18h18" /></Glyph>;
+export const CloseIcon = (p: IconProps) => <Glyph {...p}><path d="m5 5 14 14M19 5 5 19" /></Glyph>;
+export const LogOutIcon = (p: IconProps) => <Glyph {...p}><path d="M10 4H4v16h6M14 8l5 4-5 4M19 12H9" /></Glyph>;
+export const InfoIcon = (p: IconProps) => <Glyph {...p}><circle cx="12" cy="12" r="9.5" /><path d="M12 11v6.5M12 6.5V9" /></Glyph>;
+export const ShieldCheckIcon = (p: IconProps) => <Glyph {...p}><path d="M12 2.5 4 6v5.5c0 4.8 3.3 8.3 8 10 4.7-1.7 8-5.2 8-10V6l-8-3.5z" /><path d="m8.5 12 2.5 2.5 4.5-5" strokeWidth={2.5} /></Glyph>;
+export const MoonIcon = (p: IconProps) => <Glyph {...p} fill="currentColor" strokeWidth={0}><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a8.5 8.5 0 1 0 10.7 10.7z" /></Glyph>;
+export const SunIcon = (p: IconProps) => <Glyph {...p} strokeWidth={2.5}><circle cx="12" cy="12" r="4.5" fill="currentColor" /><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" /></Glyph>;
+export const UserIcon = (p: IconProps) => <Glyph {...p} fill="currentColor" strokeWidth={0}><circle cx="12" cy="8" r="4.5" /><path d="M3.5 21a8.5 7 0 0 1 17 0z" /></Glyph>;
+export const UserPlusIcon = (p: IconProps) => <Glyph {...p} strokeWidth={2.5}><circle cx="9" cy="8" r="4" fill="currentColor" /><path d="M1.5 21a7.5 6 0 0 1 15 0z" fill="currentColor" /><path d="M19 8v6M16 11h6" /></Glyph>;
+
 /**
  * Trophy icon replacing 'emoji_events'
  */

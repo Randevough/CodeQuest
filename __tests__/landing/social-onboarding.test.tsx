@@ -1,203 +1,136 @@
+import { readFileSync } from 'node:fs'
 import { describe, it, expect } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
-import React from 'react'
 import { SquadSection } from '@/components/landing/SquadSection'
-import { PlayerPebble } from '@/components/landing/PlayerPebble'
-import {
-  LeaderboardSection,
-  FALLBACK_LEADERBOARD_PODIUM,
-  BADGE_COLLECTION_14,
-} from '@/components/landing/LeaderboardSection'
-import { OnboardingSection } from '@/components/landing/OnboardingSection'
+import { LeaderboardSection, BADGE_COLLECTION } from '@/components/landing/LeaderboardSection'
+import { JoinSection } from '@/components/landing/JoinSection'
 
-describe('SquadSection (Multiplayer Co-Op Party HUD)', () => {
-  it('renders visual party HUD with crisp copy and tactile actions', () => {
-    render(<SquadSection />)
+describe('SquadSection', () => {
+  it('explains squads using only real mechanics', () => {
+    const { container } = render(<SquadSection />)
 
-    expect(
-      screen.getByRole('heading', { name: /Kerjakan Misi Bersama Skuad Pilihanmu/i })
-    ).toBeDefined()
-    expect(
-      screen.getByText(/Bentuk tim 2–4 developer/i)
-    ).toBeDefined()
+    expect(screen.getByRole('heading', { name: 'Take on bigger quests as a squad' })).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'Find a quest' }).getAttribute('href')).toBe('/explore')
 
-    // Party HUD Header & Multiplier
-    expect(screen.getByTestId('party-slots-badge').textContent).toContain('2 dari 3 Orang')
-    expect(screen.getByText(/Bonus XP Skuad \+20%/i)).toBeDefined()
-
-    // Visual Squad Members
-    expect(screen.getByText('Alex Dev')).toBeDefined()
-    expect(screen.getByText('Ketua Tim')).toBeDefined()
-    expect(screen.getByText('Budi Runner')).toBeDefined()
-    expect(screen.getByText('Pengembang Backend')).toBeDefined()
-    expect(screen.getAllByText('Siap')).toHaveLength(2)
-
-    // Interactive Open Slot
-    expect(screen.getByText(/\+ Ajak Rekan Mahasiswa Bergabung/i)).toBeDefined()
-
-    // Tactile Action buttons
-    expect(screen.getByRole('link', { name: /Buat Lobi Skuad/i })).toBeDefined()
-    expect(screen.getByRole('link', { name: /Gabung Skuad/i })).toBeDefined()
+    const text = container.textContent ?? ''
+    expect(text).not.toMatch(/\+\d+%|bonus/i)
   })
 
-  it('allows inviting teammate interactively to fill squad 3/3', () => {
+  it('labels the lobby as an example and uses no invented people', () => {
     render(<SquadSection />)
 
-    const openSlotBtn = screen.getByTestId('squad-slot-3-open')
-    expect(openSlotBtn).toBeDefined()
-    expect(screen.getByTestId('party-slots-badge').textContent).toContain('2 dari 3 Orang')
+    expect(screen.getByText('Example')).toBeTruthy()
+    expect(screen.getByText('Squad leader')).toBeTruthy()
+    expect(screen.queryByText(/Alex Dev|Budi Runner|Citra Code/)).toBeNull()
+  })
 
-    fireEvent.click(openSlotBtn)
+  it('lets the visitor fill the open slot and reset the example', () => {
+    render(<SquadSection />)
 
-    expect(screen.getByTestId('party-slots-badge').textContent).toContain('3 dari 3 Orang')
-    expect(screen.getByText('Citra Code')).toBeDefined()
-    expect(screen.getByText('Desainer UI')).toBeDefined()
-    expect(screen.getAllByText('Siap')).toHaveLength(3)
+    expect(screen.getByTestId('party-slots-badge').textContent).toBe('2 of 3 slots filled')
 
-    // Reset back to open slot
-    const resetBtn = screen.getByRole('button', { name: /Reset slot/i })
-    fireEvent.click(resetBtn)
-    expect(screen.getByTestId('party-slots-badge').textContent).toContain('2 dari 3 Orang')
-    expect(screen.getByTestId('squad-slot-3-open')).toBeDefined()
+    fireEvent.click(screen.getByTestId('squad-slot-open'))
+    expect(screen.getByTestId('party-slots-badge').textContent).toBe('3 of 3 slots filled')
+    expect(screen.queryByTestId('squad-slot-open')).toBeNull()
+    expect(screen.getByText('The squad is full.')).toBeTruthy()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Reset example' }))
+    expect(screen.getByTestId('party-slots-badge').textContent).toBe('2 of 3 slots filled')
+    expect(screen.getByTestId('squad-slot-open')).toBeTruthy()
   })
 })
 
-describe('PlayerPebble Component', () => {
-  it('renders user details, level, and points badge with Soft Arcade pill geometry', () => {
-    render(
-      <PlayerPebble
-        name="Alex Developer"
-        level={4}
-        points={1420}
-        handle="@alexdev"
-      />
-    )
+describe('LeaderboardSection', () => {
+  const users = [
+    { id: '1', name: 'Master Hacker', points: 9999, handle: '@hacker' },
+    { id: '2', name: 'Pro Coder', points: 4999, handle: '@procoder' },
+    { id: '3', name: 'Code Cadet', points: 1000 },
+  ]
 
-    expect(screen.getByText('Alex Developer')).toBeDefined()
-    expect(screen.getByText('(Level 4)')).toBeDefined()
-    expect(screen.getByText('@alexdev')).toBeDefined()
-    expect(screen.getByText('+1,420 PTS')).toBeDefined()
+  it('renders the live top players in order with points', () => {
+    render(<LeaderboardSection topUsers={users} />)
+
+    expect(screen.getByRole('heading', { name: 'See who is leading' })).toBeTruthy()
+    expect(screen.getByTestId('rank-row-1').textContent).toContain('Master Hacker')
+    expect(screen.getByTestId('rank-row-1').textContent).toContain('9,999 pts')
+    expect(screen.getByTestId('rank-row-2').textContent).toContain('Pro Coder')
+    expect(screen.getByTestId('rank-row-3').textContent).toContain('Code Cadet')
+    expect(screen.getByRole('link', { name: 'Open the full leaderboard' }).getAttribute('href')).toBe('/leaderboard')
   })
-})
 
-describe('LeaderboardSection (Soft Arcade Podium & Badge Grid)', () => {
-  it('renders top podium ranks with fallback data when empty', () => {
-    render(<LeaderboardSection />)
+  it('shows an honest empty state with no invented players', () => {
+    render(<LeaderboardSection topUsers={[]} />)
 
-    expect(
-      screen.getByRole('heading', { name: /Papan Peringkat Kampus/i })
-    ).toBeDefined()
-    expect(
-      screen.getByText(/Papan Peringkat Musim 1 • Top Pengembang/i)
-    ).toBeDefined()
-    expect(
-      screen.getByText(/Musim 1 sedang berlangsung. Skor dihitung dari PR repo yang terverifikasi./i)
-    ).toBeDefined()
+    expect(screen.getByTestId('leaderboard-empty-state')).toBeTruthy()
+    expect(screen.queryByTestId('rank-row-1')).toBeNull()
+    expect(screen.queryByText(/Alex Dev|Budi Runner|Citra Code/)).toBeNull()
+  })
 
-    // Fallback Top 3 names & points (rank 1 appears in both sample pebble and rank 1 pill)
-    expect(screen.getAllByText(FALLBACK_LEADERBOARD_PODIUM[0].name).length).toBeGreaterThan(0)
-    expect(screen.getAllByText(/2,150 PTS/i).length).toBe(2)
-    expect(screen.getByText(FALLBACK_LEADERBOARD_PODIUM[1].name)).toBeDefined()
-    expect(screen.getByText(/1,840 PTS/i)).toBeDefined()
-    expect(screen.getByText(FALLBACK_LEADERBOARD_PODIUM[2].name)).toBeDefined()
-    expect(screen.getByText(/1,620 PTS/i)).toBeDefined()
+  it('shows an unavailable state when the ranking could not be loaded', () => {
+    render(<LeaderboardSection topUsers={null} />)
 
-    // Podium ranks & badges
-    expect(screen.getByText(/Juara 1/i)).toBeDefined()
-    expect(screen.getByText(/Peringkat 2/i)).toBeDefined()
-    expect(screen.getByText(/Peringkat 3/i)).toBeDefined()
+    expect(screen.getByTestId('leaderboard-unavailable')).toBeTruthy()
+    expect(screen.queryByTestId('rank-row-1')).toBeNull()
+  })
 
-    // Visual XP Bars on each row
-    expect(screen.getByTestId('xp-bar-rank-1')).toBeDefined()
-    expect(screen.getByTestId('xp-bar-rank-2')).toBeDefined()
-    expect(screen.getByTestId('xp-bar-rank-3')).toBeDefined()
+  it('lists all 14 badges and reveals a requirement on selection', () => {
+    render(<LeaderboardSection topUsers={[]} />)
 
-    // Bevel button to full leaderboard
-    const fullPillButton = screen.getByRole('link', { name: /Lihat Seluruh Peringkat/i })
-    expect(fullPillButton).toBeDefined()
-    expect(fullPillButton.getAttribute('href')).toBe('/leaderboard')
-
-    // 14 badges rendered
-    expect(screen.getByText('14 Lencana Keahlian Terverifikasi')).toBeDefined()
-    expect(BADGE_COLLECTION_14).toHaveLength(14)
-    BADGE_COLLECTION_14.forEach((b) => {
-      expect(screen.getByText(b.name)).toBeDefined()
+    expect(BADGE_COLLECTION).toHaveLength(14)
+    expect(screen.getByText('14 badges to unlock')).toBeTruthy()
+    BADGE_COLLECTION.forEach((badge) => {
+      expect(screen.getByRole('button', { name: badge.name })).toBeTruthy()
     })
-  })
 
-  it('allows clicking badges to reveal requirements', () => {
-    render(<LeaderboardSection />)
+    const box = screen.getByTestId('badge-requirement-box')
+    expect(box.textContent).toContain('No badge selected.')
 
-    const requirementBox = screen.getByTestId('badge-requirement-box')
-    expect(requirementBox.textContent).toContain('Klik atau sorot lencana')
+    const webWeaver = screen.getByRole('button', { name: 'Web Weaver' })
+    fireEvent.click(webWeaver)
+    expect(webWeaver.getAttribute('aria-pressed')).toBe('true')
+    expect(box.textContent).toContain('Get 5 Web quests approved.')
 
-    const webWeaverBadge = screen.getByRole('button', { name: /Web Weaver/i })
-    fireEvent.click(webWeaverBadge)
-
-    expect(requirementBox.textContent).toContain('Selesaikan 5 quest Web')
-  })
-
-  it('renders custom topUsers when prop is supplied', () => {
-    const customUsers = [
-      { id: '1', name: 'Master Hacker', points: 9999, handle: '@hacker' },
-      { id: '2', name: 'Pro Coder', points: 8888, handle: '@procoder' },
-      { id: '3', name: 'Code Cadet', points: 7777, handle: '@cadet' },
-    ]
-
-    render(<LeaderboardSection topUsers={customUsers} />)
-
-    expect(screen.getAllByText('Master Hacker').length).toBe(2)
-    expect(screen.getAllByText(/9,999 PTS/i).length).toBe(2)
-    expect(screen.getByText('Pro Coder')).toBeDefined()
-    expect(screen.getByText(/8,888 PTS/i)).toBeDefined()
-    expect(screen.getByText('Code Cadet')).toBeDefined()
-    expect(screen.getByText(/7,777 PTS/i)).toBeDefined()
+    fireEvent.click(webWeaver)
+    expect(box.textContent).toContain('No badge selected.')
   })
 })
 
-describe('OnboardingSection', () => {
-  it('renders guest dual CTA and starter roles', () => {
-    render(<OnboardingSection isLoggedIn={false} />)
+describe('JoinSection', () => {
+  it('offers sign-up and sign-in to guests', () => {
+    render(<JoinSection isLoggedIn={false} />)
 
-    expect(
-      screen.getByRole('heading', { name: /PILIH JALUR KARIR & MULAI QUEST/i })
-    ).toBeDefined()
-    expect(screen.getByText(/Stasiun Pembuatan Karakter/i)).toBeDefined()
-    expect(screen.getByRole('radio', { name: /Pengembang Web/i })).toBeDefined()
-    expect(screen.getByRole('radio', { name: /Spesialis Backend/i })).toBeDefined()
-    expect(screen.getByRole('radio', { name: /AI & Machine Learning/i })).toBeDefined()
-
-    expect(screen.getByTestId('starter-perk-banner')).toBeDefined()
-    expect(screen.getByText(/\+100 XP Starter/i)).toBeDefined()
-
-    expect(screen.getByRole('link', { name: /Daftar Akun Mahasiswa/i }).getAttribute('href')).toBe(
-      '/signup'
-    )
-    expect(screen.getByRole('link', { name: /Masuk ke Akun/i }).getAttribute('href')).toBe(
-      '/login'
-    )
+    expect(screen.getByRole('heading', { name: 'Join the quest board' })).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'Create an account' }).getAttribute('href')).toBe('/signup')
+    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/login')
   })
 
-  it('allows selecting starter roles', () => {
-    render(<OnboardingSection isLoggedIn={false} />)
+  it('names the club and mentions email verification, with no invented perks', () => {
+    const { container } = render(<JoinSection />)
+    const text = container.textContent ?? ''
 
-    const backendRole = screen.getByRole('radio', { name: /Spesialis Backend/i })
-    expect(backendRole.getAttribute('aria-checked')).toBe('false')
-
-    fireEvent.click(backendRole)
-    expect(backendRole.getAttribute('aria-checked')).toBe('true')
+    expect(text).toContain('UKM Coding Cyber University')
+    expect(text).toMatch(/verifying your email/i)
+    expect(text).not.toMatch(/XP|bonus|starter/i)
+    expect(screen.queryByRole('radio')).toBeNull()
   })
 
-  it('renders member CTA when logged in (Buka Workspace Saya)', () => {
-    render(<OnboardingSection isLoggedIn={true} userName="CyberStudent" />)
+  it('offers the workspace to signed-in members and hides sign-up', () => {
+    render(<JoinSection isLoggedIn userName="Sam" />)
 
-    expect(
-      screen.getByRole('heading', { name: /PILIH JALUR KARIR & MULAI QUEST/i })
-    ).toBeDefined()
-    const workspaceLink = screen.getByRole('link', { name: /Buka Workspace Saya/i })
-    expect(workspaceLink.getAttribute('href')).toBe('/workspace')
-    expect(screen.getByText(/(CyberStudent)/i)).toBeDefined()
-    expect(screen.queryByRole('link', { name: /Daftar Akun Mahasiswa/i })).toBeNull()
-    expect(screen.queryByRole('link', { name: /Masuk ke Akun/i })).toBeNull()
+    expect(screen.getByRole('heading', { name: 'Welcome back, Sam' })).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'Open workspace' }).getAttribute('href')).toBe('/workspace')
+    expect(screen.queryByRole('link', { name: 'Create an account' })).toBeNull()
+    expect(screen.queryByRole('link', { name: 'Sign in' })).toBeNull()
+  })
+})
+
+describe('mobile navigation modal contract', () => {
+  it('uses native modal focus containment, Escape, and trigger restoration', () => {
+    const header = readFileSync('src/components/Header.tsx', 'utf8')
+    expect(header).toContain('<dialog')
+    expect(header).toContain('drawer.showModal()')
+    expect(header).toContain('onCancel=')
+    expect(header).toContain('drawer.close()')
+    expect(header).toContain('trigger?.focus()')
   })
 })
